@@ -21,7 +21,7 @@ def test_tab_configuration():
     loader = ConfigLoader()
 
     # Test 1: Simple tab configuration
-    print("\\n1. Testing simple tab configuration...")
+    print("\n1. Testing simple tab configuration...")
 
     simple_tab_config = {
         "window": {"title": "Simple Tabs", "width": 600, "height": 400},
@@ -64,7 +64,7 @@ def test_tab_configuration():
         return False
 
     # Test 2: Load example tab files
-    print("\\n2. Testing example tab configuration files...")
+    print("\n2. Testing example tab configuration files...")
 
     example_files = [
         "simple_tabs.json",
@@ -89,7 +89,7 @@ def test_tab_configuration():
             print(f"   ! {filename} not found, skipping")
 
     # Test 3: Tab validation
-    print("\\n3. Testing tab validation...")
+    print("\n3. Testing tab validation...")
 
     invalid_configs = [
         # Tab with invalid field reference
@@ -139,7 +139,7 @@ def test_tab_configuration():
             return False
 
     # Test 4: Mixed tab and non-tab configuration
-    print("\\n4. Testing mixed configurations...")
+    print("\n4. Testing mixed configurations...")
 
     # Configuration without tabs (should work normally)
     no_tab_config = {
@@ -157,9 +157,9 @@ def test_tab_configuration():
         print(f"   ✗ Error with non-tab config: {e}")
         return False
 
-    print("\\n" + "=" * 50)
+    print("\n" + "=" * 50)
     print("All tab configuration tests passed! ✓")
-    print("\\nThe library now supports:")
+    print("\nThe library now supports:")
     print("• Tab-based form organization")
     print("• Multiple layout types per tab")
     print("• Tab tooltips and enablement")
@@ -177,10 +177,10 @@ def main():
     success = test_tab_configuration()
 
     if success:
-        print("\\n🎉 All tab tests passed! The tab functionality is working correctly.")
+        print("\n🎉 All tab tests passed! The tab functionality is working correctly.")
         return 0
     else:
-        print("\\n❌ Some tab tests failed. Please check the implementation.")
+        print("\n❌ Some tab tests failed. Please check the implementation.")
         return 1
 
 

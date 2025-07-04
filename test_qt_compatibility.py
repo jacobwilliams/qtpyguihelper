@@ -42,7 +42,7 @@ def test_qtpy_imports():
 
 def test_simple_gui_creation():
     """Test creating a simple GUI without showing it."""
-    print("\\nTesting GUI creation...")
+    print("\nTesting GUI creation...")
     
     try:
         from qtpyguihelper import GuiBuilder
@@ -80,7 +80,7 @@ def test_simple_gui_creation():
 
 def test_available_backends():
     """Test which Qt backends are available."""
-    print("\\nTesting available Qt backends...")
+    print("\nTesting available Qt backends...")
     
     backends = []
     
@@ -110,7 +110,7 @@ def test_available_backends():
 
 def main():
     """Run all compatibility tests."""
-    print("QtPyGuiHelper Qt Backend Compatibility Test\\n")
+    print("QtPyGuiHelper Qt Backend Compatibility Test\n")
     
     tests = [
         test_available_backends,
@@ -128,7 +128,7 @@ def main():
         except Exception as e:
             print(f"❌ Test {test.__name__} failed with exception: {e}")
     
-    print(f"\\nTest Results: {passed}/{total} tests passed")
+    print(f"\nTest Results: {passed}/{total} tests passed")
     
     if passed == total:
         print("🎉 All compatibility tests passed!")

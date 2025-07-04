@@ -30,7 +30,7 @@ def test_config_loading():
 
     for filename in example_files:
         file_path = os.path.join(examples_dir, filename)
-        print(f"\\nTesting {filename}...")
+        print(f"\nTesting {filename}...")
 
         try:
             # Load configuration
@@ -54,14 +54,14 @@ def test_config_loading():
             print(f"  ✗ Error loading {filename}: {e}")
             return False
 
-    print("\\n" + "=" * 50)
+    print("\n" + "=" * 50)
     print("All configuration tests passed! ✓")
     return True
 
 
 def test_programmatic_config():
     """Test creating configuration programmatically."""
-    print("\\nTesting Programmatic Configuration...")
+    print("\nTesting Programmatic Configuration...")
     print("-" * 40)
 
     config_dict = {
@@ -104,7 +104,7 @@ def test_programmatic_config():
 
 def test_config_validation():
     """Test configuration validation."""
-    print("\\nTesting Configuration Validation...")
+    print("\nTesting Configuration Validation...")
     print("-" * 40)
 
     loader = ConfigLoader()
@@ -177,7 +177,7 @@ def main():
             print(f"Test failed with exception: {e}")
             results.append(False)
 
-    print("\\n" + "=" * 50)
+    print("\n" + "=" * 50)
     print("TEST SUMMARY")
     print("=" * 50)
 

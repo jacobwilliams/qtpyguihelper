@@ -65,13 +65,13 @@ def test_data_persistence():
 
     try:
         # Test 1: Configuration loading
-        print("\\n1. Testing configuration loading...")
+        print("\n1. Testing configuration loading...")
         loader = ConfigLoader()
         gui_config = loader.load_from_dict(config)
         print(f"   ✓ Configuration loaded: {len(gui_config.fields)} fields")
 
         # Test 2: Data loading from dictionary
-        print("\\n2. Testing data loading from dictionary...")
+        print("\n2. Testing data loading from dictionary...")
         # Note: We can't easily test the GUI without actually running it,
         # but we can test the data structures
 
@@ -88,7 +88,7 @@ def test_data_persistence():
         print(f"   ✓ Config file created: {config_file}")
 
         # Test 3: File operations
-        print("\\n3. Testing file operations...")
+        print("\n3. Testing file operations...")
 
         # Test loading data file
         with open(test_data_file, 'r') as f:
@@ -101,7 +101,7 @@ def test_data_persistence():
             return False
 
         # Test 4: Default value handling
-        print("\\n4. Testing default value handling...")
+        print("\n4. Testing default value handling...")
 
         # Test partial data (missing some fields)
         partial_data = {"name": "Jane Smith", "age": 28}
@@ -131,7 +131,7 @@ def test_data_persistence():
             return False
 
         # Test 5: Metadata generation
-        print("\\n5. Testing metadata generation...")
+        print("\n5. Testing metadata generation...")
 
         metadata = {
             "_metadata": {
@@ -157,9 +157,9 @@ def test_data_persistence():
         os.unlink(test_data_file)
         os.unlink(config_file)
 
-        print("\\n" + "=" * 50)
+        print("\n" + "=" * 50)
         print("All data persistence tests passed! ✓")
-        print("\\nThe library supports:")
+        print("\nThe library supports:")
         print("• Loading data from JSON files")
         print("• Saving form data to JSON files")
         print("• Merging loaded data with config defaults")
@@ -169,7 +169,7 @@ def test_data_persistence():
         return True
 
     except Exception as e:
-        print(f"\\n✗ Test failed with error: {e}")
+        print(f"\n✗ Test failed with error: {e}")
         return False
 
 
@@ -181,10 +181,10 @@ def main():
     success = test_data_persistence()
 
     if success:
-        print("\\n🎉 All tests passed! The data persistence features are working correctly.")
+        print("\n🎉 All tests passed! The data persistence features are working correctly.")
         return 0
     else:
-        print("\\n❌ Some tests failed. Please check the implementation.")
+        print("\n❌ Some tests failed. Please check the implementation.")
         return 1
 
 

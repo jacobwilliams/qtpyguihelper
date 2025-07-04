@@ -25,7 +25,7 @@ def on_registration_submit(form_data):
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Information)
     msg.setWindowTitle("Registration Successful")
-    msg.setText(f"Welcome, {form_data.get('first_name', 'User')}!\\nYour registration has been processed.")
+    msg.setText(f"Welcome, {form_data.get('first_name', 'User')}!\nYour registration has been processed.")
     msg.exec()
 
 
@@ -231,7 +231,7 @@ def demo_data_persistence():
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("Data Saved")
-        msg.setText(f"Project data has been saved successfully!\\nOutput: {output_path}")
+        msg.setText(f"Project data has been saved successfully!\nOutput: {output_path}")
         msg.exec()
 
     gui.set_submit_callback(on_submit_and_save)

@@ -23,7 +23,7 @@ try:
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("Success")
-        msg.setText(f"Hello {form_data.get('name', 'User')}!\\nForm submitted successfully.")
+        msg.setText(f"Hello {form_data.get('name', 'User')}!\nForm submitted successfully.")
         msg.exec()
 
     def main():

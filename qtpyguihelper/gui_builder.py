@@ -307,8 +307,8 @@ class GuiBuilder(QMainWindow):
                     missing_fields.append(field_config.label)
 
         if missing_fields:
-            fields_text = "\\n• ".join(missing_fields)
-            self._show_error(f"Please fill in the following required fields:\\n• {fields_text}")
+            fields_text = "\n• ".join(missing_fields)
+            self._show_error(f"Please fill in the following required fields:\n• {fields_text}")
             return False
 
         return True

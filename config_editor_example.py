@@ -180,7 +180,7 @@ try:
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Information)
                     msg.setWindowTitle("Configuration Saved")
-                    msg.setText(f"Configuration saved successfully!\\n\\nFiles created:\\n• {file_path}\\n• {metadata_file}")
+                    msg.setText(f"Configuration saved successfully!\n\nFiles created:\n• {file_path}\n• {metadata_file}")
                     msg.exec()
                 else:
                     # Show error message

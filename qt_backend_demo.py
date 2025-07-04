@@ -77,7 +77,7 @@ def show_current_backend():
         print(f"qtpy version: {qtpy.__version__}")
         
         # Show available APIs
-        print("\\nAvailable Qt APIs:")
+        print("\nAvailable Qt APIs:")
         available_apis = []
         
         try:
