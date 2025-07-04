@@ -156,7 +156,7 @@ app.exec()
 
 ### Form Configuration
 
-```json
+```jsonc
 {
   "layout": "form",               // Layout type
   "submit_button": true,          // Show submit button
