@@ -303,7 +303,7 @@ def demo_complex_tabs():
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("Configuration Saved")
-        msg.setText(f"Configuration has been saved successfully!\\nOutput: {output_path}")
+        msg.setText(f"Configuration has been saved successfully!\nOutput: {output_path}")
         msg.exec()
 
     gui.set_submit_callback(on_save_config)
