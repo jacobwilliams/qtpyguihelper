@@ -137,7 +137,7 @@ app.exec()
 
 ### Field Configuration
 
-```json
+```jsonc
 {
   "name": "field_name",           // Unique identifier (required)
   "type": "text",                 // Field type (required)
