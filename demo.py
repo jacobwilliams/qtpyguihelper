@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from qtpyguihelper import GuiBuilder
-from PySide6.QtWidgets import QApplication, QMessageBox
+from qtpy.QtWidgets import QApplication, QMessageBox
 
 
 def on_registration_submit(form_data):

@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 try:
     from qtpyguihelper import GuiBuilder
-    from PySide6.QtWidgets import QApplication, QMessageBox, QFileDialog
+    from qtpy.QtWidgets import QApplication, QMessageBox, QFileDialog
 
     def create_config_editor():
         """Create a configuration editor with data persistence."""
@@ -235,5 +235,5 @@ try:
 
 except ImportError as e:
     print(f"Import error: {e}")
-    print("Make sure PySide6 is installed and you're running from the correct directory.")
+    print("Make sure you have a Qt binding installed (PySide6 or PyQt6) and qtpy is available.")
     sys.exit(1)

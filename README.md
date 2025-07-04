@@ -1,10 +1,11 @@
 # QtPyGuiHelper
 
-A Python library for creating PySide6 GUIs from JSON configuration files. This library allows you to define GUI layouts, widgets, and their properties in JSON format and automatically generate the corresponding PySide6 interface.
+A Python library for creating Qt GUIs from JSON configuration files. This library allows you to define GUI layouts, widgets, and their properties in JSON format and automatically generate the corresponding Qt interface. Compatible with both **PySide6** and **PyQt6** via the `qtpy` abstraction layer.
 
 ## Features
 
 - 🎯 **JSON-Driven**: Define your entire GUI in JSON configuration files
+- 🔀 **Qt Binding Flexible**: Compatible with both PySide6 and PyQt6 via qtpy
 - 🎨 **Multiple Layouts**: Support for vertical, horizontal, grid, and form layouts
 - 🧩 **Rich Widget Set**: Text fields, numbers, dates, checkboxes, radio buttons, file pickers, color pickers, and more
 - ✅ **Form Validation**: Built-in validation for required fields and data types
@@ -17,15 +18,25 @@ A Python library for creating PySide6 GUIs from JSON configuration files. This l
 
 ## Installation
 
-### Option 1: Install from source
+QtPyGuiHelper uses `qtpy` as an abstraction layer, so you can use either PySide6 or PyQt6 as your Qt binding.
+
+### Option 1: Install with PySide6 (Recommended)
 
 ```bash
 git clone https://github.com/yourusername/qtpyguihelper.git
 cd qtpyguihelper
-pip install .
+pip install .[pyside6]
 ```
 
-### Option 2: Development installation
+### Option 2: Install with PyQt6
+
+```bash
+git clone https://github.com/yourusername/qtpyguihelper.git
+cd qtpyguihelper
+pip install .[pyqt6]
+```
+
+### Option 3: Development installation
 
 ```bash
 git clone https://github.com/yourusername/qtpyguihelper.git
@@ -33,10 +44,12 @@ cd qtpyguihelper
 pip install -e .[dev]
 ```
 
-### Option 3: Install dependencies only
+### Option 4: Manual dependency installation
+
+If you already have PySide6 or PyQt6 installed:
 
 ```bash
-pip install PySide6>=6.5.0
+pip install qtpy>=2.0.0
 ```
 
 ## Quick Start
@@ -91,7 +104,7 @@ Create a JSON file defining your GUI structure:
 ```python
 import sys
 from qtpyguihelper import GuiBuilder
-from PySide6.QtWidgets import QApplication
+from qtpy.QtWidgets import QApplication
 
 def on_submit(form_data):
     print("Form submitted:", form_data)
@@ -108,6 +121,54 @@ gui.set_submit_callback(on_submit)
 # Show and run
 gui.show()
 app.exec()
+```
+
+## Qt Backend Selection
+
+QtPyGuiHelper uses `qtpy` to provide compatibility with both PySide6 and PyQt6. You can control which Qt backend is used in several ways:
+
+### Method 1: Environment Variable
+
+Set the `QT_API` environment variable before importing qtpyguihelper:
+
+```bash
+# Use PySide6
+export QT_API=pyside6
+python your_app.py
+
+# Use PyQt6
+export QT_API=pyqt6
+python your_app.py
+```
+
+### Method 2: Python Code
+
+Set the environment variable in your Python code before any Qt imports:
+
+```python
+import os
+os.environ['QT_API'] = 'pyside6'  # or 'pyqt6'
+
+from qtpyguihelper import GuiBuilder
+```
+
+### Method 3: Check Current Backend
+
+You can check which backend is currently being used:
+
+```python
+import qtpy
+print(f"Current Qt API: {qtpy.API_NAME}")
+print(f"Qt version: {qtpy.QT_VERSION}")
+```
+
+### Backend Testing
+
+Use the included compatibility test to verify your setup:
+
+```bash
+python test_qt_compatibility.py
+python qt_backend_demo.py info
 ```
 
 ## Supported Field Types

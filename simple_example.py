@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 try:
     from qtpyguihelper import GuiBuilder
-    from PySide6.QtWidgets import QApplication, QMessageBox
+    from qtpy.QtWidgets import QApplication, QMessageBox
 
     def on_form_submit(form_data):
         """Handle form submission."""
@@ -86,6 +86,6 @@ try:
 
 except ImportError as e:
     print(f"Import error: {e}")
-    print("Make sure PySide6 is installed: pip install PySide6")
+    print("Make sure you have a Qt binding installed: pip install PySide6 (or PyQt6) and qtpy")
     print("You may need to run this from the qtpyguihelper directory.")
     sys.exit(1)

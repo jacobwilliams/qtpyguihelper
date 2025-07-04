@@ -1,24 +1,25 @@
 """
-Main GUI builder class that creates PySide6 applications from JSON configuration.
+Main GUI builder class that creates Qt applications from JSON configuration.
+Compatible with both PySide6 and PyQt6 via qtpy.
 """
 
 import sys
 import json
 from typing import Dict, Any, Callable, Optional
-from PySide6.QtWidgets import (
+from qtpy.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QFormLayout, QGridLayout, QPushButton, QScrollArea, QMessageBox,
     QTabWidget
 )
-from PySide6.QtCore import Qt, Signal, QDateTime
-from PySide6.QtGui import QIcon
+from qtpy.QtCore import Qt, Signal, QDateTime
+from qtpy.QtGui import QIcon
 
 from .config_loader import ConfigLoader, GuiConfig, FieldConfig
 from .widget_factory import WidgetFactory, get_nested_value
 
 
 class GuiBuilder(QMainWindow):
-    """Main GUI builder class that creates a PySide6 application from JSON configuration."""
+    """Main GUI builder class that creates Qt applications from JSON configuration."""
 
     # Signals
     formSubmitted = Signal(dict)  # Emitted when form is submitted with data

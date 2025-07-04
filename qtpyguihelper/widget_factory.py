@@ -1,17 +1,18 @@
 """
-Widget factory for creating PySide6 widgets based on field configurations.
+Widget factory for creating Qt widgets based on field configurations.
+Compatible with both PySide6 and PyQt6 via qtpy.
 """
 
 from typing import Any, Dict, Optional, List
-from PySide6.QtWidgets import (
+from qtpy.QtWidgets import (
     QWidget, QLabel, QLineEdit, QTextEdit, QSpinBox, QDoubleSpinBox,
     QCheckBox, QRadioButton, QButtonGroup, QComboBox, QDateEdit,
     QTimeEdit, QDateTimeEdit, QSlider, QProgressBar, QPushButton,
     QFileDialog, QColorDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
     QGridLayout, QFrame, QGroupBox
 )
-from PySide6.QtCore import Qt, QDate, QTime, QDateTime, Signal
-from PySide6.QtGui import QColor, QPixmap, QIcon
+from qtpy.QtCore import Qt, QDate, QTime, QDateTime, Signal
+from qtpy.QtGui import QColor, QPixmap, QIcon
 
 from .config_loader import FieldConfig
 
