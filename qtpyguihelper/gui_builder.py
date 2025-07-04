@@ -14,7 +14,7 @@ from PySide6.QtCore import Qt, Signal, QDateTime
 from PySide6.QtGui import QIcon
 
 from .config_loader import ConfigLoader, GuiConfig, FieldConfig
-from .widget_factory import WidgetFactory
+from .widget_factory import WidgetFactory, get_nested_value
 
 
 class GuiBuilder(QMainWindow):
@@ -383,9 +383,10 @@ class GuiBuilder(QMainWindow):
     def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
         """
         Load form data from a dictionary and populate the GUI.
+        Supports nested field names using dot notation.
 
         Args:
-            data: Dictionary containing form field values
+            data: Dictionary containing form field values (can be nested)
 
         Returns:
             bool: True if successful, False otherwise
@@ -399,16 +400,31 @@ class GuiBuilder(QMainWindow):
             for field_config in self.config.fields:
                 field_name = field_config.name
 
-                if field_name in data:
-                    # Use provided value
-                    success = self.widget_factory.set_widget_value(field_name, data[field_name])
-                    if success:
-                        loaded_count += 1
-                elif field_config.default_value is not None:
-                    # Use default value from config if no data provided
-                    success = self.widget_factory.set_widget_value(field_name, field_config.default_value)
-                    if success:
-                        loaded_count += 1
+                # Handle nested field names with dot notation
+                if '.' in field_name:
+                    # Use get_nested_value to handle dot notation
+                    field_value = get_nested_value(data, field_name)
+                    if field_value is not None:
+                        success = self.widget_factory.set_widget_value(field_name, field_value)
+                        if success:
+                            loaded_count += 1
+                    elif field_config.default_value is not None:
+                        # Use default value from config if no data provided
+                        success = self.widget_factory.set_widget_value(field_name, field_config.default_value)
+                        if success:
+                            loaded_count += 1
+                else:
+                    # Handle regular field names (for backward compatibility)
+                    if field_name in data:
+                        # Use provided value
+                        success = self.widget_factory.set_widget_value(field_name, data[field_name])
+                        if success:
+                            loaded_count += 1
+                    elif field_config.default_value is not None:
+                        # Use default value from config if no data provided
+                        success = self.widget_factory.set_widget_value(field_name, field_config.default_value)
+                        if success:
+                            loaded_count += 1
 
             print(f"Loaded {loaded_count} field values from data")
             return True

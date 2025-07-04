@@ -315,6 +315,62 @@ def demo_complex_tabs():
     app.exec()
 
 
+def demo_nested_fields():
+    """Demo nested field names with dot notation."""
+    print("Starting Nested Fields Demo...")
+
+    # Create the application
+    app = QApplication(sys.argv)
+
+    # Create GUI from JSON file
+    config_path = os.path.join(os.path.dirname(__file__), "examples", "nested_config.json")
+    gui = GuiBuilder(config_path=config_path)
+
+    # Load existing nested data if available
+    data_path = os.path.join(os.path.dirname(__file__), "examples", "nested_data.json")
+    if os.path.exists(data_path):
+        success = gui.load_data_from_file(data_path)
+        if success:
+            print(f"Loaded existing nested data from {data_path}")
+        else:
+            print("Failed to load existing nested data")
+
+    # Set callbacks
+    def on_save_nested_config(form_data):
+        print("Nested configuration saved:")
+        # Print the nested structure
+        def print_nested(data, indent=0):
+            for key, value in data.items():
+                if isinstance(value, dict):
+                    print("  " * indent + f"{key}:")
+                    print_nested(value, indent + 1)
+                else:
+                    print("  " * indent + f"{key}: {value}")
+
+        print_nested(form_data)
+
+        # Save to file
+        output_path = os.path.join(os.path.dirname(__file__), "nested_config_output.json")
+        success = gui.save_data_to_file(output_path)
+        if success:
+            print(f"Nested configuration saved to {output_path}")
+
+        # Show success message
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Nested Configuration Saved")
+        msg.setText(f"Nested configuration has been saved successfully!\nOutput: {output_path}")
+        msg.exec()
+
+    gui.set_submit_callback(on_save_nested_config)
+
+    # Show the GUI
+    gui.show()
+
+    # Run the application
+    app.exec()
+
+
 def main():
     """Main function to run demos."""
     if len(sys.argv) > 1:
@@ -328,8 +384,9 @@ def main():
         print("  python demo.py persistence   - Data loading and saving demo")
         print("  python demo.py tabs          - Tabbed interface demo")
         print("  python demo.py complex_tabs  - Complex tabbed configuration demo")
+        print("  python demo.py nested        - Nested field names demo")
         print()
-        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs): ").lower()
+        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs/nested): ").lower()
 
     if demo_type == "registration":
         demo_user_registration()
@@ -345,9 +402,11 @@ def main():
         demo_tabbed_interface()
     elif demo_type == "complex_tabs":
         demo_complex_tabs()
+    elif demo_type == "nested":
+        demo_nested_fields()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested")
 
 
 if __name__ == "__main__":

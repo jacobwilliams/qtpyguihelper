@@ -1,0 +1,98 @@
+{
+  "window": {
+    "title": "Nested Configuration Example",
+    "width": 600,
+    "height": 500,
+    "resizable": true
+  },
+  "layout": "form",
+  "fields": [
+    {
+      "name": "global.app_name",
+      "type": "text",
+      "label": "Application Name",
+      "required": true,
+      "default_value": "My Application"
+    },
+    {
+      "name": "global.version",
+      "type": "text",
+      "label": "Version",
+      "default_value": "1.0.0"
+    },
+    {
+      "name": "database.host",
+      "type": "text",
+      "label": "Database Host",
+      "placeholder": "localhost",
+      "default_value": "localhost"
+    },
+    {
+      "name": "database.port",
+      "type": "number",
+      "label": "Database Port",
+      "min_value": 1,
+      "max_value": 65535,
+      "default_value": 5432
+    },
+    {
+      "name": "database.name",
+      "type": "text",
+      "label": "Database Name",
+      "required": true,
+      "placeholder": "my_database"
+    },
+    {
+      "name": "database.ssl_enabled",
+      "type": "checkbox",
+      "label": "Enable SSL",
+      "default_value": true
+    },
+    {
+      "name": "logging.level",
+      "type": "select",
+      "label": "Log Level",
+      "options": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+      "default_value": "INFO"
+    },
+    {
+      "name": "logging.file_path",
+      "type": "file",
+      "label": "Log File",
+      "default_value": "save"
+    },
+    {
+      "name": "ui.theme",
+      "type": "select",
+      "label": "UI Theme",
+      "options": ["Light", "Dark", "Auto"],
+      "default_value": "Auto"
+    },
+    {
+      "name": "ui.font_size",
+      "type": "range",
+      "label": "Font Size",
+      "min_value": 8,
+      "max_value": 24,
+      "default_value": 12
+    },
+    {
+      "name": "backup.enabled",
+      "type": "checkbox",
+      "label": "Enable automatic backups",
+      "default_value": true
+    },
+    {
+      "name": "backup.interval_hours",
+      "type": "range",
+      "label": "Backup Interval (hours)",
+      "min_value": 1,
+      "max_value": 24,
+      "default_value": 6
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Save Configuration",
+  "cancel_button": true,
+  "cancel_label": "Cancel"
+}

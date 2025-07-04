@@ -8,37 +8,37 @@
   "layout": "grid",
   "fields": [
     {
-      "name": "project_name",
+      "name": "project.name",
       "type": "text",
       "label": "Project Name",
       "required": true
     },
     {
-      "name": "start_date",
+      "name": "schedule.start_date",
       "type": "date",
       "label": "Start Date"
     },
     {
-      "name": "end_date",
+      "name": "schedule.end_date",
       "type": "date",
       "label": "End Date"
     },
     {
-      "name": "priority",
+      "name": "project.priority",
       "type": "select",
       "label": "Priority",
       "options": ["Low", "Medium", "High", "Critical"],
       "default_value": "Medium"
     },
     {
-      "name": "budget",
+      "name": "budget.amount",
       "type": "number",
       "label": "Budget ($)",
       "min_value": 0,
       "max_value": 1000000
     },
     {
-      "name": "completion",
+      "name": "budget.completion",
       "type": "range",
       "label": "Completion %",
       "min_value": 0,
@@ -46,13 +46,13 @@
       "default_value": 0
     },
     {
-      "name": "active",
+      "name": "settings.active",
       "type": "checkbox",
       "label": "Project is active",
       "default_value": true
     },
     {
-      "name": "notes",
+      "name": "project.notes",
       "type": "textarea",
       "label": "Project Notes",
       "height": 80

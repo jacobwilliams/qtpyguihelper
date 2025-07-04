@@ -1,0 +1,24 @@
+{
+  "global": {
+    "app_name": "Advanced Web Application",
+    "version": "2.1.0"
+  },
+  "database": {
+    "host": "db.example.com",
+    "port": 5432,
+    "name": "production_db",
+    "ssl_enabled": true
+  },
+  "logging": {
+    "level": "WARNING",
+    "file_path": "/var/log/myapp.log"
+  },
+  "ui": {
+    "theme": "Dark",
+    "font_size": 14
+  },
+  "backup": {
+    "enabled": true,
+    "interval_hours": 12
+  }
+}

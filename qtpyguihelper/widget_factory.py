@@ -16,6 +16,79 @@ from PySide6.QtGui import QColor, QPixmap, QIcon
 from .config_loader import FieldConfig
 
 
+def set_nested_value(data: Dict[str, Any], key_path: str, value: Any):
+    """
+    Set a value in a nested dictionary using dot notation.
+
+    Args:
+        data: The dictionary to modify
+        key_path: Dot-separated key path (e.g., "global.project_name")
+        value: The value to set
+    """
+    keys = key_path.split('.')
+    current = data
+
+    # Navigate to the parent of the target key
+    for key in keys[:-1]:
+        if key not in current:
+            current[key] = {}
+        elif not isinstance(current[key], dict):
+            # If the intermediate key exists but isn't a dict, we can't proceed
+            return
+        current = current[key]
+
+    # Set the final value
+    current[keys[-1]] = value
+
+
+def get_nested_value(data: Dict[str, Any], key_path: str, default: Any = None) -> Any:
+    """
+    Get a value from a nested dictionary using dot notation.
+
+    Args:
+        data: The dictionary to search
+        key_path: Dot-separated key path (e.g., "global.project_name")
+        default: Default value if key not found
+
+    Returns:
+        The value at the key path, or default if not found
+    """
+    keys = key_path.split('.')
+    current = data
+
+    try:
+        for key in keys:
+            if isinstance(current, dict) and key in current:
+                current = current[key]
+            else:
+                return default
+        return current
+    except (KeyError, TypeError):
+        return default
+
+
+def flatten_nested_dict(data: Dict[str, Any], parent_key: str = '', separator: str = '.') -> Dict[str, Any]:
+    """
+    Flatten a nested dictionary into a flat dictionary with dot notation keys.
+
+    Args:
+        data: The nested dictionary to flatten
+        parent_key: The parent key path (for recursion)
+        separator: The separator to use (default: '.')
+
+    Returns:
+        Flattened dictionary with dot notation keys
+    """
+    items = []
+    for key, value in data.items():
+        new_key = f"{parent_key}{separator}{key}" if parent_key else key
+        if isinstance(value, dict):
+            items.extend(flatten_nested_dict(value, new_key, separator).items())
+        else:
+            items.append((new_key, value))
+    return dict(items)
+
+
 class CustomColorButton(QPushButton):
     """Custom button widget for color selection."""
 
@@ -452,10 +525,16 @@ class WidgetFactory:
             return False
 
     def get_all_values(self) -> Dict[str, Any]:
-        """Get values from all widgets."""
+        """Get values from all widgets, creating nested dictionaries for dot notation field names."""
         values = {}
         for field_name in self.widgets.keys():
-            values[field_name] = self.get_widget_value(field_name)
+            field_value = self.get_widget_value(field_name)
+            if '.' in field_name:
+                # Handle nested field names using dot notation
+                set_nested_value(values, field_name, field_value)
+            else:
+                # Handle regular field names
+                values[field_name] = field_value
         return values
 
     def clear_all_widgets(self):

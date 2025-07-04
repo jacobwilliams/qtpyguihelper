@@ -11,6 +11,9 @@ A Python library for creating PySide6 GUIs from JSON configuration files. This l
 - 🎛️ **Customizable**: Extensive configuration options for each widget
 - 📡 **Event Handling**: Built-in callbacks and signals for form submission and field changes
 - 🔧 **Programmatic Control**: Runtime manipulation of form fields and values
+- 🌲 **Nested Fields**: Support for hierarchical data structures using dot notation (e.g., "global.app_name")
+- 📑 **Tabbed Interfaces**: Organize fields into tabs for better user experience
+- 💾 **Data Persistence**: Load and save form data with smart defaults and metadata support
 
 ## Installation
 
@@ -181,6 +184,68 @@ app.exec()
 }
 ```
 
+### Nested Field Names
+
+QtPyGuiHelper supports hierarchical data structures using dot notation in field names. This allows you to organize related data into nested JSON objects when saving or loading form data.
+
+#### Basic Usage
+
+```jsonc
+{
+  "name": "global.app_name",      // Creates: {"global": {"app_name": value}}
+  "type": "text",
+  "label": "Application Name"
+}
+```
+
+#### Example Configuration
+
+```jsonc
+{
+  "fields": [
+    {
+      "name": "database.host",
+      "type": "text",
+      "label": "Database Host",
+      "default_value": "localhost"
+    },
+    {
+      "name": "database.port",
+      "type": "number",
+      "label": "Database Port",
+      "default_value": 5432
+    },
+    {
+      "name": "ui.theme",
+      "type": "select",
+      "label": "Theme",
+      "options": ["Light", "Dark", "Auto"],
+      "default_value": "Auto"
+    }
+  ]
+}
+```
+
+#### Output Structure
+
+When using nested field names, the saved JSON will have a hierarchical structure:
+
+```json
+{
+  "database": {
+    "host": "localhost",
+    "port": 5432
+  },
+  "ui": {
+    "theme": "Dark"
+  }
+}
+```
+
+#### Loading Nested Data
+
+The library automatically handles loading nested data structures. If you have existing nested JSON data, the GUI will populate fields based on their dot notation names.
+
 ## Programming Interface
 
 ### Creating a GUI
@@ -250,6 +315,9 @@ python demo.py settings      # Application settings form
 python demo.py project       # Project data entry form
 python demo.py contact       # Programmatic contact form
 python demo.py persistence   # Data loading and saving demo
+python demo.py tabs          # Tabbed interface demo
+python demo.py complex_tabs  # Complex tabbed configuration demo
+python demo.py nested        # Nested field names demo
 ```
 
 ## Advanced Usage
