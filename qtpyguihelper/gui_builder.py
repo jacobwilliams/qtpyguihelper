@@ -3,13 +3,14 @@ Main GUI builder class that creates PySide6 applications from JSON configuration
 """
 
 import sys
+import json
 from typing import Dict, Any, Callable, Optional
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QFormLayout, QGridLayout, QPushButton, QScrollArea, QMessageBox,
     QSplitter, QFrame
 )
-from PySide6.QtCore import Qt, Signal, QObject
+from PySide6.QtCore import Qt, Signal, QDateTime
 from PySide6.QtGui import QIcon
 
 from .config_loader import ConfigLoader, GuiConfig, FieldConfig
@@ -316,6 +317,137 @@ class GuiBuilder(QMainWindow):
 
         if field_name in self.widget_factory.labels:
             self.widget_factory.labels[field_name].setVisible(visible)
+
+    def load_data_from_file(self, data_file_path: str) -> bool:
+        """
+        Load form data from a JSON file and populate the GUI.
+
+        Args:
+            data_file_path: Path to the JSON file containing form data
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            with open(data_file_path, 'r', encoding='utf-8') as file:
+                data = json.load(file)
+            return self.load_data_from_dict(data)
+        except Exception as e:
+            self._show_error(f"Failed to load data from file: {str(e)}")
+            return False
+
+    def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
+        """
+        Load form data from a dictionary and populate the GUI.
+
+        Args:
+            data: Dictionary containing form field values
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # For each field in the config, check if data exists
+            if not self.config:
+                return False
+
+            loaded_count = 0
+            for field_config in self.config.fields:
+                field_name = field_config.name
+
+                if field_name in data:
+                    # Use provided value
+                    success = self.widget_factory.set_widget_value(field_name, data[field_name])
+                    if success:
+                        loaded_count += 1
+                elif field_config.default_value is not None:
+                    # Use default value from config if no data provided
+                    success = self.widget_factory.set_widget_value(field_name, field_config.default_value)
+                    if success:
+                        loaded_count += 1
+
+            print(f"Loaded {loaded_count} field values from data")
+            return True
+
+        except Exception as e:
+            self._show_error(f"Failed to load data: {str(e)}")
+            return False
+
+    def save_data_to_file(self, data_file_path: str, include_empty: bool = True) -> bool:
+        """
+        Save current form data to a JSON file.
+
+        Args:
+            data_file_path: Path where to save the JSON file
+            include_empty: Whether to include fields with empty/None values
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            data = self.get_form_data()
+
+            if not include_empty:
+                # Filter out empty/None values
+                data = {k: v for k, v in data.items()
+                       if v is not None and (not isinstance(v, str) or v.strip())}
+
+            with open(data_file_path, 'w', encoding='utf-8') as file:
+                json.dump(data, file, indent=2, ensure_ascii=False)
+
+            return True
+
+        except Exception as e:
+            self._show_error(f"Failed to save data to file: {str(e)}")
+            return False
+
+    def get_data_with_metadata(self) -> Dict[str, Any]:
+        """
+        Get form data with additional metadata about the configuration.
+
+        Returns:
+            Dict containing form data plus metadata
+        """
+        if not self.config:
+            return {}
+
+        form_data = self.get_form_data()
+
+        metadata = {
+            "_metadata": {
+                "config_source": "qtpyguihelper",
+                "window_title": self.config.window.title,
+                "layout": self.config.layout,
+                "field_count": len(self.config.fields),
+                "required_fields": [f.name for f in self.config.fields if f.required],
+                "generated_at": QDateTime.currentDateTime().toString(Qt.ISODate)
+            }
+        }
+
+        # Merge form data with metadata
+        return {**form_data, **metadata}
+
+    def save_data_with_metadata_to_file(self, data_file_path: str) -> bool:
+        """
+        Save form data with metadata to a JSON file.
+
+        Args:
+            data_file_path: Path where to save the JSON file
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            data = self.get_data_with_metadata()
+
+            with open(data_file_path, 'w', encoding='utf-8') as file:
+                json.dump(data, file, indent=2, ensure_ascii=False)
+
+            return True
+
+        except Exception as e:
+            self._show_error(f"Failed to save data with metadata: {str(e)}")
+            return False
 
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,

@@ -1,0 +1,10 @@
+{
+  "project_name": "Website Redesign",
+  "start_date": "2025-01-15",
+  "end_date": "2025-06-30",
+  "priority": "High",
+  "budget": 75000,
+  "completion": 25,
+  "active": true,
+  "notes": "Major redesign of the company website with modern UI/UX. Phase 1 includes homepage and product pages."
+}

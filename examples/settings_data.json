@@ -1,0 +1,9 @@
+{
+  "app_name": "My Custom App",
+  "theme": "Dark",
+  "auto_save": true,
+  "save_interval": 10,
+  "backup_location": "/Users/john/backups",
+  "accent_color": "#FF6B35",
+  "notification_time": "14:30"
+}

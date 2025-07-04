@@ -14,11 +14,26 @@ A Python library for creating PySide6 GUIs from JSON configuration files. This l
 
 ## Installation
 
-1. Clone or download this repository
-2. Install the required dependencies:
+### Option 1: Install from source
 
 ```bash
-pip install -r requirements.txt
+git clone https://github.com/yourusername/qtpyguihelper.git
+cd qtpyguihelper
+pip install .
+```
+
+### Option 2: Development installation
+
+```bash
+git clone https://github.com/yourusername/qtpyguihelper.git
+cd qtpyguihelper
+pip install -e .[dev]
+```
+
+### Option 3: Install dependencies only
+
+```bash
+pip install PySide6>=6.5.0
 ```
 
 ## Quick Start
@@ -230,10 +245,11 @@ The library includes several example configurations in the `examples/` directory
 Run the demo script to see these examples in action:
 
 ```bash
-python demo.py registration
-python demo.py settings
-python demo.py project
-python demo.py contact
+python demo.py registration  # User registration form
+python demo.py settings      # Application settings form
+python demo.py project       # Project data entry form
+python demo.py contact       # Programmatic contact form
+python demo.py persistence   # Data loading and saving demo
 ```
 
 ## Advanced Usage
@@ -274,6 +290,66 @@ def on_submit(form_data):
     user.save()  # Save to database
 
 gui.set_submit_callback(on_submit)
+```
+
+## Data Persistence
+
+The library supports loading and saving form data to JSON files, making it easy to create configuration editors and data entry applications.
+
+### Loading Data
+
+```python
+# Load data from JSON file
+gui.load_data_from_file("input_data.json")
+
+# Load data from dictionary
+data = {"field1": "value1", "field2": "value2"}
+gui.load_data_from_dict(data)
+```
+
+### Saving Data
+
+```python
+# Save current form data to file
+gui.save_data_to_file("output.json")
+
+# Save only non-empty fields
+gui.save_data_to_file("output.json", include_empty=False)
+
+# Save with metadata (includes config info and timestamp)
+gui.save_data_with_metadata_to_file("output_with_metadata.json")
+```
+
+### Example Data Files
+
+Input data files contain the actual field values:
+
+```json
+{
+  "project_name": "Website Redesign",
+  "start_date": "2025-01-15",
+  "priority": "High",
+  "budget": 75000,
+  "active": true
+}
+```
+
+Data files with metadata include additional information:
+
+```json
+{
+  "project_name": "Website Redesign",
+  "start_date": "2025-01-15",
+  "priority": "High",
+  "_metadata": {
+    "config_source": "qtpyguihelper",
+    "window_title": "Data Entry Form",
+    "layout": "grid",
+    "field_count": 8,
+    "required_fields": ["project_name"],
+    "generated_at": "2025-07-04T10:30:00"
+  }
+}
 ```
 
 ## Requirements

@@ -189,6 +189,60 @@ def demo_programmatic_config():
     app.exec()
 
 
+def demo_data_persistence():
+    """Demo data loading and saving functionality."""
+    print("Starting Data Persistence Demo...")
+
+    # Create the application
+    app = QApplication(sys.argv)
+
+    # Create GUI from JSON file
+    config_path = os.path.join(os.path.dirname(__file__), "examples", "project_form.json")
+    gui = GuiBuilder(config_path=config_path)
+
+    # Load existing data if available
+    data_path = os.path.join(os.path.dirname(__file__), "examples", "project_data.json")
+    if os.path.exists(data_path):
+        success = gui.load_data_from_file(data_path)
+        if success:
+            print(f"Loaded existing data from {data_path}")
+        else:
+            print("Failed to load existing data")
+
+    # Set up save functionality
+    def on_submit_and_save(form_data):
+        print("Project data submitted:")
+        for key, value in form_data.items():
+            print(f"  {key}: {value}")
+
+        # Save to output file
+        output_path = os.path.join(os.path.dirname(__file__), "project_output.json")
+        success = gui.save_data_to_file(output_path)
+        if success:
+            print(f"Data saved to {output_path}")
+
+        # Also save with metadata
+        metadata_path = os.path.join(os.path.dirname(__file__), "project_output_with_metadata.json")
+        success = gui.save_data_with_metadata_to_file(metadata_path)
+        if success:
+            print(f"Data with metadata saved to {metadata_path}")
+
+        # Show success message
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Data Saved")
+        msg.setText(f"Project data has been saved successfully!\\nOutput: {output_path}")
+        msg.exec()
+
+    gui.set_submit_callback(on_submit_and_save)
+
+    # Show the GUI
+    gui.show()
+
+    # Run the application
+    app.exec()
+
+
 def main():
     """Main function to run demos."""
     if len(sys.argv) > 1:
@@ -199,8 +253,9 @@ def main():
         print("  python demo.py settings      - Application settings form")
         print("  python demo.py project       - Project data entry form")
         print("  python demo.py contact       - Programmatic contact form")
+        print("  python demo.py persistence   - Data loading and saving demo")
         print()
-        demo_type = input("Enter demo type (registration/settings/project/contact): ").lower()
+        demo_type = input("Enter demo type (registration/settings/project/contact/persistence): ").lower()
 
     if demo_type == "registration":
         demo_user_registration()
@@ -208,11 +263,15 @@ def main():
         demo_settings_form()
     elif demo_type == "project":
         demo_project_form()
+    elif demo_type == "persistence":
+        demo_data_persistence()
     elif demo_type == "contact":
         demo_programmatic_config()
+    elif demo_type == "data":
+        demo_data_persistence()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact")
+        print("Available options: registration, settings, project, contact, data")
 
 
 if __name__ == "__main__":
