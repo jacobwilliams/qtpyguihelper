@@ -8,7 +8,7 @@ from typing import Dict, Any, Callable, Optional
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QFormLayout, QGridLayout, QPushButton, QScrollArea, QMessageBox,
-    QSplitter, QFrame, QTabWidget
+    QTabWidget
 )
 from PySide6.QtCore import Qt, Signal, QDateTime
 from PySide6.QtGui import QIcon
