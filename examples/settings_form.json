@@ -1,0 +1,61 @@
+{
+  "window": {
+    "title": "Application Settings",
+    "width": 500,
+    "height": 400,
+    "resizable": false
+  },
+  "layout": "vertical",
+  "fields": [
+    {
+      "name": "app_name",
+      "type": "text",
+      "label": "Application Name",
+      "required": true,
+      "default_value": "My Application"
+    },
+    {
+      "name": "theme",
+      "type": "select",
+      "label": "Theme",
+      "options": ["Light", "Dark", "Auto"],
+      "default_value": "Auto"
+    },
+    {
+      "name": "auto_save",
+      "type": "checkbox",
+      "label": "Enable auto-save",
+      "default_value": true
+    },
+    {
+      "name": "save_interval",
+      "type": "range",
+      "label": "Auto-save interval (minutes)",
+      "min_value": 1,
+      "max_value": 60,
+      "default_value": 5
+    },
+    {
+      "name": "backup_location",
+      "type": "file",
+      "label": "Backup Location",
+      "default_value": "save"
+    },
+    {
+      "name": "accent_color",
+      "type": "color",
+      "label": "Accent Color",
+      "default_value": "#007ACC"
+    },
+    {
+      "name": "notification_time",
+      "type": "time",
+      "label": "Daily Notification Time",
+      "default_value": "09:00"
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Save Settings",
+  "cancel_button": true,
+  "cancel_label": "Cancel"
+}

@@ -1,0 +1,64 @@
+{
+  "window": {
+    "title": "Data Entry Form",
+    "width": 700,
+    "height": 500,
+    "resizable": true
+  },
+  "layout": "grid",
+  "fields": [
+    {
+      "name": "project_name",
+      "type": "text",
+      "label": "Project Name",
+      "required": true
+    },
+    {
+      "name": "start_date",
+      "type": "date",
+      "label": "Start Date"
+    },
+    {
+      "name": "end_date",
+      "type": "date",
+      "label": "End Date"
+    },
+    {
+      "name": "priority",
+      "type": "select",
+      "label": "Priority",
+      "options": ["Low", "Medium", "High", "Critical"],
+      "default_value": "Medium"
+    },
+    {
+      "name": "budget",
+      "type": "number",
+      "label": "Budget ($)",
+      "min_value": 0,
+      "max_value": 1000000
+    },
+    {
+      "name": "completion",
+      "type": "range",
+      "label": "Completion %",
+      "min_value": 0,
+      "max_value": 100,
+      "default_value": 0
+    },
+    {
+      "name": "active",
+      "type": "checkbox",
+      "label": "Project is active",
+      "default_value": true
+    },
+    {
+      "name": "notes",
+      "type": "textarea",
+      "label": "Project Notes",
+      "height": 80
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Save Project",
+  "cancel_button": false
+}

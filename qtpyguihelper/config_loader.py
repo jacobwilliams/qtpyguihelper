@@ -1,0 +1,179 @@
+"""
+Configuration loader for reading and validating JSON GUI configuration files.
+"""
+
+import json
+import os
+from typing import Dict, Any, List, Optional
+from dataclasses import dataclass
+
+
+@dataclass
+class FieldConfig:
+    """Configuration for a single form field."""
+    name: str
+    type: str
+    label: str
+    default_value: Any = None
+    required: bool = False
+    min_value: Optional[float] = None
+    max_value: Optional[float] = None
+    options: Optional[List[str]] = None
+    placeholder: Optional[str] = None
+    tooltip: Optional[str] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+
+@dataclass
+class WindowConfig:
+    """Configuration for the main window."""
+    title: str = "GUI Application"
+    width: int = 800
+    height: int = 600
+    resizable: bool = True
+    icon: Optional[str] = None
+
+
+@dataclass
+class GuiConfig:
+    """Complete GUI configuration."""
+    window: WindowConfig
+    fields: List[FieldConfig]
+    layout: str = "vertical"
+    submit_button: bool = True
+    submit_label: str = "Submit"
+    cancel_button: bool = True
+    cancel_label: str = "Cancel"
+
+
+class ConfigLoader:
+    """Loads and validates GUI configuration from JSON files."""
+
+    SUPPORTED_FIELD_TYPES = {
+        "text", "number", "email", "password", "textarea",
+        "checkbox", "radio", "select", "date", "time",
+        "datetime", "file", "color", "range", "url"
+    }
+
+    SUPPORTED_LAYOUTS = {"vertical", "horizontal", "grid", "form"}
+
+    def __init__(self):
+        self.config: Optional[GuiConfig] = None
+
+    def load_from_file(self, config_path: str) -> GuiConfig:
+        """Load configuration from a JSON file."""
+        if not os.path.exists(config_path):
+            raise FileNotFoundError(f"Configuration file not found: {config_path}")
+
+        with open(config_path, 'r', encoding='utf-8') as file:
+            config_data = json.load(file)
+
+        return self.load_from_dict(config_data)
+
+    def load_from_dict(self, config_data: Dict[str, Any]) -> GuiConfig:
+        """Load configuration from a dictionary."""
+        self._validate_config(config_data)
+
+        # Parse window configuration
+        window_data = config_data.get("window", {})
+        window_config = WindowConfig(
+            title=window_data.get("title", "GUI Application"),
+            width=window_data.get("width", 800),
+            height=window_data.get("height", 600),
+            resizable=window_data.get("resizable", True),
+            icon=window_data.get("icon")
+        )
+
+        # Parse field configurations
+        fields_data = config_data.get("fields", [])
+        fields = []
+        for field_data in fields_data:
+            field_config = FieldConfig(
+                name=field_data["name"],
+                type=field_data["type"],
+                label=field_data["label"],
+                default_value=field_data.get("default_value"),
+                required=field_data.get("required", False),
+                min_value=field_data.get("min_value"),
+                max_value=field_data.get("max_value"),
+                options=field_data.get("options"),
+                placeholder=field_data.get("placeholder"),
+                tooltip=field_data.get("tooltip"),
+                width=field_data.get("width"),
+                height=field_data.get("height")
+            )
+            fields.append(field_config)
+
+        # Create complete configuration
+        self.config = GuiConfig(
+            window=window_config,
+            fields=fields,
+            layout=config_data.get("layout", "vertical"),
+            submit_button=config_data.get("submit_button", True),
+            submit_label=config_data.get("submit_label", "Submit"),
+            cancel_button=config_data.get("cancel_button", True),
+            cancel_label=config_data.get("cancel_label", "Cancel")
+        )
+
+        return self.config
+
+    def _validate_config(self, config_data: Dict[str, Any]) -> None:
+        """Validate the configuration data."""
+        # Check required top-level keys
+        if "fields" not in config_data:
+            raise ValueError("Configuration must contain 'fields' key")
+
+        fields = config_data["fields"]
+        if not isinstance(fields, list) or len(fields) == 0:
+            raise ValueError("'fields' must be a non-empty list")
+
+        # Validate each field
+        field_names = set()
+        for i, field in enumerate(fields):
+            if not isinstance(field, dict):
+                raise ValueError(f"Field {i} must be a dictionary")
+
+            # Check required field keys
+            required_keys = ["name", "type", "label"]
+            for key in required_keys:
+                if key not in field:
+                    raise ValueError(f"Field {i} missing required key: {key}")
+
+            # Check field name uniqueness
+            field_name = field["name"]
+            if field_name in field_names:
+                raise ValueError(f"Duplicate field name: {field_name}")
+            field_names.add(field_name)
+
+            # Validate field type
+            field_type = field["type"]
+            if field_type not in self.SUPPORTED_FIELD_TYPES:
+                raise ValueError(f"Unsupported field type: {field_type}")
+
+            # Validate options for select/radio fields
+            if field_type in ["select", "radio"]:
+                if "options" not in field or not field["options"]:
+                    raise ValueError(f"Field {field_name} of type {field_type} must have 'options'")
+
+            # Validate numeric constraints
+            if field_type in ["number", "range"]:
+                min_val = field.get("min_value")
+                max_val = field.get("max_value")
+                if min_val is not None and max_val is not None and min_val > max_val:
+                    raise ValueError(f"Field {field_name}: min_value cannot be greater than max_value")
+
+        # Validate layout
+        layout = config_data.get("layout", "vertical")
+        if layout not in self.SUPPORTED_LAYOUTS:
+            raise ValueError(f"Unsupported layout: {layout}")
+
+    def get_field_by_name(self, name: str) -> Optional[FieldConfig]:
+        """Get a field configuration by name."""
+        if not self.config:
+            return None
+
+        for field in self.config.fields:
+            if field.name == name:
+                return field
+        return None

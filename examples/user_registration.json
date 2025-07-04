@@ -1,0 +1,90 @@
+{
+  "window": {
+    "title": "User Registration Form",
+    "width": 600,
+    "height": 700,
+    "resizable": true
+  },
+  "layout": "form",
+  "fields": [
+    {
+      "name": "first_name",
+      "type": "text",
+      "label": "First Name",
+      "required": true,
+      "placeholder": "Enter your first name"
+    },
+    {
+      "name": "last_name",
+      "type": "text",
+      "label": "Last Name",
+      "required": true,
+      "placeholder": "Enter your last name"
+    },
+    {
+      "name": "email",
+      "type": "email",
+      "label": "Email Address",
+      "required": true,
+      "placeholder": "user@example.com"
+    },
+    {
+      "name": "password",
+      "type": "password",
+      "label": "Password",
+      "required": true,
+      "placeholder": "Enter a secure password"
+    },
+    {
+      "name": "age",
+      "type": "number",
+      "label": "Age",
+      "min_value": 13,
+      "max_value": 120,
+      "default_value": 25
+    },
+    {
+      "name": "country",
+      "type": "select",
+      "label": "Country",
+      "options": ["United States", "Canada", "United Kingdom", "Australia", "Germany", "France", "Other"],
+      "default_value": "United States"
+    },
+    {
+      "name": "gender",
+      "type": "radio",
+      "label": "Gender",
+      "options": ["Male", "Female", "Non-binary", "Prefer not to say"],
+      "default_value": "Prefer not to say"
+    },
+    {
+      "name": "birth_date",
+      "type": "date",
+      "label": "Date of Birth",
+      "default_value": "1995-01-01"
+    },
+    {
+      "name": "bio",
+      "type": "textarea",
+      "label": "Biography",
+      "placeholder": "Tell us about yourself...",
+      "height": 100
+    },
+    {
+      "name": "newsletter",
+      "type": "checkbox",
+      "label": "Subscribe to newsletter",
+      "default_value": true
+    },
+    {
+      "name": "terms",
+      "type": "checkbox",
+      "label": "I agree to the terms and conditions",
+      "required": true
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Register",
+  "cancel_button": true,
+  "cancel_label": "Cancel"
+}
