@@ -243,6 +243,78 @@ def demo_data_persistence():
     app.exec()
 
 
+def demo_tabbed_interface():
+    """Demo the tabbed interface functionality."""
+    print("Starting Tabbed Interface Demo...")
+
+    # Create the application
+    app = QApplication(sys.argv)
+
+    # Create GUI from JSON file
+    config_path = os.path.join(os.path.dirname(__file__), "examples", "simple_tabs.json")
+    gui = GuiBuilder(config_path=config_path)
+
+    # Set callbacks
+    def on_submit_tabs(form_data):
+        print("Tabbed form submitted:")
+        for key, value in form_data.items():
+            print(f"  {key}: {value}")
+
+        # Show success message
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Form Submitted")
+        msg.setText("Tabbed form data has been submitted successfully!")
+        msg.exec()
+
+    gui.set_submit_callback(on_submit_tabs)
+
+    # Show the GUI
+    gui.show()
+
+    # Run the application
+    app.exec()
+
+
+def demo_complex_tabs():
+    """Demo a complex tabbed configuration interface."""
+    print("Starting Complex Tabbed Configuration Demo...")
+
+    # Create the application
+    app = QApplication(sys.argv)
+
+    # Create GUI from JSON file
+    config_path = os.path.join(os.path.dirname(__file__), "examples", "tabbed_config.json")
+    gui = GuiBuilder(config_path=config_path)
+
+    # Set callbacks
+    def on_save_config(form_data):
+        print("Configuration saved:")
+        for key, value in form_data.items():
+            print(f"  {key}: {value}")
+
+        # Save to file
+        output_path = os.path.join(os.path.dirname(__file__), "tabbed_config_output.json")
+        success = gui.save_data_to_file(output_path)
+        if success:
+            print(f"Configuration saved to {output_path}")
+
+        # Show success message
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Configuration Saved")
+        msg.setText(f"Configuration has been saved successfully!\\nOutput: {output_path}")
+        msg.exec()
+
+    gui.set_submit_callback(on_save_config)
+
+    # Show the GUI
+    gui.show()
+
+    # Run the application
+    app.exec()
+
+
 def main():
     """Main function to run demos."""
     if len(sys.argv) > 1:
@@ -254,8 +326,10 @@ def main():
         print("  python demo.py project       - Project data entry form")
         print("  python demo.py contact       - Programmatic contact form")
         print("  python demo.py persistence   - Data loading and saving demo")
+        print("  python demo.py tabs          - Tabbed interface demo")
+        print("  python demo.py complex_tabs  - Complex tabbed configuration demo")
         print()
-        demo_type = input("Enter demo type (registration/settings/project/contact/persistence): ").lower()
+        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs): ").lower()
 
     if demo_type == "registration":
         demo_user_registration()
@@ -267,11 +341,13 @@ def main():
         demo_data_persistence()
     elif demo_type == "contact":
         demo_programmatic_config()
-    elif demo_type == "data":
-        demo_data_persistence()
+    elif demo_type == "tabs":
+        demo_tabbed_interface()
+    elif demo_type == "complex_tabs":
+        demo_complex_tabs()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, data")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs")
 
 
 if __name__ == "__main__":

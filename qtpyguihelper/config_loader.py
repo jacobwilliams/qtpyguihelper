@@ -36,15 +36,28 @@ class WindowConfig:
 
 
 @dataclass
+class TabConfig:
+    """Configuration for a single tab."""
+    name: str
+    title: str
+    fields: List[FieldConfig]
+    layout: str = "vertical"
+    enabled: bool = True
+    tooltip: Optional[str] = None
+
+
+@dataclass
 class GuiConfig:
     """Complete GUI configuration."""
     window: WindowConfig
     fields: List[FieldConfig]
+    tabs: Optional[List[TabConfig]] = None
     layout: str = "vertical"
     submit_button: bool = True
     submit_label: str = "Submit"
     cancel_button: bool = True
     cancel_label: str = "Cancel"
+    use_tabs: bool = False
 
 
 class ConfigLoader:
@@ -105,15 +118,45 @@ class ConfigLoader:
             )
             fields.append(field_config)
 
+        # Parse tab configurations
+        tabs_data = config_data.get("tabs", [])
+        tabs = []
+        for tab_data in tabs_data:
+            # Parse fields for this tab
+            tab_fields = []
+            for field_name in tab_data.get("fields", []):
+                # Find the field in the main fields list
+                field_found = False
+                for field_config in fields:
+                    if field_config.name == field_name:
+                        tab_fields.append(field_config)
+                        field_found = True
+                        break
+                if not field_found:
+                    raise ValueError(f"Tab '{tab_data['name']}' references unknown field '{field_name}'")
+
+            tab_config = TabConfig(
+                name=tab_data["name"],
+                title=tab_data["title"],
+                fields=tab_fields,
+                layout=tab_data.get("layout", "vertical"),
+                enabled=tab_data.get("enabled", True),
+                tooltip=tab_data.get("tooltip")
+            )
+            tabs.append(tab_config)
+
         # Create complete configuration
+        use_tabs = len(tabs) > 0 or config_data.get("use_tabs", False)
         self.config = GuiConfig(
             window=window_config,
             fields=fields,
+            tabs=tabs if tabs else None,
             layout=config_data.get("layout", "vertical"),
             submit_button=config_data.get("submit_button", True),
             submit_label=config_data.get("submit_label", "Submit"),
             cancel_button=config_data.get("cancel_button", True),
-            cancel_label=config_data.get("cancel_label", "Cancel")
+            cancel_label=config_data.get("cancel_label", "Cancel"),
+            use_tabs=use_tabs
         )
 
         return self.config
@@ -167,6 +210,43 @@ class ConfigLoader:
         layout = config_data.get("layout", "vertical")
         if layout not in self.SUPPORTED_LAYOUTS:
             raise ValueError(f"Unsupported layout: {layout}")
+
+        # Validate tabs if present
+        tabs_data = config_data.get("tabs", [])
+        if tabs_data:
+            if not isinstance(tabs_data, list):
+                raise ValueError("'tabs' must be a list")
+
+            tab_names = set()
+            for i, tab in enumerate(tabs_data):
+                if not isinstance(tab, dict):
+                    raise ValueError(f"Tab {i} must be a dictionary")
+
+                # Check required tab keys
+                required_tab_keys = ["name", "title", "fields"]
+                for key in required_tab_keys:
+                    if key not in tab:
+                        raise ValueError(f"Tab {i} missing required key: {key}")
+
+                # Check tab name uniqueness
+                tab_name = tab["name"]
+                if tab_name in tab_names:
+                    raise ValueError(f"Duplicate tab name: {tab_name}")
+                tab_names.add(tab_name)
+
+                # Validate tab fields reference existing fields
+                tab_fields = tab.get("fields", [])
+                if not isinstance(tab_fields, list):
+                    raise ValueError(f"Tab '{tab_name}' fields must be a list")
+
+                for field_name in tab_fields:
+                    if field_name not in field_names:
+                        raise ValueError(f"Tab '{tab_name}' references unknown field '{field_name}'")
+
+                # Validate tab layout
+                tab_layout = tab.get("layout", "vertical")
+                if tab_layout not in self.SUPPORTED_LAYOUTS:
+                    raise ValueError(f"Tab '{tab_name}' has unsupported layout: {tab_layout}")
 
     def get_field_by_name(self, name: str) -> Optional[FieldConfig]:
         """Get a field configuration by name."""

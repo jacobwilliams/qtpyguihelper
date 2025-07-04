@@ -1,0 +1,62 @@
+{
+  "window": {
+    "title": "Simple Tabbed Form",
+    "width": 600,
+    "height": 400
+  },
+  "use_tabs": true,
+  "fields": [
+    {
+      "name": "first_name",
+      "type": "text",
+      "label": "First Name",
+      "required": true
+    },
+    {
+      "name": "last_name",
+      "type": "text",
+      "label": "Last Name",
+      "required": true
+    },
+    {
+      "name": "email",
+      "type": "email",
+      "label": "Email",
+      "required": true
+    },
+    {
+      "name": "company",
+      "type": "text",
+      "label": "Company"
+    },
+    {
+      "name": "position",
+      "type": "text",
+      "label": "Position"
+    },
+    {
+      "name": "experience",
+      "type": "select",
+      "label": "Experience Level",
+      "options": ["Junior", "Mid-level", "Senior", "Expert"],
+      "default_value": "Mid-level"
+    }
+  ],
+  "tabs": [
+    {
+      "name": "personal",
+      "title": "Personal Info",
+      "layout": "form",
+      "fields": ["first_name", "last_name", "email"]
+    },
+    {
+      "name": "professional",
+      "title": "Professional Info",
+      "layout": "form",
+      "fields": ["company", "position", "experience"]
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Submit",
+  "cancel_button": true
+}

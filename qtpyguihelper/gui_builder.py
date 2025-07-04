@@ -8,7 +8,7 @@ from typing import Dict, Any, Callable, Optional
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QFormLayout, QGridLayout, QPushButton, QScrollArea, QMessageBox,
-    QSplitter, QFrame
+    QSplitter, QFrame, QTabWidget
 )
 from PySide6.QtCore import Qt, Signal, QDateTime
 from PySide6.QtGui import QIcon
@@ -85,29 +85,41 @@ class GuiBuilder(QMainWindow):
 
         # Create central widget
         self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
-
-        # Create main layout
+        self.setCentralWidget(self.central_widget)        # Create main layout
         main_layout = QVBoxLayout(self.central_widget)
 
-        # Create scroll area for form fields
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        # Check if we should use tabs
+        if self.config.use_tabs and self.config.tabs:
+            # Create tab widget
+            tab_widget = QTabWidget()
+            main_layout.addWidget(tab_widget)
 
-        # Create form widget
-        form_widget = QWidget()
-        scroll_area.setWidget(form_widget)
+            # Create tabs
+            for tab_config in self.config.tabs:
+                if tab_config.enabled:
+                    tab_page = self._create_tab_page(tab_config)
+                    tab_widget.addTab(tab_page, tab_config.title)
+                    if tab_config.tooltip:
+                        tab_widget.setTabToolTip(tab_widget.count() - 1, tab_config.tooltip)
+        else:
+            # Create scroll area for form fields (original behavior)
+            scroll_area = QScrollArea()
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
-        # Create form layout based on configuration
-        form_layout = self._create_form_layout(form_widget)
+            # Create form widget
+            form_widget = QWidget()
+            scroll_area.setWidget(form_widget)
 
-        # Add fields to the form
-        self._add_fields_to_layout(form_layout)
+            # Create form layout based on configuration
+            form_layout = self._create_form_layout(form_widget)
 
-        # Add scroll area to main layout
-        main_layout.addWidget(scroll_area)
+            # Add fields to the form
+            self._add_fields_to_layout(form_layout, self.config.fields, self.config.layout)
+
+            # Add scroll area to main layout
+            main_layout.addWidget(scroll_area)
 
         # Add buttons if enabled
         if self.config.submit_button or self.config.cancel_button:
@@ -131,10 +143,13 @@ class GuiBuilder(QMainWindow):
             # Default to vertical
             return QVBoxLayout(parent_widget)
 
-    def _add_fields_to_layout(self, layout):
+    def _add_fields_to_layout(self, layout, fields=None, layout_type=None):
         """Add form fields to the layout."""
-        for i, field_config in enumerate(self.config.fields):
-            if self.config.layout == "form":
+        if fields is None:
+            fields = self.config.fields
+
+        for i, field_config in enumerate(fields):
+            if layout_type == "form":
                 # Form layout: add label and widget as pair
                 label = self.widget_factory.create_label(field_config)
                 widget = self.widget_factory.create_widget(field_config)
@@ -145,7 +160,7 @@ class GuiBuilder(QMainWindow):
                     else:
                         layout.addRow(label, widget)
 
-            elif self.config.layout == "grid":
+            elif layout_type == "grid":
                 # Grid layout: arrange in 2 columns (label, widget)
                 row = i
                 label = self.widget_factory.create_label(field_config)
@@ -168,8 +183,37 @@ class GuiBuilder(QMainWindow):
                     layout.addWidget(widget)
 
                     # Add some spacing between fields in vertical layout
-                    if self.config.layout == "vertical" and i < len(self.config.fields) - 1:
+                    if layout_type == "vertical" and i < len(fields) - 1:
                         layout.addSpacing(10)
+
+    def _create_tab_page(self, tab_config) -> QWidget:
+        """Create a tab page with its content."""
+        # Create scroll area for the tab
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+
+        # Create tab content widget
+        tab_widget = QWidget()
+        scroll_area.setWidget(tab_widget)
+
+        # Create layout for the tab based on its configuration
+        if tab_config.layout == "vertical":
+            tab_layout = QVBoxLayout(tab_widget)
+        elif tab_config.layout == "horizontal":
+            tab_layout = QHBoxLayout(tab_widget)
+        elif tab_config.layout == "grid":
+            tab_layout = QGridLayout(tab_widget)
+        elif tab_config.layout == "form":
+            tab_layout = QFormLayout(tab_widget)
+        else:
+            tab_layout = QVBoxLayout(tab_widget)
+
+        # Add fields to the tab
+        self._add_fields_to_layout(tab_layout, tab_config.fields, tab_config.layout)
+
+        return scroll_area
 
     def _create_button_layout(self) -> QHBoxLayout:
         """Create the button layout with submit and cancel buttons."""

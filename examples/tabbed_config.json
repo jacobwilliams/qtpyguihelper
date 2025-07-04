@@ -1,0 +1,172 @@
+{
+  "window": {
+    "title": "Tabbed Configuration Editor",
+    "width": 800,
+    "height": 600,
+    "resizable": true
+  },
+  "use_tabs": true,
+  "fields": [
+    {
+      "name": "app_name",
+      "type": "text",
+      "label": "Application Name",
+      "required": true,
+      "default_value": "My Application"
+    },
+    {
+      "name": "version",
+      "type": "text",
+      "label": "Version",
+      "default_value": "1.0.0"
+    },
+    {
+      "name": "author",
+      "type": "text",
+      "label": "Author",
+      "placeholder": "Enter author name"
+    },
+    {
+      "name": "description",
+      "type": "textarea",
+      "label": "Description",
+      "placeholder": "Enter application description...",
+      "height": 80
+    },
+    {
+      "name": "debug_mode",
+      "type": "checkbox",
+      "label": "Enable debug mode",
+      "default_value": false
+    },
+    {
+      "name": "log_level",
+      "type": "select",
+      "label": "Log Level",
+      "options": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+      "default_value": "INFO"
+    },
+    {
+      "name": "max_connections",
+      "type": "number",
+      "label": "Max Connections",
+      "min_value": 1,
+      "max_value": 1000,
+      "default_value": 100
+    },
+    {
+      "name": "timeout",
+      "type": "number",
+      "label": "Timeout (seconds)",
+      "min_value": 1,
+      "max_value": 300,
+      "default_value": 30
+    },
+    {
+      "name": "database_url",
+      "type": "text",
+      "label": "Database URL",
+      "placeholder": "postgres://user:pass@host:port/db"
+    },
+    {
+      "name": "api_key",
+      "type": "password",
+      "label": "API Key",
+      "placeholder": "Enter your API key"
+    },
+    {
+      "name": "theme",
+      "type": "select",
+      "label": "UI Theme",
+      "options": ["Light", "Dark", "Auto"],
+      "default_value": "Auto"
+    },
+    {
+      "name": "accent_color",
+      "type": "color",
+      "label": "Accent Color",
+      "default_value": "#007ACC"
+    },
+    {
+      "name": "font_size",
+      "type": "range",
+      "label": "Font Size",
+      "min_value": 8,
+      "max_value": 24,
+      "default_value": 12
+    },
+    {
+      "name": "backup_enabled",
+      "type": "checkbox",
+      "label": "Enable automatic backups",
+      "default_value": true
+    },
+    {
+      "name": "backup_location",
+      "type": "file",
+      "label": "Backup Location",
+      "default_value": "save"
+    },
+    {
+      "name": "backup_interval",
+      "type": "range",
+      "label": "Backup Interval (hours)",
+      "min_value": 1,
+      "max_value": 24,
+      "default_value": 6
+    },
+    {
+      "name": "email_notifications",
+      "type": "checkbox",
+      "label": "Enable email notifications",
+      "default_value": true
+    },
+    {
+      "name": "notification_email",
+      "type": "email",
+      "label": "Notification Email",
+      "placeholder": "admin@example.com"
+    }
+  ],
+  "tabs": [
+    {
+      "name": "general",
+      "title": "General",
+      "layout": "form",
+      "fields": ["app_name", "version", "author", "description"],
+      "tooltip": "General application settings"
+    },
+    {
+      "name": "advanced",
+      "title": "Advanced",
+      "layout": "form",
+      "fields": ["debug_mode", "log_level", "max_connections", "timeout", "database_url", "api_key"],
+      "tooltip": "Advanced configuration options"
+    },
+    {
+      "name": "appearance",
+      "title": "Appearance",
+      "layout": "form",
+      "fields": ["theme", "accent_color", "font_size"],
+      "tooltip": "UI appearance settings"
+    },
+    {
+      "name": "backup",
+      "title": "Backup & Storage",
+      "layout": "form",
+      "fields": ["backup_enabled", "backup_location", "backup_interval"],
+      "tooltip": "Backup and storage configuration"
+    },
+    {
+      "name": "notifications",
+      "title": "Notifications",
+      "layout": "form",
+      "fields": ["email_notifications", "notification_email"],
+      "tooltip": "Notification settings"
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Save Configuration",
+  "cancel_button": true,
+  "cancel_label": "Cancel"
+}
