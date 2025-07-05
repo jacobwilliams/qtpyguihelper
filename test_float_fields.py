@@ -82,7 +82,7 @@ def test_float_field_configuration():
         # Test 3: Widget creation
         print("\n3. Testing float widget creation...")
         factory = WidgetFactory()
-        
+
         for field in float_fields:
             widget = factory.create_widget(field)
             if widget:
@@ -158,7 +158,7 @@ def test_float_format_strings():
     ]
 
     factory = WidgetFactory()
-    
+
     for i, test_case in enumerate(format_tests):
         field_config_data = {
             "name": f"test_field_{i}",
@@ -167,24 +167,24 @@ def test_float_format_strings():
             "format_string": test_case["format_string"],
             "default_value": 123.456789
         }
-        
+
         # Create a minimal config
         config = {
             "window": {"title": "Test"},
             "fields": [field_config_data]
         }
-        
+
         loader = ConfigLoader()
         gui_config = loader.load_from_dict(config)
         field = gui_config.fields[0]
-        
+
         widget = factory.create_widget(field)
         actual_decimals = widget.decimals() if hasattr(widget, 'decimals') else None
-        
+
         print(f"Test {i+1}: format='{test_case['format_string']}'")
         print(f"  Expected decimals: {test_case['expected_decimals']}")
         print(f"  Actual decimals: {actual_decimals}")
-        
+
         if actual_decimals == test_case['expected_decimals']:
             print("  ✓ PASS")
         else:
@@ -232,7 +232,7 @@ def main():
     print("TEST SUMMARY")
     print("=" * 50)
     print(f"Passed: {passed}/{total}")
-    
+
     if passed == total:
         print("\n🎉 All float field tests passed! The functionality is working correctly.")
         return 0

@@ -286,39 +286,39 @@ class WidgetFactory:
     def _create_int_field(self, field_config: FieldConfig) -> QSpinBox:
         """Create an integer input field."""
         widget = QSpinBox()
-        
+
         # Set range
         if field_config.min_value is not None:
             widget.setMinimum(int(field_config.min_value))
         else:
             widget.setMinimum(-2147483648)  # Default minimum for 32-bit int
-            
+
         if field_config.max_value is not None:
             widget.setMaximum(int(field_config.max_value))
         else:
             widget.setMaximum(2147483647)  # Default maximum for 32-bit int
-        
+
         # Set default value
         if field_config.default_value is not None:
             widget.setValue(int(field_config.default_value))
-        
+
         return widget
 
     def _create_float_field(self, field_config: FieldConfig) -> QDoubleSpinBox:
         """Create a float input field with optional format enforcement."""
         widget = QDoubleSpinBox()
-        
+
         # Set range
         if field_config.min_value is not None:
             widget.setMinimum(float(field_config.min_value))
         else:
             widget.setMinimum(-999999999.0)  # Default minimum
-            
+
         if field_config.max_value is not None:
             widget.setMaximum(float(field_config.max_value))
         else:
             widget.setMaximum(999999999.0)  # Default maximum
-        
+
         # Extract decimal places from format string (e.g., ".2f" -> 2)
         decimals = 2  # Default to 2 decimal places
         if field_config.format_string:
@@ -328,21 +328,21 @@ class WidgetFactory:
                     decimals = int(decimal_part.replace('f', ''))
             except (ValueError, IndexError):
                 decimals = 2  # Default to 2 decimal places
-        
+
         widget.setDecimals(decimals)
-        
+
         # Set step size based on decimal places
         step = 1.0 / (10 ** decimals)
         widget.setSingleStep(step)
-        
+
         # Set default value
         if field_config.default_value is not None:
             widget.setValue(float(field_config.default_value))
-        
+
         # Store format string for later use in value retrieval
         if field_config.format_string:
             widget.setProperty("format_string", field_config.format_string)
-        
+
         return widget
 
     def _create_email_field(self, field_config: FieldConfig) -> QLineEdit:

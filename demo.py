@@ -430,11 +430,11 @@ def demo_float_fields():
     def handle_submit(form_data):
         """Handle form submission and show the values with their formats."""
         result_text = "Float Field Values:\n" + "="*30 + "\n"
-        
+
         for field_name, value in form_data.items():
             if field_name != "_metadata":
                 result_text += f"{field_name}: {value} (type: {type(value).__name__})\n"
-        
+
         # Show the values
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
@@ -445,7 +445,7 @@ def demo_float_fields():
     # Create GUI from config dict
     gui = GuiBuilder(config_dict=config)
     gui.set_submit_callback(handle_submit)
-    
+
     # Show the GUI
     gui.show()
 

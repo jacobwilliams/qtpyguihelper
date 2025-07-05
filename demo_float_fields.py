@@ -91,11 +91,11 @@ def demo_float_fields():
     def handle_submit(form_data):
         """Handle form submission and show the values with their formats."""
         result_text = "Float Field Values:\n" + "="*30 + "\n"
-        
+
         for field_name, value in form_data.items():
             if field_name != "_metadata":
                 result_text += f"{field_name}: {value} (type: {type(value).__name__})\n"
-        
+
         # Show the values
         from qtpy.QtWidgets import QMessageBox
         msg = QMessageBox()
@@ -106,10 +106,10 @@ def demo_float_fields():
 
     # Build and show the GUI
     builder = GuiBuilder(config_dict=config)
-    
+
     # Connect submit handler
     builder.set_submit_callback(handle_submit)
-    
+
     builder.show()
     return builder
 
@@ -117,9 +117,9 @@ def demo_float_fields():
 def main():
     """Run the float fields demo."""
     from qtpy.QtWidgets import QApplication
-    
+
     app = QApplication(sys.argv)
-    
+
     print("QtPyGuiHelper Float Fields Demo")
     print("=" * 40)
     print("This demo showcases float fields with:")
@@ -129,9 +129,9 @@ def main():
     print("• Various use cases (currency, percentage, scientific)")
     print("\nClick 'Show Values' to see the current float values.")
     print("=" * 40)
-    
+
     window = demo_float_fields()
-    
+
     sys.exit(app.exec_())
 
 

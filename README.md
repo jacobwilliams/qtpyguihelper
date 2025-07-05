@@ -211,7 +211,7 @@ python qt_backend_demo.py info
 }
 
 {
-  "name": "percentage", 
+  "name": "percentage",
   "type": "float",
   "format_string": ".1f",  // 1 decimal place (95.5)
   "max_value": 100.0
@@ -219,7 +219,7 @@ python qt_backend_demo.py info
 
 {
   "name": "precision",
-  "type": "float", 
+  "type": "float",
   "format_string": ".4f",  // 4 decimal places (0.1234)
   "default_value": 0.0001
 }
