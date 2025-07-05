@@ -138,9 +138,15 @@ class GuiBuilder(QMainWindow):
         elif self.config.layout == "horizontal":
             return QHBoxLayout(parent_widget)
         elif self.config.layout == "grid":
-            return QGridLayout(parent_widget)
+            layout = QGridLayout(parent_widget)
+            # Set column stretch to make the widget column expand
+            layout.setColumnStretch(1, 1)
+            return layout
         elif self.config.layout == "form":
-            return QFormLayout(parent_widget)
+            layout = QFormLayout(parent_widget)
+            # Set field growth policy to expand fields
+            layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+            return layout
         else:
             # Default to vertical
             return QVBoxLayout(parent_widget)

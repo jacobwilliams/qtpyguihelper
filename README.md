@@ -1,11 +1,17 @@
 # QtPyGuiHelper
 
-A Python library for creating Qt GUIs from JSON configuration files. This library allows you to define GUI layouts, widgets, and their properties in JSON format and automatically generate the corresponding Qt interface. Compatible with both **PySide6** and **PyQt6** via the `qtpy` abstraction layer.
+A Python library for creating GUI applications from JSON configuration files. This library allows you to define GUI layouts, widgets, and their properties in JSON format and automatically generate the corresponding interface. 
+
+**Multi-Backend Support:**
+- **Qt backend** via qtpy (supports PySide6/PyQt6) 
+- **wxPython backend** as a cross-platform alternative
+
+The library automatically detects available backends and provides a unified interface, allowing you to switch between Qt and wxPython seamlessly.
 
 ## Features
 
 - 🎯 **JSON-Driven**: Define your entire GUI in JSON configuration files
-- 🔀 **Qt Binding Flexible**: Compatible with both PySide6 and PyQt6 via qtpy
+- 🔀 **Multi-Backend**: Support for both Qt (PySide6/PyQt6) and wxPython backends
 - 🎨 **Multiple Layouts**: Support for vertical, horizontal, grid, and form layouts
 - 🧩 **Rich Widget Set**: Text fields, numbers, dates, checkboxes, radio buttons, file pickers, color pickers, and more
 - ✅ **Form Validation**: Built-in validation for required fields and data types
@@ -15,12 +21,18 @@ A Python library for creating Qt GUIs from JSON configuration files. This librar
 - 🌲 **Nested Fields**: Support for hierarchical data structures using dot notation (e.g., "global.app_name")
 - 📑 **Tabbed Interfaces**: Organize fields into tabs for better user experience
 - 💾 **Data Persistence**: Load and save form data with smart defaults and metadata support
+- 🎨 **Custom Buttons**: Add custom buttons with callbacks and styling
 
 ## Installation
 
-QtPyGuiHelper uses `qtpy` as an abstraction layer, so you can use either PySide6 or PyQt6 as your Qt binding.
+QtPyGuiHelper supports multiple GUI backends for maximum flexibility and cross-platform compatibility.
 
-### Option 1: Install with PySide6 (Recommended)
+### Backend Options
+
+**Qt Backend (Default)**: Uses `qtpy` as an abstraction layer, supporting both PySide6 and PyQt6.
+**wxPython Backend**: Alternative cross-platform GUI toolkit with native look and feel.
+
+### Option 1: Install with Qt Backend (PySide6 - Recommended)
 
 ```bash
 git clone https://github.com/yourusername/qtpyguihelper.git
@@ -28,7 +40,7 @@ cd qtpyguihelper
 pip install .[pyside6]
 ```
 
-### Option 2: Install with PyQt6
+### Option 2: Install with Qt Backend (PyQt6)
 
 ```bash
 git clone https://github.com/yourusername/qtpyguihelper.git
@@ -36,20 +48,43 @@ cd qtpyguihelper
 pip install .[pyqt6]
 ```
 
-### Option 3: Development installation
+### Option 3: Install with wxPython Backend
+
+```bash
+git clone https://github.com/yourusername/qtpyguihelper.git
+cd qtpyguihelper
+pip install wxpython>=4.2.0
+pip install -e .
+```
+
+### Option 4: Install Both Backends
+
+```bash
+git clone https://github.com/yourusername/qtpyguihelper.git
+cd qtpyguihelper
+pip install .[pyside6]
+pip install wxpython>=4.2.0
+```
+
+### Option 5: Development installation
 
 ```bash
 git clone https://github.com/yourusername/qtpyguihelper.git
 cd qtpyguihelper
 pip install -e .[dev]
+pip install wxpython>=4.2.0  # Optional: for wxPython support
 ```
 
-### Option 4: Manual dependency installation
+### Option 6: Manual dependency installation
 
-If you already have PySide6 or PyQt6 installed:
+If you already have Qt or wxPython installed:
 
 ```bash
+# For Qt backend
 pip install qtpy>=2.0.0
+
+# For wxPython backend  
+pip install wxpython>=4.2.0
 ```
 
 ## Quick Start
@@ -104,71 +139,133 @@ Create a JSON file defining your GUI structure:
 ```python
 import sys
 from qtpyguihelper import GuiBuilder
-from qtpy.QtWidgets import QApplication
 
 def on_submit(form_data):
     print("Form submitted:", form_data)
 
-# Create application
-app = QApplication(sys.argv)
-
-# Create GUI from JSON file
+# Method 1: Auto-detect backend (recommended)
 gui = GuiBuilder(config_path="my_form.json")
+gui.set_submit_callback(on_submit)
+gui.show()
 
-# Set submit callback
+# Method 2: Force specific backend
+from qtpyguihelper import set_backend
+set_backend('wx')  # or 'qt'
+gui = GuiBuilder(config_path="my_form.json") 
 gui.set_submit_callback(on_submit)
 
-# Show and run
-gui.show()
-app.exec()
+# Method 3: Create and run with auto app management
+GuiBuilder.create_and_run(config_path="my_form.json")
 ```
 
-## Qt Backend Selection
+## Backend Selection
 
-QtPyGuiHelper uses `qtpy` to provide compatibility with both PySide6 and PyQt6. You can control which Qt backend is used in several ways:
+QtPyGuiHelper supports both Qt and wxPython backends with automatic detection and easy switching.
 
-### Method 1: Environment Variable
+### Automatic Backend Detection
 
-Set the `QT_API` environment variable before importing qtpyguihelper:
-
-```bash
-# Use PySide6
-export QT_API=pyside6
-python your_app.py
-
-# Use PyQt6
-export QT_API=pyqt6
-python your_app.py
-```
-
-### Method 2: Python Code
-
-Set the environment variable in your Python code before any Qt imports:
+The library automatically detects available backends in this order:
+1. Check `GUI_BACKEND` environment variable
+2. Check `QT_API` environment variable (for Qt backend)
+3. Use default backend (Qt) if available
+4. Fall back to any available backend
 
 ```python
-import os
-os.environ['QT_API'] = 'pyside6'  # or 'pyqt6'
+from qtpyguihelper import GuiBuilder, get_backend_info
 
+# Check current backend
+info = get_backend_info()
+print(f"Using backend: {info['backend']}")
+print(f"Available backends: {info['available_backends']}")
+
+# Create GUI with auto-detection
+gui = GuiBuilder(config_path="form.json")
+print(f"Selected backend: {gui.backend}")
+```
+
+### Manual Backend Selection
+
+#### Method 1: Environment Variable
+
+```bash
+# Use wxPython backend
+export GUI_BACKEND=wx
+python your_app.py
+
+# Use Qt backend  
+export GUI_BACKEND=qt
+python your_app.py
+
+# For Qt backend, you can also specify the Qt binding
+export QT_API=pyside6  # or pyqt6
+python your_app.py
+```
+
+#### Method 2: Python Code
+
+```python
+from qtpyguihelper import set_backend, GuiBuilder
+
+# Force wxPython backend
+set_backend('wx')
+gui = GuiBuilder(config_path="form.json")
+
+# Force Qt backend
+set_backend('qt')
+gui = GuiBuilder(config_path="form.json")
+```
+
+#### Method 3: Constructor Parameter
+
+```python
 from qtpyguihelper import GuiBuilder
+
+# Force specific backend during construction
+gui = GuiBuilder(config_path="form.json", backend='wx')
 ```
 
-### Method 3: Check Current Backend
+### Backend-Specific Features
 
-You can check which backend is currently being used:
+#### Qt Backend Features
+- Native Qt styling and themes
+- Advanced widgets and layouts
+- Comprehensive signal/slot system
+- Cross-platform consistency
+- Rich graphics and animation support
+
+#### wxPython Backend Features  
+- Native platform look and feel
+- Smaller memory footprint
+- Direct platform API access
+- Extensive widget library
+- Strong macOS integration
+
+### Backend Compatibility
+
+All core features work identically across both backends:
+- ✅ All field types (text, number, date, etc.)
+- ✅ All layout types (form, grid, vertical, horizontal)
+- ✅ Custom buttons with callbacks
+- ✅ Data persistence and loading
+- ✅ Field validation
+- ✅ Nested field names
+- ✅ Tabbed interfaces
+- ✅ Event handling and callbacks
+
+### Testing Backend Availability
 
 ```python
-import qtpy
-print(f"Current Qt API: {qtpy.API_NAME}")
-print(f"Qt version: {qtpy.QT_VERSION}")
-```
+from qtpyguihelper import get_available_backends, is_backend_available
 
-### Backend Testing
+# Check what's available
+print("Available backends:", get_available_backends())
 
-Use the included compatibility test to verify your setup:
-
-```bash
-python test_qt_compatibility.py
-python qt_backend_demo.py info
+# Check specific backend
+if is_backend_available('wx'):
+    print("wxPython is available")
+    
+if is_backend_available('qt'):
+    print("Qt backend is available")
 ```
 
 ## Supported Field Types
@@ -531,8 +628,9 @@ The library includes several example configurations in the `examples/` directory
 - `user_registration.json` - Complete user registration form
 - `settings_form.json` - Application settings with various widget types
 - `project_form.json` - Project data entry form with grid layout
+- `custom_buttons.json` - Demonstrates custom buttons with callbacks
 
-Run the demo script to see these examples in action:
+### Running Demo Scripts
 
 ```bash
 python demo.py registration  # User registration form
@@ -543,6 +641,49 @@ python demo.py persistence   # Data loading and saving demo
 python demo.py tabs          # Tabbed interface demo
 python demo.py complex_tabs  # Complex tabbed configuration demo
 python demo.py nested        # Nested field names demo
+
+# Custom buttons demo
+python demo_custom_buttons.py
+
+# Backend selection demos
+python demo_backend_selection.py auto  # Auto-detect backend
+python demo_backend_selection.py qt    # Force Qt backend  
+python demo_backend_selection.py wx    # Force wxPython backend
+python demo_backend_selection.py wx    # Force wxPython backend
+```
+
+### Backend Comparison Demo
+
+The `demo_backend_selection.py` script demonstrates all features working across both backends:
+
+```python
+# Example: Test both backends with the same configuration
+from qtpyguihelper import GuiBuilder, set_backend
+
+config = {
+    "window": {"title": "Cross-Platform Demo", "width": 500, "height": 400},
+    "layout": "form",
+    "fields": [
+        {"name": "name", "type": "text", "label": "Name", "required": True},
+        {"name": "age", "type": "int", "label": "Age", "min_value": 0, "max_value": 120},
+        {"name": "height", "type": "float", "label": "Height (m)", "format_string": ".2f"},
+        {"name": "active", "type": "checkbox", "label": "Active"}
+    ],
+    "submit_button": True,
+    "custom_buttons": [
+        {"name": "clear", "label": "Clear Form", "tooltip": "Clear all fields"}
+    ]
+}
+
+# Test with Qt backend
+set_backend('qt')
+qt_gui = GuiBuilder(config_dict=config)
+
+# Test with wxPython backend  
+set_backend('wx')
+wx_gui = GuiBuilder(config_dict=config)
+
+# Both GUIs work identically!
 ```
 
 ## Advanced Usage
@@ -645,12 +786,26 @@ Data files with metadata include additional information:
 }
 ```
 
-<!-- ## Requirements
+## Requirements
 
+### Python
 - Python 3.7+
-- PySide6 6.5.0+ -->
 
-<!-- ## License
+### Backend Requirements
+
+#### Qt Backend
+- PySide6 6.5.0+ (recommended) OR PyQt6 6.5.0+
+- qtpy 2.0.0+
+
+#### wxPython Backend  
+- wxPython 4.2.0+
+
+### Backend Selection Priority
+1. If both backends are available, Qt is preferred by default
+2. Use `GUI_BACKEND` environment variable to force selection
+3. Use `set_backend()` function for programmatic control
+
+## License
 
 This project is open source. Feel free to use and modify as needed.
 
@@ -662,13 +817,36 @@ Contributions are welcome! Please feel free to submit pull requests or open issu
 
 ### Common Issues
 
-1. **Import errors**: Make sure PySide6 is installed: `pip install PySide6`
-2. **Configuration validation errors**: Check that all required fields in your JSON are present
-3. **Widget not displaying**: Verify the field type is supported and properly configured
+1. **Backend not available errors**: 
+   - For Qt: `pip install PySide6` or `pip install PyQt6`
+   - For wxPython: `pip install wxpython`
+
+2. **Import errors**: Make sure at least one backend is installed
+   ```bash
+   # Check available backends
+   python -c "from qtpyguihelper import get_available_backends; print(get_available_backends())"
+   ```
+
+3. **Configuration validation errors**: Check that all required fields in your JSON are present
+
+4. **Widget not displaying**: Verify the field type is supported and properly configured
+
+5. **Backend-specific issues**:
+   - Qt: Check `QT_API` environment variable if using specific Qt binding
+   - wxPython: Ensure compatible version (4.2.0+) for your platform
+
+### Backend-Specific Features
+
+Some advanced features may behave slightly differently between backends:
+- **Styling**: Qt has more advanced theming, wxPython has native platform look
+- **Events**: Both support all core events, but Qt has more granular signal system  
+- **Performance**: wxPython typically has smaller memory footprint
+- **Platform integration**: wxPython may have better native integration on some platforms
 
 ### Getting Help
 
 - Check the example configurations in `examples/`
-- Run the demo script to see working examples
+- Run the demo script to see working examples: `python demo_backend_selection.py`
 - Review the configuration reference above
-- Open an issue on the project repository -->
+- Test both backends: `python demo_backend_selection.py qt` and `python demo_backend_selection.py wx`
+- Open an issue on the project repository

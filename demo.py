@@ -625,25 +625,303 @@ def demo_custom_buttons():
     return app.exec()
 
 
+def demo_wxpython_backend():
+    """Demo the wxPython backend with a working GUI."""
+    print("Starting wxPython Backend Demo...")
+    
+    try:
+        # Force wxPython backend
+        from qtpyguihelper import set_backend
+        set_backend('wx')
+        print("✓ wxPython backend selected")
+        
+        # Import wxPython
+        import wx
+        
+        # Create configuration
+        config = {
+            "window": {
+                "title": "wxPython Backend Demo - Cross-Platform GUI",
+                "width": 600,
+                "height": 500,
+                "resizable": True
+            },
+            "layout": "form",
+            "submit_button": True,
+            "cancel_button": True,
+            "submit_label": "Submit Data",
+            "cancel_label": "Cancel",
+            "fields": [
+                {
+                    "name": "name",
+                    "type": "text",
+                    "label": "Full Name",
+                    "placeholder": "Enter your full name",
+                    "required": True
+                },
+                {
+                    "name": "age",
+                    "type": "int",
+                    "label": "Age",
+                    "min_value": 0,
+                    "max_value": 120,
+                    "default_value": 25
+                },
+                {
+                    "name": "height",
+                    "type": "float",
+                    "label": "Height (m)",
+                    "format_string": ".2f",
+                    "min_value": 0.5,
+                    "max_value": 3.0,
+                    "default_value": 1.75
+                },
+                {
+                    "name": "email",
+                    "type": "email",
+                    "label": "Email Address",
+                    "placeholder": "your.email@example.com",
+                    "required": True
+                },
+                {
+                    "name": "subscribe",
+                    "type": "checkbox",
+                    "label": "Subscribe to newsletter",
+                    "default_value": True
+                },
+                {
+                    "name": "category",
+                    "type": "select",
+                    "label": "Category",
+                    "options": ["Student", "Professional", "Retired", "Other"],
+                    "default_value": "Professional"
+                },
+                {
+                    "name": "priority",
+                    "type": "radio",
+                    "label": "Priority Level",
+                    "options": ["Low", "Medium", "High"],
+                    "default_value": "Medium"
+                },
+                {
+                    "name": "birth_date",
+                    "type": "date",
+                    "label": "Birth Date",
+                    "default_value": "1990-01-01"
+                },
+                {
+                    "name": "notes",
+                    "type": "textarea",
+                    "label": "Additional Notes",
+                    "placeholder": "Enter any additional information...",
+                    "height": 80
+                }
+            ],
+            "custom_buttons": [
+                {
+                    "name": "clear_form",
+                    "label": "Clear Form",
+                    "tooltip": "Clear all form fields",
+                    "enabled": True
+                },
+                {
+                    "name": "load_demo",
+                    "label": "Load Demo Data",
+                    "tooltip": "Load sample data into the form",
+                    "enabled": True
+                }
+            ]
+        }
+        
+        # Create wxPython application
+        app = wx.App()
+        
+        # Create GUI builder with wxPython backend
+        from qtpyguihelper import WxGuiBuilder
+        gui_builder = WxGuiBuilder(config_dict=config)
+        
+        # Set up callbacks
+        def on_submit(form_data):
+            print("wxPython form submitted:")
+            for key, value in form_data.items():
+                print(f"  {key}: {value}")
+            wx.MessageBox("Form submitted successfully!", "Success", wx.OK | wx.ICON_INFORMATION)
+        
+        def on_cancel():
+            print("wxPython form cancelled")
+            wx.MessageBox("Form cancelled by user", "Cancelled", wx.OK | wx.ICON_INFORMATION)
+        
+        def clear_form(_form_data):
+            gui_builder.clear_form()
+            print("Form cleared")
+            wx.MessageBox("Form cleared successfully!", "Cleared", wx.OK | wx.ICON_INFORMATION)
+        
+        def load_demo_data(_form_data):
+            demo_data = {
+                "name": "Jane Smith",
+                "age": 28,
+                "height": 1.65,
+                "email": "jane.smith@example.com",
+                "subscribe": False,
+                "category": "Student",
+                "priority": "Medium",
+                "birth_date": "1995-03-20",
+                "notes": "Demo data for wxPython backend testing."
+            }
+            gui_builder.set_form_data(demo_data)
+            print("Demo data loaded")
+            wx.MessageBox("Demo data loaded successfully!", "Data Loaded", wx.OK | wx.ICON_INFORMATION)
+        
+        # Register callbacks
+        gui_builder.set_submit_callback(on_submit)
+        gui_builder.set_cancel_callback(on_cancel)
+        gui_builder.set_custom_button_callback("clear_form", clear_form)
+        gui_builder.set_custom_button_callback("load_demo", load_demo_data)
+        
+        # Show the GUI
+        gui_builder.Show()
+        
+        print("✓ wxPython GUI created and shown")
+        print("  - Custom buttons available:", gui_builder.get_custom_button_names())
+        
+        # Run the application
+        app.MainLoop()
+        
+    except ImportError as e:
+        print(f"✗ wxPython not available: {e}")
+        print("  Install wxPython with: pip install wxpython")
+    except Exception as e:
+        print(f"✗ Error with wxPython backend: {e}")
+
+
+def demo_backend_comparison():
+    """Demo both Qt and wxPython backends side by side."""
+    print("Starting Backend Comparison Demo...")
+    
+    from qtpyguihelper import get_available_backends, get_backend_info
+    
+    print(f"Available backends: {get_available_backends()}")
+    
+    backend_choice = input("Choose backend (qt/wx/both): ").lower()
+    
+    if backend_choice == "qt":
+        demo_user_registration()  # Existing Qt demo
+    elif backend_choice == "wx":
+        demo_wxpython_backend()   # New wxPython demo
+    elif backend_choice == "both":
+        print("\n=== Running Qt Backend Demo ===")
+        demo_user_registration()
+        
+        print("\n=== Running wxPython Backend Demo ===")
+        demo_wxpython_backend()
+    else:
+        print("Invalid choice. Available options: qt, wx, both")
+
+
+def demo_unified_interface():
+    """Demo the unified GuiBuilder interface that auto-selects backend."""
+    print("Starting Unified Interface Demo...")
+    
+    from qtpyguihelper import GuiBuilder, get_backend_info
+    
+    # Show current backend info
+    info = get_backend_info()
+    print(f"Auto-selected backend: {info['backend']}")
+    
+    # Create a simple configuration
+    config = {
+        "window": {
+            "title": f"Unified Interface Demo - {info['backend'].upper()} Backend",
+            "width": 500,
+            "height": 400
+        },
+        "layout": "form",
+        "fields": [
+            {
+                "name": "backend_test",
+                "type": "text",
+                "label": "Backend Test",
+                "default_value": f"Running on {info['backend']} backend",
+                "required": True
+            },
+            {
+                "name": "user_name",
+                "type": "text",
+                "label": "Your Name",
+                "placeholder": "Enter your name"
+            },
+            {
+                "name": "rating",
+                "type": "int",
+                "label": "Rate this demo (1-10)",
+                "min_value": 1,
+                "max_value": 10,
+                "default_value": 5
+            },
+            {
+                "name": "feedback",
+                "type": "textarea",
+                "label": "Feedback",
+                "placeholder": "How was the cross-platform experience?",
+                "height": 100
+            }
+        ],
+        "submit_button": True,
+        "cancel_button": True
+    }
+    
+    def on_submit_unified(form_data):
+        print(f"Unified interface form submitted via {info['backend']} backend:")
+        for key, value in form_data.items():
+            print(f"  {key}: {value}")
+    
+    # Create the appropriate application based on backend
+    if info['backend'] == 'qt':
+        # Qt backend needs QApplication
+        app = QApplication(sys.argv)
+        gui = GuiBuilder(config_dict=config)
+        gui.set_submit_callback(on_submit_unified)
+        gui.show()
+        app.exec()
+    elif info['backend'] == 'wx':
+        # wxPython backend needs wx.App
+        import wx
+        app = wx.App()
+        gui = GuiBuilder(config_dict=config)
+        gui.set_submit_callback(on_submit_unified)
+        gui.show()
+        app.MainLoop()
+    else:
+        # Use the create_and_run method as fallback
+        gui = GuiBuilder(config_dict=config)
+        gui.set_submit_callback(on_submit_unified)
+        return GuiBuilder.create_and_run(config_dict=config)
+
+
 def main():
     """Main function to run demos."""
     if len(sys.argv) > 1:
         demo_type = sys.argv[1].lower()
     else:
         print("Available demos:")
-        print("  python demo.py registration  - User registration form")
-        print("  python demo.py settings      - Application settings form")
-        print("  python demo.py project       - Project data entry form")
-        print("  python demo.py contact       - Programmatic contact form")
-        print("  python demo.py persistence   - Data loading and saving demo")
-        print("  python demo.py tabs          - Tabbed interface demo")
-        print("  python demo.py complex_tabs  - Complex tabbed configuration demo")
-        print("  python demo.py nested        - Nested field names demo")
-        print("  python demo.py float         - Float fields demo")
-        print("  python demo.py format        - Format strings demo")
-        print("  python demo.py custom_buttons - Custom buttons demo")
+        print("  python demo.py registration  - User registration form (Qt)")
+        print("  python demo.py settings      - Application settings form (Qt)")
+        print("  python demo.py project       - Project data entry form (Qt)")
+        print("  python demo.py contact       - Programmatic contact form (Qt)")
+        print("  python demo.py persistence   - Data loading and saving demo (Qt)")
+        print("  python demo.py tabs          - Tabbed interface demo (Qt)")
+        print("  python demo.py complex_tabs  - Complex tabbed configuration demo (Qt)")
+        print("  python demo.py nested        - Nested field names demo (Qt)")
+        print("  python demo.py float         - Float fields demo (Qt)")
+        print("  python demo.py format        - Format strings demo (Qt)")
+        print("  python demo.py custom_buttons - Custom buttons demo (Qt)")
         print()
-        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs/nested/float/format/custom_buttons): ").lower()
+        print("Backend-specific demos:")
+        print("  python demo.py wxpython      - wxPython backend demo")
+        print("  python demo.py compare       - Compare Qt vs wxPython backends")
+        print("  python demo.py unified       - Unified interface (auto-backend)")
+        print()
+        demo_type = input("Enter demo type: ").lower()
 
     if demo_type == "registration":
         demo_user_registration()
@@ -667,9 +945,15 @@ def main():
         demo_format_strings()
     elif demo_type == "custom_buttons":
         demo_custom_buttons()
+    elif demo_type == "wx" or demo_type == "wxpython":
+        demo_wxpython_backend()
+    elif demo_type == "backend_comparison" or demo_type == "compare":
+        demo_backend_comparison()
+    elif demo_type == "unified":
+        demo_unified_interface()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format, custom_buttons")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format, custom_buttons, wx, wxpython, compare, backend_comparison, unified")
 
 
 if __name__ == "__main__":
