@@ -317,6 +317,99 @@ python qt_backend_demo.py info
 }
 ```
 
+### Custom Buttons
+
+QtPyGuiHelper supports adding custom buttons with callbacks to the bottom of the form. Custom buttons appear to the left of the standard submit/cancel buttons.
+
+#### Basic Custom Button Configuration
+
+```jsonc
+{
+  "custom_buttons": [
+    {
+      "name": "validate",          // Unique button identifier
+      "label": "Validate Data",    // Button text
+      "tooltip": "Validate form before submission",  // Optional tooltip
+      "enabled": true,             // Optional: button enabled state (default: true)
+      "style": "background-color: #007bff; color: white;",  // Optional: CSS styling
+      "icon": "path/to/icon.png"   // Optional: button icon
+    },
+    {
+      "name": "export",
+      "label": "Export JSON",
+      "tooltip": "Export form data as JSON file",
+      "style": "background-color: #28a745; color: white; padding: 8px 16px; border-radius: 4px;"
+    }
+  ]
+}
+```
+
+#### Custom Button Properties
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `name` | string | Yes | Unique identifier for the button (used when registering callbacks) |
+| `label` | string | Yes | Text displayed on the button |
+| `tooltip` | string | No | Tooltip text shown on hover |
+| `enabled` | boolean | No | Whether the button is enabled (default: true) |
+| `style` | string | No | CSS-style string for custom button appearance |
+| `icon` | string | No | Path to icon file for the button |
+
+#### Registering Custom Button Callbacks
+
+```python
+from qtpyguihelper import GuiBuilder
+
+def validate_data_callback(form_data):
+    """Custom button callback receives current form data as parameter."""
+    print("Validating data:", form_data)
+    # Perform validation logic here
+    if not form_data.get('email'):
+        print("Email is required!")
+    else:
+        print("Validation passed!")
+
+def export_data_callback(form_data):
+    """Export form data to JSON file."""
+    import json
+    with open('exported_data.json', 'w') as f:
+        json.dump(form_data, f, indent=2)
+    print("Data exported successfully!")
+
+# Create GUI
+gui = GuiBuilder("config.json")
+
+# Register custom button callbacks
+gui.set_custom_button_callback("validate", validate_data_callback)
+gui.set_custom_button_callback("export", export_data_callback)
+
+# Standard callbacks still work
+gui.set_submit_callback(lambda data: print("Form submitted:", data))
+gui.set_cancel_callback(lambda: print("Form cancelled"))
+
+# Show the GUI
+gui.show()
+```
+
+#### Custom Button Management
+
+```python
+# Get list of all custom button names
+button_names = gui.get_custom_button_names()
+print("Available buttons:", button_names)
+
+# Remove a custom button callback
+gui.remove_custom_button_callback("validate")
+
+# Check which callbacks are registered
+print("Registered callbacks:", list(gui.custom_button_callbacks.keys()))
+```
+
+#### Complete Example
+
+See `examples/custom_buttons.json` and `demo_custom_buttons.py` for a complete working example with multiple custom buttons including validation, clear form, preview, and export functionality.
+```
+
 ### Nested Field Names
 
 QtPyGuiHelper supports hierarchical data structures using dot notation in field names. This allows you to organize related data into nested JSON objects when saving or loading form data.

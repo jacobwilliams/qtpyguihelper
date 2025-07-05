@@ -306,7 +306,7 @@ class WidgetFactory:
 
     def _create_float_field(self, field_config: FieldConfig):
         """Create a float input field with optional format enforcement."""
-        
+
         # Check if we need scientific notation or special formatting
         needs_line_edit = False
         if field_config.format_string:
@@ -314,12 +314,12 @@ class WidgetFactory:
             # Use QLineEdit for scientific notation, percentage, or other special formats
             if any(char in format_str for char in ['e', '%', 'g']) or ',' in format_str:
                 needs_line_edit = True
-        
+
         if needs_line_edit:
             return self._create_scientific_float_field(field_config)
         else:
             return self._create_spinbox_float_field(field_config)
-    
+
     def _create_spinbox_float_field(self, field_config: FieldConfig) -> QDoubleSpinBox:
         """Create a float input field using QDoubleSpinBox for simple decimal formatting."""
         widget = QDoubleSpinBox()
@@ -363,13 +363,13 @@ class WidgetFactory:
         widget.setProperty("field_type", "spinbox_float")
 
         return widget
-    
+
     def _create_scientific_float_field(self, field_config: FieldConfig) -> QLineEdit:
         """Create a float input field using QLineEdit for scientific notation and special formatting."""
         from qtpy.QtGui import QDoubleValidator
-        
+
         widget = QLineEdit()
-        
+
         # Set up validator for floating point numbers (including scientific notation)
         validator = QDoubleValidator()
         if field_config.min_value is not None:
@@ -378,7 +378,7 @@ class WidgetFactory:
             validator.setTop(float(field_config.max_value))
         validator.setNotation(QDoubleValidator.ScientificNotation)
         widget.setValidator(validator)
-        
+
         # Set default value
         if field_config.default_value is not None:
             if field_config.format_string:
@@ -390,12 +390,12 @@ class WidgetFactory:
                     widget.setText(str(field_config.default_value))
             else:
                 widget.setText(str(field_config.default_value))
-        
+
         # Store format string and field type for later use
         if field_config.format_string:
             widget.setProperty("format_string", field_config.format_string)
         widget.setProperty("field_type", "scientific_float")
-        
+
         # Set placeholder text to show expected format
         if field_config.format_string:
             format_str = field_config.format_string
@@ -405,7 +405,7 @@ class WidgetFactory:
                 widget.setPlaceholderText("e.g., 0.856 (for 85.6%)")
             elif 'g' in format_str.lower():
                 widget.setPlaceholderText("e.g., 123.456 or 1.23e+06")
-        
+
         return widget
 
     def _create_email_field(self, field_config: FieldConfig) -> QLineEdit:

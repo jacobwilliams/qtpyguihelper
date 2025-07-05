@@ -96,15 +96,15 @@ def test_format_strings():
         # Test 2: Widget creation with format strings
         print("\n2. Testing widget creation with format strings...")
         factory = WidgetFactory()
-        
+
         for i, field in enumerate(gui_config.fields):
             test_case = format_test_cases[i]
-            
+
             widget = factory.create_widget(field)
             if widget:
                 print(f"   • {field.name} ({test_case['format_string']}):")
                 print(f"     - Expected decimals: {test_case['expected_decimals']}")
-                
+
                 # Check widget type and get decimals accordingly
                 if hasattr(widget, 'decimals'):
                     # QDoubleSpinBox
@@ -118,9 +118,9 @@ def test_format_strings():
                     print(f"     - Default text: {widget.text()}")
                     # For QLineEdit, we can't directly check decimals, but we can verify format
                     actual_decimals = test_case['expected_decimals']  # Assume correct for QLineEdit
-                
+
                 print(f"     - Format stored: {widget.property('format_string')}")
-                
+
                 # Verify decimal places (skip for QLineEdit since it doesn't have decimals)
                 if hasattr(widget, 'decimals'):
                     if widget.decimals() == test_case['expected_decimals']:
@@ -140,28 +140,28 @@ def test_format_strings():
             field_name = test_case["name"]
             input_value = test_case["input_value"]
             format_string = test_case["format_string"]
-            
+
             # Set and get value
             factory.set_widget_value(field_name, input_value)
             retrieved_value = factory.get_widget_value(field_name)
-            
+
             # Format the value using Python's format function
             try:
                 expected_formatted = format(input_value, format_string)
                 actual_formatted = format(retrieved_value, format_string)
-                
+
                 print(f"   • {field_name} ({format_string}):")
                 print(f"     - Input: {input_value}")
                 print(f"     - Retrieved: {retrieved_value}")
                 print(f"     - Expected formatted: {expected_formatted}")
                 print(f"     - Actual formatted: {actual_formatted}")
-                
+
                 # For scientific notation, the value might be slightly different due to precision
                 if abs(retrieved_value - input_value) < 1e-10:
                     print(f"     - ✓ Value preserved correctly")
                 else:
                     print(f"     - ⚠ Value precision difference (acceptable for GUI)")
-                    
+
             except ValueError as e:
                 print(f"     - ✗ Format error: {e}")
                 return False
@@ -170,7 +170,7 @@ def test_format_strings():
         print("\n4. Demonstrating format string examples...")
         demo_values = [123.456789, 1234567.89, 0.000012345, 0.856]
         demo_formats = [".2f", ".3e", ".2E", ".1%", ".3g", ",.2f"]
-        
+
         print("   Format demonstrations:")
         for value in demo_values:
             print(f"   Value: {value}")

@@ -5,7 +5,7 @@ Compatible with both PySide6 and PyQt6 via qtpy.
 
 import sys
 import json
-from typing import Dict, Any, Callable, Optional
+from typing import Dict, Any, Callable, Optional, List
 from qtpy.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QFormLayout, QGridLayout, QPushButton, QScrollArea, QMessageBox,
@@ -14,7 +14,7 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
-from .config_loader import ConfigLoader, GuiConfig, FieldConfig
+from .config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
 from .widget_factory import WidgetFactory, get_nested_value
 
 
@@ -42,6 +42,7 @@ class GuiBuilder(QMainWindow):
         self.central_widget: Optional[QWidget] = None
         self.submit_callback: Optional[Callable] = None
         self.cancel_callback: Optional[Callable] = None
+        self.custom_button_callbacks: Dict[str, Callable] = {}  # Store custom button callbacks
 
         # Load configuration
         if config_path:
@@ -217,9 +218,41 @@ class GuiBuilder(QMainWindow):
         return scroll_area
 
     def _create_button_layout(self) -> QHBoxLayout:
-        """Create the button layout with submit and cancel buttons."""
+        """Create the button layout with submit, cancel, and custom buttons."""
         button_layout = QHBoxLayout()
-        button_layout.addStretch()  # Push buttons to the right
+
+        # Add custom buttons first (on the left)
+        if self.config.custom_buttons:
+            for button_config in self.config.custom_buttons:
+                custom_btn = QPushButton(button_config.label)
+
+                # Set tooltip if provided
+                if button_config.tooltip:
+                    custom_btn.setToolTip(button_config.tooltip)
+
+                # Set enabled state
+                custom_btn.setEnabled(button_config.enabled)
+
+                # Apply custom style if provided
+                if button_config.style:
+                    custom_btn.setStyleSheet(button_config.style)
+
+                # Set icon if provided
+                if button_config.icon:
+                    try:
+                        icon = QIcon(button_config.icon)
+                        custom_btn.setIcon(icon)
+                    except:
+                        pass  # Ignore icon loading errors
+
+                # Connect to custom callback handler
+                def make_button_handler(button_name):
+                    return lambda checked: self._on_custom_button_clicked(button_name)
+
+                custom_btn.clicked.connect(make_button_handler(button_config.name))
+                button_layout.addWidget(custom_btn)
+
+        button_layout.addStretch()  # Push default buttons to the right
 
         if self.config.cancel_button:
             cancel_btn = QPushButton(self.config.cancel_label)
@@ -236,29 +269,62 @@ class GuiBuilder(QMainWindow):
 
     def _connect_field_signals(self):
         """Connect field change signals to emit fieldChanged signal."""
+        def create_signal_handler(field_name, signal_type, widget=None):
+            """Create a proper signal handler for a specific field and signal type."""
+            if signal_type == 'text':
+                return lambda text: self.fieldChanged.emit(field_name, text)
+            elif signal_type == 'text_edit':
+                # Special handler for QTextEdit which doesn't pass text in signal
+                return lambda: self.fieldChanged.emit(field_name, widget.toPlainText())
+            elif signal_type == 'value':
+                return lambda value: self.fieldChanged.emit(field_name, value)
+            elif signal_type == 'bool':
+                return lambda checked: self.fieldChanged.emit(field_name, checked)
+            elif signal_type == 'date':
+                return lambda date: self.fieldChanged.emit(field_name, date.toString(Qt.ISODate))
+            elif signal_type == 'time':
+                return lambda time: self.fieldChanged.emit(field_name, time.toString(Qt.ISODate))
+            elif signal_type == 'datetime':
+                return lambda datetime: self.fieldChanged.emit(field_name, datetime.toString(Qt.ISODate))
+            elif signal_type == 'color':
+                return lambda color: self.fieldChanged.emit(field_name, color.name())
+            elif signal_type == 'file':
+                return lambda file_path: self.fieldChanged.emit(field_name, file_path)
+            else:
+                return lambda value: self.fieldChanged.emit(field_name, value)
+
         for field_name, widget in self.widget_factory.widgets.items():
-            # Connect appropriate signal based on widget type
             try:
-                if hasattr(widget, 'textChanged'):
-                    widget.textChanged.connect(lambda text, name=field_name: self.fieldChanged.emit(name, text))
-                elif hasattr(widget, 'valueChanged'):
-                    widget.valueChanged.connect(lambda value, name=field_name: self.fieldChanged.emit(name, value))
-                elif hasattr(widget, 'toggled'):
-                    widget.toggled.connect(lambda checked, name=field_name: self.fieldChanged.emit(name, checked))
-                elif hasattr(widget, 'currentTextChanged'):
-                    widget.currentTextChanged.connect(lambda text, name=field_name: self.fieldChanged.emit(name, text))
-                elif hasattr(widget, 'dateChanged'):
-                    widget.dateChanged.connect(lambda date, name=field_name: self.fieldChanged.emit(name, date.toString(Qt.ISODate)))
-                elif hasattr(widget, 'timeChanged'):
-                    widget.timeChanged.connect(lambda time, name=field_name: self.fieldChanged.emit(name, time.toString(Qt.ISODate)))
-                elif hasattr(widget, 'dateTimeChanged'):
-                    widget.dateTimeChanged.connect(lambda datetime, name=field_name: self.fieldChanged.emit(name, datetime.toString(Qt.ISODate)))
-                elif hasattr(widget, 'colorChanged'):
-                    widget.colorChanged.connect(lambda color, name=field_name: self.fieldChanged.emit(name, color.name()))
-                elif hasattr(widget, 'fileChanged'):
-                    widget.fileChanged.connect(lambda file_path, name=field_name: self.fieldChanged.emit(name, file_path))
+                # Check widget type by class name to handle QTextEdit specially
+                widget_class_name = widget.__class__.__name__
+
+                if widget_class_name == 'QTextEdit':
+                    # QTextEdit textChanged signal doesn't pass arguments
+                    widget.textChanged.connect(create_signal_handler(field_name, 'text_edit', widget))
+                elif hasattr(widget, 'textChanged') and callable(getattr(widget, 'textChanged')):
+                    # QLineEdit and other text widgets that pass text in signal
+                    widget.textChanged.connect(create_signal_handler(field_name, 'text'))
+                elif hasattr(widget, 'valueChanged') and callable(getattr(widget, 'valueChanged')):
+                    widget.valueChanged.connect(create_signal_handler(field_name, 'value'))
+                elif hasattr(widget, 'toggled') and callable(getattr(widget, 'toggled')):
+                    widget.toggled.connect(create_signal_handler(field_name, 'bool'))
+                elif hasattr(widget, 'currentTextChanged') and callable(getattr(widget, 'currentTextChanged')):
+                    widget.currentTextChanged.connect(create_signal_handler(field_name, 'text'))
+                elif hasattr(widget, 'dateChanged') and callable(getattr(widget, 'dateChanged')):
+                    widget.dateChanged.connect(create_signal_handler(field_name, 'date'))
+                elif hasattr(widget, 'timeChanged') and callable(getattr(widget, 'timeChanged')):
+                    widget.timeChanged.connect(create_signal_handler(field_name, 'time'))
+                elif hasattr(widget, 'dateTimeChanged') and callable(getattr(widget, 'dateTimeChanged')):
+                    widget.dateTimeChanged.connect(create_signal_handler(field_name, 'datetime'))
+                elif hasattr(widget, 'colorChanged') and callable(getattr(widget, 'colorChanged')):
+                    widget.colorChanged.connect(create_signal_handler(field_name, 'color'))
+                elif hasattr(widget, 'fileChanged') and callable(getattr(widget, 'fileChanged')):
+                    widget.fileChanged.connect(create_signal_handler(field_name, 'file'))
+                # If no recognized signal is found, skip this widget
+
             except Exception as e:
                 print(f"Warning: Could not connect signal for field {field_name}: {e}")
+                # Continue with other widgets even if one fails
 
     def _on_submit(self):
         """Handle submit button click."""
@@ -290,6 +356,17 @@ class GuiBuilder(QMainWindow):
 
         # Emit signal
         self.formCancelled.emit()
+
+    def _on_custom_button_clicked(self, button_name: str):
+        """Handle custom button click."""
+        # Call custom callback if registered
+        if button_name in self.custom_button_callbacks:
+            try:
+                # Get current form data to pass to callback
+                form_data = self.get_form_data()
+                self.custom_button_callbacks[button_name](form_data)
+            except Exception as e:
+                self._show_error(f"Custom button '{button_name}' callback error: {str(e)}")
 
     def _validate_required_fields(self) -> bool:
         """Validate that all required fields have values."""
@@ -349,6 +426,27 @@ class GuiBuilder(QMainWindow):
     def set_cancel_callback(self, callback: Callable[[], None]):
         """Set a callback function to be called when the form is cancelled."""
         self.cancel_callback = callback
+
+    def set_custom_button_callback(self, button_name: str, callback: Callable[[Dict[str, Any]], None]):
+        """
+        Set a callback function to be called when a custom button is clicked.
+
+        Args:
+            button_name: The name of the custom button as defined in the configuration
+            callback: Function to call when button is clicked. Receives form data as parameter.
+        """
+        self.custom_button_callbacks[button_name] = callback
+
+    def remove_custom_button_callback(self, button_name: str):
+        """Remove a custom button callback."""
+        if button_name in self.custom_button_callbacks:
+            del self.custom_button_callbacks[button_name]
+
+    def get_custom_button_names(self) -> List[str]:
+        """Get a list of all custom button names from the configuration."""
+        if self.config and self.config.custom_buttons:
+            return [button.name for button in self.config.custom_buttons]
+        return []
 
     def enable_field(self, field_name: str, enabled: bool = True):
         """Enable or disable a specific field."""

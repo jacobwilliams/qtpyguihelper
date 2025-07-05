@@ -48,6 +48,17 @@ class TabConfig:
 
 
 @dataclass
+class CustomButtonConfig:
+    """Configuration for a custom button."""
+    name: str
+    label: str
+    tooltip: Optional[str] = None
+    enabled: bool = True
+    icon: Optional[str] = None
+    style: Optional[str] = None  # CSS style string
+
+
+@dataclass
 class GuiConfig:
     """Complete GUI configuration."""
     window: WindowConfig
@@ -59,6 +70,7 @@ class GuiConfig:
     cancel_button: bool = True
     cancel_label: str = "Cancel"
     use_tabs: bool = False
+    custom_buttons: Optional[List[CustomButtonConfig]] = None
 
 
 class ConfigLoader:
@@ -147,6 +159,20 @@ class ConfigLoader:
             )
             tabs.append(tab_config)
 
+        # Parse custom button configurations
+        custom_buttons_data = config_data.get("custom_buttons", [])
+        custom_buttons = []
+        for button_data in custom_buttons_data:
+            custom_button = CustomButtonConfig(
+                name=button_data["name"],
+                label=button_data["label"],
+                tooltip=button_data.get("tooltip"),
+                enabled=button_data.get("enabled", True),
+                icon=button_data.get("icon"),
+                style=button_data.get("style")
+            )
+            custom_buttons.append(custom_button)
+
         # Create complete configuration
         use_tabs = len(tabs) > 0 or config_data.get("use_tabs", False)
         self.config = GuiConfig(
@@ -158,7 +184,8 @@ class ConfigLoader:
             submit_label=config_data.get("submit_label", "Submit"),
             cancel_button=config_data.get("cancel_button", True),
             cancel_label=config_data.get("cancel_label", "Cancel"),
-            use_tabs=use_tabs
+            use_tabs=use_tabs,
+            custom_buttons=custom_buttons if custom_buttons else None
         )
 
         return self.config
@@ -249,6 +276,29 @@ class ConfigLoader:
                 tab_layout = tab.get("layout", "vertical")
                 if tab_layout not in self.SUPPORTED_LAYOUTS:
                     raise ValueError(f"Tab '{tab_name}' has unsupported layout: {tab_layout}")
+
+        # Validate custom buttons if present
+        custom_buttons_data = config_data.get("custom_buttons", [])
+        if custom_buttons_data:
+            if not isinstance(custom_buttons_data, list):
+                raise ValueError("'custom_buttons' must be a list")
+
+            button_names = set()
+            for i, button in enumerate(custom_buttons_data):
+                if not isinstance(button, dict):
+                    raise ValueError(f"Custom button {i} must be a dictionary")
+
+                # Check required button keys
+                required_button_keys = ["name", "label"]
+                for key in required_button_keys:
+                    if key not in button:
+                        raise ValueError(f"Custom button {i} missing required key: {key}")
+
+                # Check button name uniqueness
+                button_name = button["name"]
+                if button_name in button_names:
+                    raise ValueError(f"Duplicate custom button name: {button_name}")
+                button_names.add(button_name)
 
     def get_field_by_name(self, name: str) -> Optional[FieldConfig]:
         """Get a field configuration by name."""

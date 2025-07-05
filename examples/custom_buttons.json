@@ -1,0 +1,83 @@
+{
+  "window": {
+    "title": "Custom Buttons Demo",
+    "width": 600,
+    "height": 500
+  },
+  "fields": [
+    {
+      "name": "first_name",
+      "type": "text",
+      "label": "First Name",
+      "required": true,
+      "placeholder": "Enter your first name"
+    },
+    {
+      "name": "last_name",
+      "type": "text",
+      "label": "Last Name",
+      "required": true,
+      "placeholder": "Enter your last name"
+    },
+    {
+      "name": "email",
+      "type": "email",
+      "label": "Email",
+      "required": true,
+      "placeholder": "Enter your email address"
+    },
+    {
+      "name": "age",
+      "type": "int",
+      "label": "Age",
+      "min_value": 0,
+      "max_value": 120,
+      "default_value": 25
+    },
+    {
+      "name": "salary",
+      "type": "float",
+      "label": "Salary",
+      "min_value": 0.0,
+      "format_string": ".2f",
+      "default_value": 50000.00,
+      "tooltip": "Annual salary in USD"
+    },
+    {
+      "name": "notes",
+      "type": "textarea",
+      "label": "Notes",
+      "placeholder": "Additional notes..."
+    }
+  ],
+  "layout": "form",
+  "submit_button": true,
+  "submit_label": "Save",
+  "cancel_button": true,
+  "cancel_label": "Cancel",
+  "custom_buttons": [
+    {
+      "name": "validate",
+      "label": "Validate Data",
+      "tooltip": "Validate the current form data without saving"
+    },
+    {
+      "name": "clear",
+      "label": "Clear All",
+      "tooltip": "Clear all form fields",
+      "style": "background-color: #ff6b6b; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px;"
+    },
+    {
+      "name": "preview",
+      "label": "Preview",
+      "tooltip": "Preview the form data",
+      "style": "background-color: #4ecdc4; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px;"
+    },
+    {
+      "name": "export",
+      "label": "Export JSON",
+      "tooltip": "Export form data as JSON file",
+      "style": "background-color: #45b7d1; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px;"
+    }
+  ]
+}

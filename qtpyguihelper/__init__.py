@@ -6,10 +6,10 @@ and automatically generate the corresponding PySide6 interface.
 """
 
 from .gui_builder import GuiBuilder
-from .config_loader import ConfigLoader
+from .config_loader import ConfigLoader, CustomButtonConfig
 from .widget_factory import WidgetFactory
 
 __version__ = "1.0.0"
 __author__ = "QtPyGuiHelper Team"
 
-__all__ = ["GuiBuilder", "ConfigLoader", "WidgetFactory"]
+__all__ = ["GuiBuilder", "ConfigLoader", "WidgetFactory", "CustomButtonConfig"]

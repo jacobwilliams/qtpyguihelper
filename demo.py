@@ -467,7 +467,7 @@ def demo_format_strings():
     def handle_submit(form_data):
         """Handle form submission and show formatted values."""
         result_text = "Format String Examples:\n" + "="*50 + "\n"
-        
+
         # Define format examples with explanations
         format_examples = {
             "fixed_point_2": (".2f", "Fixed-point, 2 decimals"),
@@ -479,7 +479,7 @@ def demo_format_strings():
             "currency": (",.2f", "Currency with thousands separator"),
             "no_decimals": (".0f", "Whole numbers only")
         }
-        
+
         for field_name, value in form_data.items():
             if field_name != "_metadata" and field_name in format_examples:
                 format_spec, description = format_examples[field_name]
@@ -492,7 +492,7 @@ def demo_format_strings():
                     result_text += f"  Formatted: {formatted_value}\n\n"
                 except ValueError as e:
                     result_text += f"{field_name}: Format error - {e}\n\n"
-        
+
         # Show the values
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
@@ -507,6 +507,122 @@ def demo_format_strings():
 
     # Run the application
     app.exec()
+
+
+def demo_custom_buttons():
+    """Demo custom buttons with callbacks."""
+    print("Starting Custom Buttons Demo...")
+
+    app = QApplication(sys.argv)
+
+    # Load custom buttons configuration
+    config_path = os.path.join(os.path.dirname(__file__), "examples", "custom_buttons.json")
+    gui = GuiBuilder(config_path=config_path)
+
+    def validate_data_callback(form_data):
+        """Validate form data."""
+        issues = []
+
+        if not form_data.get('first_name', '').strip():
+            issues.append("First name is required")
+        if not form_data.get('last_name', '').strip():
+            issues.append("Last name is required")
+        if not form_data.get('email', '').strip():
+            issues.append("Email is required")
+        elif '@' not in form_data.get('email', ''):
+            issues.append("Email must contain @ symbol")
+
+        age = form_data.get('age', 0)
+        if age < 18:
+            issues.append("Age must be 18 or older")
+
+        salary = form_data.get('salary', 0)
+        if salary < 0:
+            issues.append("Salary cannot be negative")
+
+        # Show validation results
+        if issues:
+            msg = "Validation Issues Found:\n\n• " + "\n• ".join(issues)
+            QMessageBox.warning(None, "Validation Failed", msg)
+        else:
+            QMessageBox.information(None, "Validation Passed", "All form data is valid!")
+
+    def clear_all_callback(form_data):
+        """Clear all form fields."""
+        reply = QMessageBox.question(
+            None,
+            "Confirm Clear",
+            "Are you sure you want to clear all form data?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            gui.clear_form()
+            QMessageBox.information(None, "Form Cleared", "All form fields have been cleared.")
+
+    def preview_callback(form_data):
+        """Preview form data."""
+        preview_text = "Form Data Preview:\n\n"
+
+        for key, value in form_data.items():
+            if key and value is not None:
+                if isinstance(value, float):
+                    preview_text += f"{key.replace('_', ' ').title()}: ${value:,.2f}\n"
+                else:
+                    preview_text += f"{key.replace('_', ' ').title()}: {value}\n"
+
+        QMessageBox.information(None, "Form Data Preview", preview_text)
+
+    def export_json_callback(form_data):
+        """Export form data as JSON."""
+        try:
+            from qtpy.QtWidgets import QFileDialog
+            file_path, _ = QFileDialog.getSaveFileName(
+                None,
+                "Export Form Data",
+                "form_data.json",
+                "JSON Files (*.json);;All Files (*)"
+            )
+
+            if file_path:
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    json.dump(form_data, f, indent=2, ensure_ascii=False)
+                QMessageBox.information(None, "Export Successful", f"Form data exported to:\n{file_path}")
+        except Exception as e:
+            QMessageBox.critical(None, "Export Failed", f"Failed to export data:\n{str(e)}")
+
+    def on_submit_custom_buttons(form_data):
+        """Handle form submission."""
+        print("Form submitted with data:")
+        for key, value in form_data.items():
+            print(f"  {key}: {value}")
+
+        QMessageBox.information(None, "Form Submitted", "Form data has been submitted successfully!")
+
+    def on_cancel_custom_buttons():
+        """Handle form cancellation."""
+        print("Form cancelled")
+        QMessageBox.information(None, "Cancelled", "Form submission was cancelled.")
+
+    # Register custom button callbacks
+    gui.set_custom_button_callback("validate", validate_data_callback)
+    gui.set_custom_button_callback("clear", clear_all_callback)
+    gui.set_custom_button_callback("preview", preview_callback)
+    gui.set_custom_button_callback("export", export_json_callback)
+
+    # Register standard callbacks
+    gui.set_submit_callback(on_submit_custom_buttons)
+    gui.set_cancel_callback(on_cancel_custom_buttons)
+
+    # Show the GUI
+    gui.show()
+
+    print("Custom buttons available:")
+    for button_name in gui.get_custom_button_names():
+        print(f"  - {button_name}")
+
+    return app.exec()
 
 
 def main():
@@ -525,8 +641,9 @@ def main():
         print("  python demo.py nested        - Nested field names demo")
         print("  python demo.py float         - Float fields demo")
         print("  python demo.py format        - Format strings demo")
+        print("  python demo.py custom_buttons - Custom buttons demo")
         print()
-        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs/nested/float/format): ").lower()
+        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs/nested/float/format/custom_buttons): ").lower()
 
     if demo_type == "registration":
         demo_user_registration()
@@ -548,9 +665,11 @@ def main():
         demo_float_fields()
     elif demo_type == "format":
         demo_format_strings()
+    elif demo_type == "custom_buttons":
+        demo_custom_buttons()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format, custom_buttons")
 
 
 if __name__ == "__main__":

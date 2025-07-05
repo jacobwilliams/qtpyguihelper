@@ -87,5 +87,18 @@
   ],
   "submit_button": true,
   "submit_label": "Submit",
-  "cancel_button": true
+  "cancel_button": true,
+  "custom_buttons": [
+    {
+      "name": "validate",
+      "label": "Validate",
+      "tooltip": "Validate form data before submission"
+    },
+    {
+      "name": "reset",
+      "label": "Reset",
+      "tooltip": "Reset form to default values",
+      "style": "background-color: #f39c12; color: white; padding: 6px 12px; border-radius: 3px;"
+    }
+  ]
 }
