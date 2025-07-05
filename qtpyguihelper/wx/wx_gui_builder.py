@@ -7,7 +7,7 @@ from typing import Dict, Any, Callable, Optional, List
 import wx
 import wx.lib.scrolledpanel as scrolled
 
-from .config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
 from .wx_widget_factory import WxWidgetFactory, get_nested_value
 
 

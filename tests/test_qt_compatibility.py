@@ -29,7 +29,7 @@ def test_qtpy_imports():
 
         # Test library imports
         from qtpyguihelper import GuiBuilder
-        from qtpyguihelper.widget_factory import WidgetFactory
+        from qtpyguihelper.qt.widget_factory import WidgetFactory
         from qtpyguihelper.config_loader import ConfigLoader
         print("✓ QtPyGuiHelper imports successful")
 

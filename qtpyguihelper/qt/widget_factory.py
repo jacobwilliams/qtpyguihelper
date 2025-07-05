@@ -14,7 +14,7 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt, QDate, QTime, QDateTime, Signal
 from qtpy.QtGui import QColor, QPixmap, QIcon
 
-from .config_loader import FieldConfig
+from ..config_loader import FieldConfig
 
 
 def set_nested_value(data: Dict[str, Any], key_path: str, value: Any):

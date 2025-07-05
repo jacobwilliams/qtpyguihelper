@@ -13,7 +13,7 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
-from .config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
 from .widget_factory import WidgetFactory, get_nested_value
 
 

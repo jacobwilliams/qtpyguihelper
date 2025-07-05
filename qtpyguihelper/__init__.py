@@ -19,11 +19,11 @@ Usage:
     app = GuiBuilder.create_and_run('config.json')
 """
 
-from .gui_builder import GuiBuilder as QtGuiBuilder
-from .wx_gui_builder import WxGuiBuilder
+from .qt.gui_builder import GuiBuilder as QtGuiBuilder
+from .qt.widget_factory import WidgetFactory
+from .wx.wx_gui_builder import WxGuiBuilder
+from .wx.wx_widget_factory import WxWidgetFactory
 from .config_loader import ConfigLoader, CustomButtonConfig
-from .widget_factory import WidgetFactory
-from .wx_widget_factory import WxWidgetFactory
 from .backend import (
     get_backend, set_backend, get_available_backends,
     get_backend_info, is_backend_available, BackendError

@@ -114,8 +114,8 @@ def test_widget_factory_imports():
     print("\n=== Widget Factory Import Test ===")
 
     try:
-        from qtpyguihelper.widget_factory import WidgetFactory
-        from qtpyguihelper.wx_widget_factory import WxWidgetFactory
+        from qtpyguihelper.qt.widget_factory import WidgetFactory
+        from qtpyguihelper.wx.wx_widget_factory import WxWidgetFactory
 
         # Test that we can create factory instances
         qt_factory = WidgetFactory()

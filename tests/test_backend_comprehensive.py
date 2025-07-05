@@ -79,13 +79,13 @@ def test_import_safety():
         print(f"✗ GuiBuilder import error: {e}")
 
     try:
-        from qtpyguihelper.gui_builder import GuiBuilder as QtGuiBuilder
+        from qtpyguihelper.qt.gui_builder import GuiBuilder as QtGuiBuilder
         print("✓ QtGuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ QtGuiBuilder import error: {e}")
 
     try:
-        from qtpyguihelper.wx_gui_builder import WxGuiBuilder
+        from qtpyguihelper.wx.wx_gui_builder import WxGuiBuilder
         print("✓ WxGuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ WxGuiBuilder import error: {e}")
@@ -133,14 +133,14 @@ def test_widget_factories():
     print("=== Widget Factory Test ===")
 
     try:
-        from qtpyguihelper.widget_factory import WidgetFactory
+        from qtpyguihelper.qt.widget_factory import WidgetFactory
         _qt_factory = WidgetFactory()
         print("✓ Qt WidgetFactory created successfully")
     except (ImportError, RuntimeError) as e:
         print(f"✗ Qt WidgetFactory error: {e}")
 
     try:
-        from qtpyguihelper.wx_widget_factory import WxWidgetFactory
+        from qtpyguihelper.wx.wx_widget_factory import WxWidgetFactory
         _wx_factory = WxWidgetFactory()
         print("✓ wxPython WxWidgetFactory created successfully")
     except (ImportError, RuntimeError) as e:

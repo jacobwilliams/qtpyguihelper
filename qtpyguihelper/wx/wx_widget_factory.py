@@ -8,7 +8,7 @@ import wx.lib.scrolledpanel as scrolled
 import wx.adv
 from datetime import datetime, date, time
 
-from .config_loader import FieldConfig
+from ..config_loader import FieldConfig
 
 
 def set_nested_value(data: Dict[str, Any], key_path: str, value: Any):
