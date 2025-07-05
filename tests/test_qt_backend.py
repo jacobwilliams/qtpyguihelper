@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
 """
-Quick test of wxPython backend functionality.
+Quick test of Qt backend functionality.
 """
 
 import sys
 import os
 
 # Add the library to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from qtpyguihelper import set_backend, GuiBuilder
 
 
-def test_wx_backend():
-    """Test basic wxPython backend functionality."""
-    print("Testing wxPython backend...")
+def test_qt_backend():
+    """Test basic Qt backend functionality."""
+    print("Testing Qt backend...")
     
-    # Force wxPython backend
-    set_backend('wx')
+    # Force Qt backend
+    set_backend('qt')
     
     # Simple configuration
     config = {
         "window": {
-            "title": "wxPython Test",
+            "title": "Qt Test", 
             "width": 400,
             "height": 300,
             "resizable": True
@@ -41,14 +41,14 @@ def test_wx_backend():
             {
                 "name": "age",
                 "type": "int",
-                "label": "Age",
+                "label": "Age", 
                 "min_value": 0,
                 "max_value": 120,
                 "default_value": 25
             },
             {
                 "name": "subscribe",
-                "type": "checkbox", 
+                "type": "checkbox",
                 "label": "Subscribe to newsletter",
                 "default_value": True
             }
@@ -73,11 +73,15 @@ def test_wx_backend():
     gui.show()
     
     # Run the application
-    import wx
-    if wx.App.Get() is None:
-        app = wx.App()
-        app.MainLoop()
+    try:
+        from qtpy.QtWidgets import QApplication
+    except ImportError:
+        from qtpy.QtGui import QApplication
+        
+    if not QApplication.instance():
+        app = QApplication(sys.argv)
+        sys.exit(app.exec())
 
 
 if __name__ == "__main__":
-    test_wx_backend()
+    test_qt_backend()
