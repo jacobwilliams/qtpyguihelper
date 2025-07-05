@@ -32,13 +32,13 @@ def on_submit(form_data):
     for key, value in form_data.items():
         print(f"{key}: {value}")
     print("=====================\n")
-    
+
     # Show a simple message dialog
     try:
         import wx as wx_local
         app = wx_local.GetApp()
         if app:
-            wx_local.MessageBox(f"Form submitted successfully!\nName: {form_data.get('name', 'Unknown')}", 
+            wx_local.MessageBox(f"Form submitted successfully!\nName: {form_data.get('name', 'Unknown')}",
                                "Success", wx_local.OK | wx_local.ICON_INFORMATION)
     except (AttributeError, ImportError, RuntimeError):
         pass
@@ -113,48 +113,48 @@ def main():
     """Main function to run the wxPython demo."""
     print("QtPyGuiHelper wxPython Demo")
     print("===========================")
-    
+
     try:
         # Force wxPython backend
         set_backend('wx')
         print("✓ wxPython backend selected")
-        
+
         # Create the GUI configuration
         config = create_simple_config()
-        
+
         # Create the GUI builder
         gui_builder = GuiBuilder(config_dict=config)
         print("✓ GUI builder created")
-        
+
         # Set callbacks
         gui_builder.set_submit_callback(on_submit)
         gui_builder.set_cancel_callback(on_cancel)
         print("✓ Callbacks set")
-        
+
         # Show the window
         print("✓ Showing window...")
         gui_builder.show()
-        
+
         # Start the wxPython event loop
         print("✓ Starting wxPython application...")
-        
+
         app = wx.GetApp()  # type: ignore
         if not app:
             app = wx.App()  # type: ignore
-        
+
         print("\n=== GUI is now running ===")
         print("Fill out the form and click Submit to test functionality")
         print("Close the window or click Cancel to exit")
         print("==========================")
-        
+
         app.MainLoop()  # type: ignore
-        
+
     except (ImportError, RuntimeError, AttributeError) as e:
         print(f"❌ Error: {e}")
         import traceback
         traceback.print_exc()
         return 1
-    
+
     print("\n✓ Demo completed successfully!")
     return 0
 

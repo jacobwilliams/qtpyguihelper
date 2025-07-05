@@ -41,30 +41,30 @@ def on_form_cancel():
 def validate_form(form_data):
     """Custom button: Validate the form data."""
     print("\n=== Validating Form ===")
-    
+
     errors = []
-    
+
     # Check required fields
     if not form_data.get('name', '').strip():
         errors.append("Name is required")
-    
+
     if not form_data.get('email', '').strip():
         errors.append("Email is required")
     elif '@' not in form_data.get('email', ''):
         errors.append("Email must contain @")
-    
+
     if form_data.get('age', 0) < 18:
         errors.append("Age must be 18 or older")
-    
+
     if errors:
         print("❌ Validation failed:")
         for error in errors:
             print(f"  - {error}")
-        
+
         # Show error dialog
         try:
             wx_local = wx  # Work around linting
-            wx_local.MessageBox("\n".join(errors), "Validation Errors", 
+            wx_local.MessageBox("\n".join(errors), "Validation Errors",
                                wx_local.OK | wx_local.ICON_ERROR)  # type: ignore
         except (AttributeError, RuntimeError):
             pass
@@ -72,7 +72,7 @@ def validate_form(form_data):
         print("✓ Validation passed!")
         try:
             wx_local = wx
-            wx_local.MessageBox("All form data is valid!", "Validation Success", 
+            wx_local.MessageBox("All form data is valid!", "Validation Success",
                                wx_local.OK | wx_local.ICON_INFORMATION)  # type: ignore
         except (AttributeError, RuntimeError):
             pass
@@ -89,7 +89,7 @@ def clear_form_data(_form_data):
 def load_sample_data(_form_data):
     """Custom button: Load sample data into the form."""
     print("Loading sample data...")
-    
+
     sample_data = {
         "name": "Alice Johnson",
         "age": 28,
@@ -101,7 +101,7 @@ def load_sample_data(_form_data):
         "experience": "Senior",
         "notes": "Experienced software engineer with expertise in Python and web development."
     }
-    
+
     gui_builder.set_form_data(sample_data)
     print("✓ Sample data loaded")
 
@@ -109,21 +109,21 @@ def load_sample_data(_form_data):
 def export_form_data(form_data):
     """Custom button: Export form data to JSON file."""
     print("Exporting form data...")
-    
+
     try:
         filename = "exported_form_data.json"
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(form_data, f, indent=2, ensure_ascii=False)
-        
+
         print(f"✓ Form data exported to {filename}")
-        
+
         try:
             wx_local = wx
-            wx_local.MessageBox(f"Form data exported successfully to:\n{filename}", 
+            wx_local.MessageBox(f"Form data exported successfully to:\n{filename}",
                                "Export Complete", wx_local.OK | wx_local.ICON_INFORMATION)  # type: ignore
         except (AttributeError, RuntimeError):
             pass
-            
+
     except IOError as e:
         print(f"❌ Export failed: {e}")
 
@@ -244,49 +244,49 @@ def create_advanced_config():
 def main():
     """Main function to run the advanced wxPython demo."""
     global gui_builder
-    
+
     print("QtPyGuiHelper Advanced wxPython Demo")
     print("====================================")
-    
+
     try:
         # Force wxPython backend
         set_backend('wx')
         print("✓ wxPython backend selected")
-        
+
         # Create the advanced GUI configuration
         config = create_advanced_config()
-        
+
         # Create the GUI builder
         gui_builder = GuiBuilder(config_dict=config)
         print("✓ GUI builder created")
-        
+
         # Set main callbacks
         gui_builder.set_submit_callback(on_form_submit)
         gui_builder.set_cancel_callback(on_form_cancel)
-        
+
         # Set custom button callbacks
         gui_builder.set_custom_button_callback("validate", validate_form)
         gui_builder.set_custom_button_callback("clear", clear_form_data)
         gui_builder.set_custom_button_callback("load_sample", load_sample_data)
         gui_builder.set_custom_button_callback("export", export_form_data)
-        
+
         print("✓ All callbacks set")
-        
+
         # Show available custom buttons
         button_names = gui_builder.get_custom_button_names()
         print(f"✓ Custom buttons available: {', '.join(button_names)}")
-        
+
         # Show the window
         print("✓ Showing window...")
         gui_builder.show()
-        
+
         # Start the wxPython event loop
         print("✓ Starting wxPython application...")
-        
+
         app = wx.GetApp()  # type: ignore
         if not app:
             app = wx.App()  # type: ignore
-        
+
         print("\n=== Advanced GUI Demo is now running ===")
         print("Try the following features:")
         print("1. Fill out the form fields")
@@ -296,15 +296,15 @@ def main():
         print("5. Click 'Export JSON' to save data")
         print("6. Click 'Save Employee' to submit")
         print("==========================================")
-        
+
         app.MainLoop()  # type: ignore
-        
+
     except (ImportError, RuntimeError, AttributeError) as e:
         print(f"❌ Error: {e}")
         import traceback
         traceback.print_exc()
         return 1
-    
+
     print("\n✓ Advanced demo completed successfully!")
     return 0
 

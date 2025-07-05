@@ -10,7 +10,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
 
 from qtpyguihelper import (
-    get_available_backends, get_backend_info, set_backend, 
+    get_available_backends, get_backend_info, set_backend,
     is_backend_available
 )
 
@@ -18,13 +18,13 @@ from qtpyguihelper import (
 def test_backend_detection():
     """Test backend detection and switching."""
     print("=== Backend Detection Test ===")
-    
+
     available = get_available_backends()
     print(f"Available backends: {available}")
-    
+
     info = get_backend_info()
     print(f"Default backend: {info['backend']}")
-    
+
     # Test Qt availability
     if is_backend_available('qt'):
         print("✓ Qt backend is available")
@@ -34,8 +34,8 @@ def test_backend_detection():
         print(f"  Qt Version: {qt_info.get('qt_version', 'Unknown')}")
     else:
         print("✗ Qt backend not available")
-    
-    # Test wxPython availability  
+
+    # Test wxPython availability
     if is_backend_available('wx'):
         print("✓ wxPython backend is available")
         set_backend('wx')
@@ -44,14 +44,14 @@ def test_backend_detection():
         print(f"  wxPython Platform: {wx_info.get('wx_platform', 'Unknown')}")
     else:
         print("✗ wxPython backend not available")
-    
+
     print()
 
 
 def test_unified_interface():
     """Test the unified GuiBuilder interface."""
     print("=== Unified Interface Test ===")
-    
+
     # Test backend switching without creating GUI objects
     for backend in get_available_backends():
         print(f"Testing backend selection: {backend}")
@@ -64,41 +64,41 @@ def test_unified_interface():
                 print(f"  ✗ {backend} backend selection failed")
         except Exception as e:
             print(f"  ✗ Error selecting {backend} backend: {e}")
-    
+
     print()
 
 
 def test_import_safety():
     """Test that all imports work without requiring app creation."""
     print("=== Import Safety Test ===")
-    
+
     try:
         from qtpyguihelper import GuiBuilder
         print("✓ GuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ GuiBuilder import error: {e}")
-    
+
     try:
         from qtpyguihelper.gui_builder import GuiBuilder as QtGuiBuilder
         print("✓ QtGuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ QtGuiBuilder import error: {e}")
-    
+
     try:
         from qtpyguihelper.wx_gui_builder import WxGuiBuilder
-        print("✓ WxGuiBuilder imported successfully") 
+        print("✓ WxGuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ WxGuiBuilder import error: {e}")
-    
+
     print()
 
 
 def test_config_loading():
     """Test configuration loading with different backends."""
     print("=== Configuration Loading Test ===")
-    
+
     from qtpyguihelper.config_loader import ConfigLoader
-    
+
     config_dict = {
         "window": {"title": "Test", "width": 500, "height": 400},
         "layout": "form",
@@ -115,37 +115,37 @@ def test_config_loading():
             {"name": "test_btn", "label": "Test Button", "tooltip": "Test button"}
         ]
     }
-    
+
     loader = ConfigLoader()
     config = loader.load_from_dict(config_dict)
-    
+
     print("Configuration loaded successfully")
     print(f"  Window title: {config.window.title}")
     print(f"  Field count: {len(config.fields)}")
     print(f"  Custom buttons: {len(config.custom_buttons) if config.custom_buttons else 0}")
     print(f"  Layout: {config.layout}")
-    
+
     print()
 
 
 def test_widget_factories():
     """Test both widget factory imports."""
     print("=== Widget Factory Test ===")
-    
+
     try:
         from qtpyguihelper.widget_factory import WidgetFactory
         _qt_factory = WidgetFactory()
         print("✓ Qt WidgetFactory created successfully")
     except (ImportError, RuntimeError) as e:
         print(f"✗ Qt WidgetFactory error: {e}")
-    
+
     try:
-        from qtpyguihelper.wx_widget_factory import WxWidgetFactory  
+        from qtpyguihelper.wx_widget_factory import WxWidgetFactory
         _wx_factory = WxWidgetFactory()
         print("✓ wxPython WxWidgetFactory created successfully")
     except (ImportError, RuntimeError) as e:
         print(f"✗ wxPython WxWidgetFactory error: {e}")
-    
+
     print()
 
 
@@ -154,12 +154,12 @@ def main():
     print("QtPyGuiHelper Backend Test Suite")
     print("=" * 40)
     print()
-    
+
     test_backend_detection()
     test_unified_interface()
     test_config_loading()
     test_widget_factories()
-    
+
     print("=== Summary ===")
     available = get_available_backends()
     if len(available) == 2:
@@ -169,19 +169,19 @@ def main():
         print("✓ Qt backend available")
         print("⚠ wxPython backend not available (install with: pip install wxpython)")
     elif 'wx' in available:
-        print("✓ wxPython backend available") 
+        print("✓ wxPython backend available")
         print("⚠ Qt backend not available (install with: pip install PySide6)")
     else:
         print("✗ No backends available!")
         return 1
-    
+
     print("✓ All core functionality tests passed")
     print()
     print("To test the GUI interfaces:")
     print("  python demo_backend_selection.py qt    # Test Qt backend")
     print("  python demo_backend_selection.py wx    # Test wxPython backend")
     print("  python demo_backend_selection.py auto  # Test auto-selection")
-    
+
     return 0
 
 

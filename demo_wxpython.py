@@ -21,11 +21,11 @@ def on_submit_callback(form_data):
     print("=== Form Submitted ===")
     for key, value in form_data.items():
         print(f"  {key}: {value}")
-    
+
     # Show success message using wxPython
     wx.MessageBox(
-        f"Form submitted successfully!\nName: {form_data.get('name', 'N/A')}\nEmail: {form_data.get('email', 'N/A')}", 
-        "Success", 
+        f"Form submitted successfully!\nName: {form_data.get('name', 'N/A')}\nEmail: {form_data.get('email', 'N/A')}",
+        "Success",
         wx.OK | wx.ICON_INFORMATION
     )
 
@@ -33,14 +33,14 @@ def on_submit_callback(form_data):
 def on_cancel_callback():
     """Callback function for form cancellation."""
     print("Form cancelled by user")
-    
+
     # Show cancellation message
     result = wx.MessageBox(
-        "Are you sure you want to exit?", 
-        "Confirm Exit", 
+        "Are you sure you want to exit?",
+        "Confirm Exit",
         wx.YES_NO | wx.ICON_QUESTION
     )
-    
+
     if result == wx.YES:
         # Close the application
         wx.GetApp().ExitMainLoop()
@@ -49,24 +49,24 @@ def on_cancel_callback():
 def validate_data_callback(form_data):
     """Custom button callback for data validation."""
     print("=== Validating Data ===")
-    
+
     errors = []
-    
+
     # Check required fields
     if not form_data.get('name', '').strip():
         errors.append("Name is required")
-    
+
     if not form_data.get('email', '').strip():
         errors.append("Email is required")
     elif '@' not in form_data.get('email', ''):
         errors.append("Email must contain @ symbol")
-    
+
     age = form_data.get('age', 0)
     if age <= 0:
         errors.append("Age must be greater than 0")
     elif age > 150:
         errors.append("Age seems unrealistic")
-    
+
     # Show validation results
     if errors:
         error_msg = "Validation Errors:\n\n" + "\n".join(f"• {error}" for error in errors)
@@ -80,7 +80,7 @@ def validate_data_callback(form_data):
 def load_sample_data_callback(form_data):
     """Custom button callback to load sample data."""
     print("=== Loading Sample Data ===")
-    
+
     # Get the GUI builder instance from the callback context
     # Note: In a real application, you'd store the reference to gui_builder
     # For this demo, we'll show how to access it
@@ -97,7 +97,7 @@ def load_sample_data_callback(form_data):
             'birth_date': '1995-06-15',
             'notes': 'This is sample data loaded via wxPython custom button callback.'
         }
-        
+
         app.gui_builder.set_form_data(sample_data)
         wx.MessageBox("Sample data loaded successfully!", "Data Loaded", wx.OK | wx.ICON_INFORMATION)
         print("Sample data loaded:", sample_data)
@@ -108,13 +108,13 @@ def load_sample_data_callback(form_data):
 def clear_form_callback(form_data):
     """Custom button callback to clear the form."""
     print("=== Clearing Form ===")
-    
+
     result = wx.MessageBox(
-        "Are you sure you want to clear all form data?", 
-        "Confirm Clear", 
+        "Are you sure you want to clear all form data?",
+        "Confirm Clear",
         wx.YES_NO | wx.ICON_QUESTION
     )
-    
+
     if result == wx.YES:
         app = wx.GetApp()
         if hasattr(app, 'gui_builder'):
@@ -242,7 +242,7 @@ def demo_wxpython_gui():
     print("=== Starting wxPython GUI Demo ===")
     print("This demo shows a fully functional GUI created with wxPython backend")
     print()
-    
+
     # Force wxPython backend
     try:
         set_backend('wx')
@@ -250,36 +250,36 @@ def demo_wxpython_gui():
     except Exception as e:
         print(f"❌ Failed to set wxPython backend: {e}")
         return
-    
+
     # Create wxPython application
     app = wx.App()
-    
+
     try:
         # Create the GUI configuration
         config = create_sample_config()
-        
+
         # Create the GUI builder
         gui_builder = GuiBuilder(config_dict=config)
         print("✓ GUI builder created successfully")
-        
+
         # Store reference in app for custom button callbacks
         app.gui_builder = gui_builder
-        
+
         # Set up callbacks
         gui_builder.set_submit_callback(on_submit_callback)
         gui_builder.set_cancel_callback(on_cancel_callback)
-        
+
         # Set up custom button callbacks
         gui_builder.set_custom_button_callback("validate", validate_data_callback)
         gui_builder.set_custom_button_callback("load_sample", load_sample_data_callback)
         gui_builder.set_custom_button_callback("clear_all", clear_form_callback)
-        
+
         print("✓ All callbacks registered successfully")
-        
+
         # Show the GUI window
         gui_builder.show()
         print("✓ GUI window shown")
-        
+
         print()
         print("=== GUI Demo Features ===")
         print("• Text input fields with validation")
@@ -299,12 +299,12 @@ def demo_wxpython_gui():
         print("• 'Cancel' - Close the application")
         print()
         print("Close the window or click Cancel to exit...")
-        
+
         # Run the wxPython event loop
         app.MainLoop()
-        
+
         print("=== Demo completed successfully! ===")
-        
+
     except Exception as e:
         print(f"❌ Error during GUI demo: {e}")
         import traceback
@@ -314,43 +314,43 @@ def demo_wxpython_gui():
 def demo_file_based_config():
     """Demo loading configuration from a JSON file."""
     print("\n=== File-Based Configuration Demo ===")
-    
+
     # Create a sample config file
     config_file = "demo_wx_config.json"
     config = create_sample_config()
     config["window"]["title"] = "wxPython Demo - From JSON File"
-    
+
     try:
         # Save config to file
         with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(config, f, indent=2)
-        
+
         print(f"✓ Created config file: {config_file}")
-        
+
         # Force wxPython backend
         set_backend('wx')
-        
+
         # Create wxPython app
         app = wx.App()
-        
+
         # Load GUI from file
         gui_builder = GuiBuilder(config_path=config_file)
         app.gui_builder = gui_builder
-        
+
         # Set up callbacks (simplified)
         gui_builder.set_submit_callback(lambda data: print("File-based config submitted:", data))
         gui_builder.set_cancel_callback(lambda: app.ExitMainLoop())
-        
+
         print("✓ Loaded GUI from JSON file")
-        
+
         # Show and run
         gui_builder.show()
         app.MainLoop()
-        
+
         # Clean up
         os.remove(config_file)
         print(f"✓ Cleaned up config file: {config_file}")
-        
+
     except Exception as e:
         print(f"❌ Error in file-based demo: {e}")
         # Clean up on error
@@ -363,7 +363,7 @@ def main():
     print("QtPyGuiHelper - wxPython Backend Demo")
     print("=====================================")
     print()
-    
+
     # Check if wxPython is available
     try:
         import wx
@@ -372,11 +372,11 @@ def main():
         print("❌ wxPython is not installed. Please install it with:")
         print("   pip install wxPython")
         return
-    
+
     # Check command line arguments
     if len(sys.argv) > 1:
         demo_type = sys.argv[1].lower()
-        
+
         if demo_type == "dict":
             demo_wxpython_gui()
         elif demo_type == "file":

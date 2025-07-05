@@ -80,7 +80,7 @@ class WxGuiBuilder(wx.Frame):
         if self.config.use_tabs and self.config.tabs:
             # Create notebook (tab control)
             notebook = wx.Notebook(main_panel)
-            
+
             # Create tabs
             for tab_config in self.config.tabs:
                 if tab_config.enabled:
@@ -89,7 +89,7 @@ class WxGuiBuilder(wx.Frame):
                     if tab_config.tooltip:
                         # wxPython doesn't have built-in tab tooltips, but we can add them to the page
                         tab_page.SetToolTip(tab_config.tooltip)
-            
+
             main_sizer.Add(notebook, 1, wx.EXPAND | wx.ALL, 5)
         else:
             # Create scrolled panel for form fields
@@ -152,7 +152,7 @@ class WxGuiBuilder(wx.Frame):
                     # Regular field with label
                     label = self.widget_factory.create_label(parent, field_config)
                     widget = self.widget_factory.create_widget(parent, field_config)
-                    
+
                     sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 2)
                     if widget:
                         sizer.Add(widget, 1, wx.EXPAND | wx.ALL, 2)
@@ -203,22 +203,22 @@ class WxGuiBuilder(wx.Frame):
     def _create_button_sizer(self, parent: wx.Window) -> wx.BoxSizer:
         """Create the button sizer with submit, cancel, and custom buttons."""
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        
+
         # Add custom buttons first (on the left)
         if self.config.custom_buttons:
             for button_config in self.config.custom_buttons:
                 button_id = self._next_button_id
                 self._next_button_id += 1
-                
+
                 custom_btn = wx.Button(parent, id=button_id, label=button_config.label)
-                
+
                 # Set tooltip if provided
                 if button_config.tooltip:
                     custom_btn.SetToolTip(button_config.tooltip)
-                
+
                 # Set enabled state
                 custom_btn.Enable(button_config.enabled)
-                
+
                 # Apply custom style if provided (limited support in wxPython)
                 if button_config.style:
                     # Parse simple background-color and color styles
@@ -226,7 +226,7 @@ class WxGuiBuilder(wx.Frame):
                         import re
                         bg_match = re.search(r'background-color:\s*([^;]+)', button_config.style)
                         fg_match = re.search(r'color:\s*([^;]+)', button_config.style)
-                        
+
                         if bg_match:
                             bg_color = bg_match.group(1).strip()
                             if bg_color.startswith('#'):
@@ -236,7 +236,7 @@ class WxGuiBuilder(wx.Frame):
                                 g = int(hex_color[2:4], 16)
                                 b = int(hex_color[4:6], 16)
                                 custom_btn.SetBackgroundColour(wx.Colour(r, g, b))
-                        
+
                         if fg_match:
                             fg_color = fg_match.group(1).strip()
                             if fg_color.startswith('#'):
@@ -251,14 +251,14 @@ class WxGuiBuilder(wx.Frame):
                                 custom_btn.SetForegroundColour(wx.Colour(0, 0, 0))
                     except:
                         pass  # Ignore style parsing errors
-                
+
                 # Bind event
-                self.Bind(wx.EVT_BUTTON, 
-                         lambda evt, name=button_config.name: self._on_custom_button_clicked(name), 
+                self.Bind(wx.EVT_BUTTON,
+                         lambda evt, name=button_config.name: self._on_custom_button_clicked(name),
                          custom_btn)
-                
+
                 button_sizer.Add(custom_btn, 0, wx.ALL, 5)
-        
+
         button_sizer.AddStretchSpacer()  # Push standard buttons to the right
 
         if self.config.cancel_button:
@@ -279,20 +279,20 @@ class WxGuiBuilder(wx.Frame):
         for field_name, widget in self.widget_factory.widgets.items():
             if isinstance(widget, wx.TextCtrl):
                 # Connect text change event
-                widget.Bind(wx.EVT_TEXT, 
+                widget.Bind(wx.EVT_TEXT,
                            lambda evt, name=field_name: self._on_field_changed(name, evt.GetString()))
             elif isinstance(widget, (wx.SpinCtrl, wx.SpinCtrlDouble)):
                 # Connect spin control change event
-                widget.Bind(wx.EVT_SPINCTRL, 
+                widget.Bind(wx.EVT_SPINCTRL,
                            lambda evt, name=field_name: self._on_field_changed(name, evt.GetEventObject().GetValue()))
             elif isinstance(widget, wx.CheckBox):
                 # Connect checkbox change event
-                widget.Bind(wx.EVT_CHECKBOX, 
+                widget.Bind(wx.EVT_CHECKBOX,
                            lambda evt, name=field_name: self._on_field_changed(name, evt.IsChecked()))
             elif isinstance(widget, wx.Choice):
                 # Connect choice change event
-                widget.Bind(wx.EVT_CHOICE, 
-                           lambda evt, name=field_name: self._on_field_changed(name, 
+                widget.Bind(wx.EVT_CHOICE,
+                           lambda evt, name=field_name: self._on_field_changed(name,
                                evt.GetEventObject().GetString(evt.GetSelection()) if evt.GetSelection() != wx.NOT_FOUND else ""))
             elif isinstance(widget, (wx.adv.DatePickerCtrl, wx.adv.TimePickerCtrl)):
                 # Connect date/time picker change events
@@ -304,7 +304,7 @@ class WxGuiBuilder(wx.Frame):
                                lambda evt, name=field_name: self._on_field_changed(name, self.widget_factory.get_widget_value(field_name)))
             elif isinstance(widget, wx.Slider):
                 # Connect slider change event
-                widget.Bind(wx.EVT_SLIDER, 
+                widget.Bind(wx.EVT_SLIDER,
                            lambda evt, name=field_name: self._on_field_changed(name, evt.GetInt()))
             elif isinstance(widget, wx.Panel):
                 # Handle radio buttons
@@ -419,7 +419,7 @@ class WxGuiBuilder(wx.Frame):
     def set_custom_button_callback(self, button_name: str, callback: Callable[[Dict[str, Any]], None]):
         """
         Set a callback function to be called when a custom button is clicked.
-        
+
         Args:
             button_name: The name of the custom button as defined in the configuration
             callback: Function to call when button is clicked. Receives form data as parameter.

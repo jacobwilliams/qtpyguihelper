@@ -59,11 +59,11 @@ class WxCustomColorButton(wx.Button):
         """Open color dialog and update button."""
         dialog = wx.ColourDialog(self)
         dialog.GetColourData().SetColour(self.current_color)
-        
+
         if dialog.ShowModal() == wx.ID_OK:
             self.current_color = dialog.GetColourData().GetColour()
             self._update_button_appearance()
-        
+
         dialog.Destroy()
 
     def _update_button_appearance(self):
@@ -204,12 +204,12 @@ class WxWidgetFactory:
         """Create a text input field."""
         style = wx.TE_PROCESS_ENTER
         widget = wx.TextCtrl(parent, style=style)
-        
+
         if field_config.placeholder:
             widget.SetHint(field_config.placeholder)
         if field_config.default_value:
             widget.SetValue(str(field_config.default_value))
-        
+
         return widget
 
     def _create_number_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.Window:
@@ -229,19 +229,19 @@ class WxWidgetFactory:
             widget = wx.SpinCtrlDouble(parent, min=min_val, max=max_val)
             if field_config.default_value is not None:
                 widget.SetValue(float(field_config.default_value))
-        
+
         return widget
 
     def _create_int_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.SpinCtrl:
         """Create an integer input field."""
         min_val = int(field_config.min_value) if field_config.min_value is not None else -2147483648
         max_val = int(field_config.max_value) if field_config.max_value is not None else 2147483647
-        
+
         widget = wx.SpinCtrl(parent, min=min_val, max=max_val)
-        
+
         if field_config.default_value is not None:
             widget.SetValue(int(field_config.default_value))
-        
+
         return widget
 
     def _create_float_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.Window:
@@ -252,7 +252,7 @@ class WxWidgetFactory:
             format_str = field_config.format_string.lower()
             if any(char in format_str for char in ['e', '%', 'g']) or ',' in format_str:
                 needs_text_field = True
-        
+
         if needs_text_field:
             return self._create_scientific_float_field(parent, field_config)
         else:
@@ -262,9 +262,9 @@ class WxWidgetFactory:
         """Create a float input field using SpinCtrlDouble."""
         min_val = float(field_config.min_value) if field_config.min_value is not None else -999999.0
         max_val = float(field_config.max_value) if field_config.max_value is not None else 999999.0
-        
+
         widget = wx.SpinCtrlDouble(parent, min=min_val, max=max_val)
-        
+
         # Set decimal places from format string
         decimals = 2
         if field_config.format_string:
@@ -275,23 +275,23 @@ class WxWidgetFactory:
                     decimals = int(decimal_part.replace('f', ''))
             except (ValueError, IndexError):
                 decimals = 2
-        
+
         widget.SetDigits(decimals)
-        
+
         if field_config.default_value is not None:
             widget.SetValue(float(field_config.default_value))
-        
+
         # Store format string for later use
         if field_config.format_string:
             widget.format_string = field_config.format_string
         widget.field_type = "spinctrl_float"
-        
+
         return widget
 
     def _create_scientific_float_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.TextCtrl:
         """Create a float input field using TextCtrl for scientific notation."""
         widget = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        
+
         # Set default value
         if field_config.default_value is not None:
             if field_config.format_string:
@@ -302,12 +302,12 @@ class WxWidgetFactory:
                     widget.SetValue(str(field_config.default_value))
             else:
                 widget.SetValue(str(field_config.default_value))
-        
+
         # Store format string and field type
         if field_config.format_string:
             widget.format_string = field_config.format_string
         widget.field_type = "scientific_float"
-        
+
         # Set hint text based on format
         if field_config.format_string:
             format_str = field_config.format_string
@@ -317,7 +317,7 @@ class WxWidgetFactory:
                 widget.SetHint("e.g., 0.856 (for 85.6%)")
             elif 'g' in format_str.lower():
                 widget.SetHint("e.g., 123.456 or 1.23e+06")
-        
+
         return widget
 
     def _create_email_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.TextCtrl:
@@ -338,16 +338,16 @@ class WxWidgetFactory:
         """Create a textarea field."""
         style = wx.TE_MULTILINE | wx.TE_WORDWRAP
         widget = wx.TextCtrl(parent, style=style)
-        
+
         if field_config.default_value:
             widget.SetValue(str(field_config.default_value))
-        
+
         widget.SetHint(field_config.placeholder or "Enter text...")
-        
+
         # Set default size for multiline text
         if not field_config.height:
             widget.SetSize((-1, 100))
-        
+
         return widget
 
     def _create_checkbox_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.CheckBox:
@@ -361,18 +361,18 @@ class WxWidgetFactory:
         """Create radio button group."""
         panel = wx.Panel(parent)
         sizer = wx.BoxSizer(wx.VERTICAL)
-        
+
         radio_buttons = []
         for i, option in enumerate(field_config.options or []):
             style = wx.RB_GROUP if i == 0 else 0
             radio_button = wx.RadioButton(panel, label=option, style=style)
             radio_buttons.append(radio_button)
             sizer.Add(radio_button, 0, wx.ALL, 2)
-            
+
             # Set default selection
             if field_config.default_value == option:
                 radio_button.SetValue(True)
-        
+
         panel.SetSizer(sizer)
         panel.radio_buttons = radio_buttons  # Store reference for value access
         return panel
@@ -381,18 +381,18 @@ class WxWidgetFactory:
         """Create a select (choice) field."""
         choices = field_config.options or []
         widget = wx.Choice(parent, choices=choices)
-        
+
         # Set default selection
         if field_config.default_value and field_config.default_value in choices:
             index = choices.index(field_config.default_value)
             widget.SetSelection(index)
-        
+
         return widget
 
     def _create_date_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.adv.DatePickerCtrl:
         """Create a date input field."""
         widget = wx.adv.DatePickerCtrl(parent, style=wx.adv.DP_DROPDOWN | wx.adv.DP_SHOWCENTURY)
-        
+
         if field_config.default_value:
             try:
                 # Parse YYYY-MM-DD format
@@ -401,13 +401,13 @@ class WxWidgetFactory:
                 widget.SetValue(date_val)
             except (ValueError, AttributeError):
                 pass  # Use current date as fallback
-        
+
         return widget
 
     def _create_time_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.adv.TimePickerCtrl:
         """Create a time input field."""
         widget = wx.adv.TimePickerCtrl(parent)
-        
+
         if field_config.default_value:
             try:
                 # Parse HH:MM format
@@ -418,41 +418,41 @@ class WxWidgetFactory:
                 widget.SetValue(time_val)
             except (ValueError, AttributeError):
                 pass  # Use current time as fallback
-        
+
         return widget
 
     def _create_datetime_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.Panel:
         """Create a datetime input field using separate date and time controls."""
         panel = wx.Panel(parent)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        
+
         # Create date picker
         date_picker = wx.adv.DatePickerCtrl(panel, style=wx.adv.DP_DROPDOWN | wx.adv.DP_SHOWCENTURY)
         time_picker = wx.adv.TimePickerCtrl(panel)
-        
+
         sizer.Add(date_picker, 1, wx.EXPAND | wx.RIGHT, 5)
         sizer.Add(time_picker, 1, wx.EXPAND)
-        
+
         panel.SetSizer(sizer)
         panel.date_picker = date_picker
         panel.time_picker = time_picker
-        
+
         # Set default value
         if field_config.default_value:
             try:
                 # Parse ISO datetime format
                 dt = datetime.fromisoformat(field_config.default_value.replace('Z', '+00:00'))
-                
+
                 date_val = wx.DateTime(dt.day, dt.month - 1, dt.year)
                 date_picker.SetValue(date_val)
-                
+
                 time_val = wx.DateTime()
                 time_val.SetHour(dt.hour)
                 time_val.SetMinute(dt.minute)
                 time_picker.SetValue(time_val)
             except (ValueError, AttributeError):
                 pass  # Use current datetime as fallback
-        
+
         return panel
 
     def _create_range_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.Slider:
@@ -460,10 +460,10 @@ class WxWidgetFactory:
         min_val = int(field_config.min_value) if field_config.min_value is not None else 0
         max_val = int(field_config.max_value) if field_config.max_value is not None else 100
         default_val = int(field_config.default_value) if field_config.default_value is not None else min_val
-        
+
         widget = wx.Slider(parent, value=default_val, minValue=min_val, maxValue=max_val,
                           style=wx.SL_HORIZONTAL | wx.SL_LABELS)
-        
+
         return widget
 
     def _create_file_field(self, parent: wx.Window, field_config: FieldConfig) -> WxCustomFileButton:
@@ -471,14 +471,14 @@ class WxWidgetFactory:
         file_mode = "open"
         if field_config.default_value == "save":
             file_mode = "save"
-        
+
         widget = WxCustomFileButton(parent, file_mode)
         return widget
 
     def _create_color_field(self, parent: wx.Window, field_config: FieldConfig) -> WxCustomColorButton:
         """Create a color selection field."""
         initial_color = wx.Colour(255, 255, 255)
-        
+
         if field_config.default_value:
             try:
                 # Parse hex color
@@ -489,7 +489,7 @@ class WxWidgetFactory:
                 initial_color = wx.Colour(r, g, b)
             except (ValueError, IndexError):
                 pass  # Use default color
-        
+
         widget = WxCustomColorButton(parent, initial_color)
         return widget
 

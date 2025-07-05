@@ -10,7 +10,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
 
 from qtpyguihelper import (
-    GuiBuilder, get_available_backends, get_backend_info, 
+    GuiBuilder, get_available_backends, get_backend_info,
     set_backend, BackendError
 )
 
@@ -31,17 +31,17 @@ def demo_backend_detection():
     """Demo automatic backend detection."""
     print("=== Backend Detection Demo ===")
     print(f"Available backends: {get_available_backends()}")
-    
+
     backend_info = get_backend_info()
     print(f"Current backend: {backend_info['backend']}")
-    
+
     if backend_info['backend'] == 'qt':
         print(f"Qt API: {backend_info.get('qt_api', 'Unknown')}")
         print(f"Qt Version: {backend_info.get('qt_version', 'Unknown')}")
     elif backend_info['backend'] == 'wx':
         print(f"wxPython Version: {backend_info.get('wx_version', 'Unknown')}")
         print(f"wxPython Platform: {backend_info.get('wx_platform', 'Unknown')}")
-    
+
     print()
 
 
@@ -147,26 +147,26 @@ def create_sample_config():
 def demo_qt_backend():
     """Demo the Qt backend specifically."""
     print("=== Qt Backend Demo ===")
-    
+
     try:
         # Force Qt backend
         set_backend('qt')
         print("Qt backend selected successfully")
-        
+
         # Create configuration
         config = create_sample_config()
         config["window"]["title"] += " (Qt Backend)"
-        
+
         # Create and run GUI
         gui_builder = GuiBuilder(config_dict=config)
         gui_builder.set_submit_callback(on_form_submit)
         gui_builder.set_cancel_callback(on_form_cancel)
-        
+
         # Set up custom button callbacks
         def clear_form(_form_data):
             gui_builder.clear_form()
             print("Form cleared")
-        
+
         def load_demo_data(_form_data):
             demo_data = {
                 "name": "John Doe",
@@ -181,23 +181,23 @@ def demo_qt_backend():
             }
             gui_builder.set_form_data(demo_data)
             print("Demo data loaded")
-        
+
         gui_builder.set_custom_button_callback("clear_form", clear_form)
         gui_builder.set_custom_button_callback("load_demo", load_demo_data)
-        
+
         # Show the window
         gui_builder.show()
-        
+
         # For Qt, we need to run the application event loop
         try:
             from qtpy.QtWidgets import QApplication
         except ImportError:
             from qtpy.QtGui import QApplication
-            
+
         if not QApplication.instance():
             app = QApplication(sys.argv)
             sys.exit(app.exec())
-        
+
     except BackendError as e:
         print(f"Qt backend not available: {e}")
     except ImportError as e:
@@ -209,26 +209,26 @@ def demo_qt_backend():
 def demo_wx_backend():
     """Demo the wxPython backend specifically."""
     print("=== wxPython Backend Demo ===")
-    
+
     try:
         # Force wxPython backend
         set_backend('wx')
         print("wxPython backend selected successfully")
-        
+
         # Create configuration
         config = create_sample_config()
         config["window"]["title"] += " (wxPython Backend)"
-        
+
         # Create and run GUI
         gui_builder = GuiBuilder(config_dict=config)
         gui_builder.set_submit_callback(on_form_submit)
         gui_builder.set_cancel_callback(on_form_cancel)
-        
+
         # Set up custom button callbacks
         def clear_form(_form_data):
             gui_builder.clear_form()
             print("Form cleared")
-        
+
         def load_demo_data(_form_data):
             demo_data = {
                 "name": "Jane Smith",
@@ -243,19 +243,19 @@ def demo_wx_backend():
             }
             gui_builder.set_form_data(demo_data)
             print("Demo data loaded")
-        
+
         gui_builder.set_custom_button_callback("clear_form", clear_form)
         gui_builder.set_custom_button_callback("load_demo", load_demo_data)
-        
+
         # Show the window
         gui_builder.show()
-        
+
         # For wxPython, we need to run the application main loop
         import wx
         if not wx.App.Get():
             app = wx.App()
             app.MainLoop()
-        
+
     except BackendError as e:
         print(f"wxPython backend not available: {e}")
     except ImportError as e:
@@ -267,23 +267,23 @@ def demo_wx_backend():
 def demo_auto_backend():
     """Demo automatic backend selection."""
     print("=== Auto Backend Selection Demo ===")
-    
+
     # Create configuration
     config = create_sample_config()
     config["window"]["title"] += " (Auto-Selected Backend)"
-    
+
     # Let the system auto-select backend
     gui_builder = GuiBuilder(config_dict=config)
     print(f"Auto-selected backend: {gui_builder.backend}")
-    
+
     gui_builder.set_submit_callback(on_form_submit)
     gui_builder.set_cancel_callback(on_form_cancel)
-    
+
     # Set up custom button callbacks
     def clear_form(_form_data):
         gui_builder.clear_form()
         print("Form cleared")
-    
+
     def load_demo_data(_form_data):
         demo_data = {
             "name": "Alex Johnson",
@@ -298,10 +298,10 @@ def demo_auto_backend():
         }
         gui_builder.set_form_data(demo_data)
         print("Demo data loaded")
-    
+
     gui_builder.set_custom_button_callback("clear_form", clear_form)
     gui_builder.set_custom_button_callback("load_demo", load_demo_data)
-    
+
     # Use the unified create_and_run method
     return GuiBuilder.create_and_run(config_dict=config)
 
@@ -310,14 +310,14 @@ def main():
     """Main demo function."""
     print("QtPyGuiHelper Backend Selection Demo")
     print("====================================")
-    
+
     # Show backend detection info
     demo_backend_detection()
-    
+
     # Check command line arguments for specific demo
     if len(sys.argv) > 1:
         backend_choice = sys.argv[1].lower()
-        
+
         if backend_choice == 'qt':
             demo_qt_backend()
         elif backend_choice == 'wx':
@@ -333,7 +333,7 @@ def main():
         print("  python demo_backend_selection.py wx     # Force wxPython backend")
         print("  python demo_backend_selection.py auto   # Auto-select backend")
         print()
-        
+
         # Default to auto-selection
         print("No backend specified, using auto-selection...")
         demo_auto_backend()

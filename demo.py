@@ -628,16 +628,16 @@ def demo_custom_buttons():
 def demo_wxpython_backend():
     """Demo the wxPython backend with a working GUI."""
     print("Starting wxPython Backend Demo...")
-    
+
     try:
         # Force wxPython backend
         from qtpyguihelper import set_backend
         set_backend('wx')
         print("✓ wxPython backend selected")
-        
+
         # Import wxPython
         import wx
-        
+
         # Create configuration
         config = {
             "window": {
@@ -732,30 +732,30 @@ def demo_wxpython_backend():
                 }
             ]
         }
-        
+
         # Create wxPython application
         app = wx.App()
-        
+
         # Create GUI builder with wxPython backend
         from qtpyguihelper import WxGuiBuilder
         gui_builder = WxGuiBuilder(config_dict=config)
-        
+
         # Set up callbacks
         def on_submit(form_data):
             print("wxPython form submitted:")
             for key, value in form_data.items():
                 print(f"  {key}: {value}")
             wx.MessageBox("Form submitted successfully!", "Success", wx.OK | wx.ICON_INFORMATION)
-        
+
         def on_cancel():
             print("wxPython form cancelled")
             wx.MessageBox("Form cancelled by user", "Cancelled", wx.OK | wx.ICON_INFORMATION)
-        
+
         def clear_form(_form_data):
             gui_builder.clear_form()
             print("Form cleared")
             wx.MessageBox("Form cleared successfully!", "Cleared", wx.OK | wx.ICON_INFORMATION)
-        
+
         def load_demo_data(_form_data):
             demo_data = {
                 "name": "Jane Smith",
@@ -771,22 +771,22 @@ def demo_wxpython_backend():
             gui_builder.set_form_data(demo_data)
             print("Demo data loaded")
             wx.MessageBox("Demo data loaded successfully!", "Data Loaded", wx.OK | wx.ICON_INFORMATION)
-        
+
         # Register callbacks
         gui_builder.set_submit_callback(on_submit)
         gui_builder.set_cancel_callback(on_cancel)
         gui_builder.set_custom_button_callback("clear_form", clear_form)
         gui_builder.set_custom_button_callback("load_demo", load_demo_data)
-        
+
         # Show the GUI
         gui_builder.Show()
-        
+
         print("✓ wxPython GUI created and shown")
         print("  - Custom buttons available:", gui_builder.get_custom_button_names())
-        
+
         # Run the application
         app.MainLoop()
-        
+
     except ImportError as e:
         print(f"✗ wxPython not available: {e}")
         print("  Install wxPython with: pip install wxpython")
@@ -797,13 +797,13 @@ def demo_wxpython_backend():
 def demo_backend_comparison():
     """Demo both Qt and wxPython backends side by side."""
     print("Starting Backend Comparison Demo...")
-    
+
     from qtpyguihelper import get_available_backends, get_backend_info
-    
+
     print(f"Available backends: {get_available_backends()}")
-    
+
     backend_choice = input("Choose backend (qt/wx/both): ").lower()
-    
+
     if backend_choice == "qt":
         demo_user_registration()  # Existing Qt demo
     elif backend_choice == "wx":
@@ -811,7 +811,7 @@ def demo_backend_comparison():
     elif backend_choice == "both":
         print("\n=== Running Qt Backend Demo ===")
         demo_user_registration()
-        
+
         print("\n=== Running wxPython Backend Demo ===")
         demo_wxpython_backend()
     else:
@@ -821,13 +821,13 @@ def demo_backend_comparison():
 def demo_unified_interface():
     """Demo the unified GuiBuilder interface that auto-selects backend."""
     print("Starting Unified Interface Demo...")
-    
+
     from qtpyguihelper import GuiBuilder, get_backend_info
-    
+
     # Show current backend info
     info = get_backend_info()
     print(f"Auto-selected backend: {info['backend']}")
-    
+
     # Create a simple configuration
     config = {
         "window": {
@@ -869,12 +869,12 @@ def demo_unified_interface():
         "submit_button": True,
         "cancel_button": True
     }
-    
+
     def on_submit_unified(form_data):
         print(f"Unified interface form submitted via {info['backend']} backend:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")
-    
+
     # Create the appropriate application based on backend
     if info['backend'] == 'qt':
         # Qt backend needs QApplication

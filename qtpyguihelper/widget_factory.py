@@ -429,7 +429,7 @@ class WidgetFactory:
         widget.setPlaceholderText(field_config.placeholder or "Enter email address")
         if field_config.default_value:
             widget.setText(str(field_config.default_value))
-        
+
         return widget
 
     def _create_password_field(self, field_config: FieldConfig) -> QLineEdit:
@@ -437,7 +437,7 @@ class WidgetFactory:
         widget = QLineEdit()
         widget.setEchoMode(QLineEdit.Password)
         widget.setPlaceholderText(field_config.placeholder or "Enter password")
-        
+
         return widget
 
     def _create_textarea_field(self, field_config: FieldConfig) -> QTextEdit:
@@ -579,7 +579,7 @@ class WidgetFactory:
         widget.setPlaceholderText(field_config.placeholder or "Enter URL (http://...)")
         if field_config.default_value:
             widget.setText(str(field_config.default_value))
-        
+
         return widget
 
     def get_widget_value(self, field_name: str) -> Any:
