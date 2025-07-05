@@ -192,90 +192,104 @@ class ConfigLoader:
 
     def _validate_config(self, config_data: Dict[str, Any]) -> None:
         """Validate the configuration data."""
-        # Check required top-level keys
-        if "fields" not in config_data:
-            raise ValueError("Configuration must contain 'fields' key")
-
-        fields = config_data["fields"]
-        if not isinstance(fields, list) or len(fields) == 0:
-            raise ValueError("'fields' must be a non-empty list")
-
-        # Validate each field
+        # Initialize field names set for later validation
         field_names = set()
-        for i, field in enumerate(fields):
-            if not isinstance(field, dict):
-                raise ValueError(f"Field {i} must be a dictionary")
+        
+        # First, collect all field names from the main fields list if it exists
+        if "fields" in config_data and isinstance(config_data["fields"], list):
+            fields = config_data["fields"]
+            
+            # Validate each field and collect names
+            for i, field in enumerate(fields):
+                if not isinstance(field, dict):
+                    raise ValueError(f"Field {i} must be a dictionary")
 
-            # Check required field keys
-            required_keys = ["name", "type", "label"]
-            for key in required_keys:
-                if key not in field:
-                    raise ValueError(f"Field {i} missing required key: {key}")
+                # Check required field keys
+                required_keys = ["name", "type", "label"]
+                for key in required_keys:
+                    if key not in field:
+                        raise ValueError(f"Field {i} missing required key: {key}")
 
-            # Check field name uniqueness
-            field_name = field["name"]
-            if field_name in field_names:
-                raise ValueError(f"Duplicate field name: {field_name}")
-            field_names.add(field_name)
+                # Check field name uniqueness
+                field_name = field["name"]
+                if field_name in field_names:
+                    raise ValueError(f"Duplicate field name: {field_name}")
+                field_names.add(field_name)
 
-            # Validate field type
-            field_type = field["type"]
-            if field_type not in self.SUPPORTED_FIELD_TYPES:
-                raise ValueError(f"Unsupported field type: {field_type}")
+                # Validate field type
+                field_type = field["type"]
+                if field_type not in self.SUPPORTED_FIELD_TYPES:
+                    raise ValueError(f"Unsupported field type: {field_type}")
 
-            # Validate options for select/radio fields
-            if field_type in ["select", "radio"]:
-                if "options" not in field or not field["options"]:
-                    raise ValueError(f"Field {field_name} of type {field_type} must have 'options'")
+                # Validate options for select/radio fields
+                if field_type in ["select", "radio"]:
+                    if "options" not in field or not field["options"]:
+                        raise ValueError(f"Field {field_name} of type {field_type} must have 'options'")
 
-            # Validate numeric constraints
-            if field_type in ["number", "range"]:
-                min_val = field.get("min_value")
-                max_val = field.get("max_value")
-                if min_val is not None and max_val is not None and min_val > max_val:
-                    raise ValueError(f"Field {field_name}: min_value cannot be greater than max_value")
+                # Validate numeric constraints
+                if field_type in ["number", "range"]:
+                    min_val = field.get("min_value")
+                    max_val = field.get("max_value")
+                    if min_val is not None and max_val is not None and min_val > max_val:
+                        raise ValueError(f"Field {field_name}: min_value cannot be greater than max_value")
+        
+        # Check if using tabs
+        use_tabs = config_data.get("use_tabs", False)
+        
+        if use_tabs:
+            # When using tabs, fields can be in tabs instead of root level
+            if "tabs" not in config_data:
+                raise ValueError("Configuration with use_tabs=True must contain 'tabs' key")
+            
+            tabs = config_data["tabs"]
+            if not isinstance(tabs, list) or len(tabs) == 0:
+                raise ValueError("'tabs' must be a non-empty list when use_tabs=True")
+            
+            # Validate each tab and its fields
+            for i, tab in enumerate(tabs):
+                if not isinstance(tab, dict):
+                    raise ValueError(f"Tab {i} must be a dictionary")
+                
+                required_tab_keys = ["name", "title", "fields"]
+                for key in required_tab_keys:
+                    if key not in tab:
+                        raise ValueError(f"Tab {i} missing required key: {key}")
+                
+                # Validate fields within this tab
+                tab_fields = tab["fields"]
+                if not isinstance(tab_fields, list):
+                    raise ValueError(f"Tab {i} 'fields' must be a list")
+                
+                # Check if we have a main fields list (field references) or inline field definitions
+                has_main_fields = "fields" in config_data and isinstance(config_data["fields"], list)
+                
+                for j, field in enumerate(tab_fields):
+                    if has_main_fields:
+                        # Fields should be strings referencing the main fields list
+                        if not isinstance(field, str):
+                            raise ValueError(f"Tab {i}, field {j} must be a string (field name) when main fields list exists")
+                        # Check that the referenced field actually exists
+                        if field not in field_names:
+                            raise ValueError(f"Tab '{tab['name']}' references unknown field '{field}'")
+                    else:
+                        # Fields should be dictionaries (inline field definitions)
+                        if not isinstance(field, dict):
+                            raise ValueError(f"Tab {i}, field {j} must be a dictionary")
+                        
+                        # Check required field keys
+                        required_keys = ["name", "type", "label"]
+                        for key in required_keys:
+                            if key not in field:
+                                raise ValueError(f"Tab {i}, field {j} missing required key: {key}")
+        else:
+            # Traditional layout - fields at root level
+            if "fields" not in config_data:
+                raise ValueError("Configuration must contain 'fields' key")
 
         # Validate layout
         layout = config_data.get("layout", "vertical")
         if layout not in self.SUPPORTED_LAYOUTS:
             raise ValueError(f"Unsupported layout: {layout}")
-
-        # Validate tabs if present
-        tabs_data = config_data.get("tabs", [])
-        if tabs_data:
-            if not isinstance(tabs_data, list):
-                raise ValueError("'tabs' must be a list")
-
-            tab_names = set()
-            for i, tab in enumerate(tabs_data):
-                if not isinstance(tab, dict):
-                    raise ValueError(f"Tab {i} must be a dictionary")
-
-                # Check required tab keys
-                required_tab_keys = ["name", "title", "fields"]
-                for key in required_tab_keys:
-                    if key not in tab:
-                        raise ValueError(f"Tab {i} missing required key: {key}")
-
-                # Check tab name uniqueness
-                tab_name = tab["name"]
-                if tab_name in tab_names:
-                    raise ValueError(f"Duplicate tab name: {tab_name}")
-                tab_names.add(tab_name)
-
-                # Validate tab fields reference existing fields
-                tab_fields = tab.get("fields", [])
-                if not isinstance(tab_fields, list):
-                    raise ValueError(f"Tab '{tab_name}' fields must be a list")
-
-                for field_name in tab_fields:
-                    if field_name not in field_names:
-                        raise ValueError(f"Tab '{tab_name}' references unknown field '{field_name}'")
-
-                # Validate tab layout
-                tab_layout = tab.get("layout", "vertical")
-                if tab_layout not in self.SUPPORTED_LAYOUTS:
-                    raise ValueError(f"Tab '{tab_name}' has unsupported layout: {tab_layout}")
 
         # Validate custom buttons if present
         custom_buttons_data = config_data.get("custom_buttons", [])

@@ -215,6 +215,8 @@ class GuiBuilder(QMainWindow):
             tab_layout = QGridLayout(tab_widget)
         elif tab_config.layout == "form":
             tab_layout = QFormLayout(tab_widget)
+            # Set field growth policy to make fields expand horizontally
+            tab_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         else:
             tab_layout = QVBoxLayout(tab_widget)
 

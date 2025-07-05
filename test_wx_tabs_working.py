@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""
+Test wxPython backend with tabs using existing tabbed_config.json.
+"""
+
+import sys
+import os
+
+# Add the library to the Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+def test_wx_tabs():
+    """Test wxPython backend with tabs using the existing tabbed_config.json."""
+    print("Testing wxPython backend with tabs...")
+    
+    try:
+        # Force wxPython backend
+        from qtpyguihelper import set_backend
+        set_backend('wx')
+        print("✓ wxPython backend selected")
+        
+        import wx
+        
+        # Use the existing tabbed_config.json file
+        config_path = os.path.join(os.path.dirname(__file__), "examples", "tabbed_config.json")
+        
+        from qtpyguihelper import GuiBuilder
+        
+        # Create wxPython application
+        app = wx.App()
+        
+        # Create GUI builder with the existing configuration
+        gui_builder = GuiBuilder(config_path=config_path)
+        
+        def on_submit(form_data):
+            print("wxPython tabs form submitted:")
+            for key, value in form_data.items():
+                print(f"  {key}: {value}")
+            wx.MessageBox("Configuration saved successfully!", "Success", wx.OK | wx.ICON_INFORMATION)
+        
+        def on_cancel():
+            print("wxPython tabs form cancelled")
+        
+        # Register callbacks
+        gui_builder.set_submit_callback(on_submit)
+        gui_builder.set_cancel_callback(on_cancel)
+        
+        # Show the GUI
+        gui_builder.Show()
+        
+        print("✓ wxPython tabbed GUI created successfully")
+        print("  - Check that fields in tabs expand to fit the window width")
+        
+        # Run the application
+        app.MainLoop()
+        
+    except ImportError as e:
+        print(f"✗ wxPython not available: {e}")
+        print("  Install wxPython with: pip install wxpython")
+    except Exception as e:
+        print(f"✗ Error with wxPython tabs: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+if __name__ == "__main__":
+    test_wx_tabs()
