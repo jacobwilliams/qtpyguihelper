@@ -304,8 +304,24 @@ class WidgetFactory:
 
         return widget
 
-    def _create_float_field(self, field_config: FieldConfig) -> QDoubleSpinBox:
+    def _create_float_field(self, field_config: FieldConfig):
         """Create a float input field with optional format enforcement."""
+        
+        # Check if we need scientific notation or special formatting
+        needs_line_edit = False
+        if field_config.format_string:
+            format_str = field_config.format_string.lower()
+            # Use QLineEdit for scientific notation, percentage, or other special formats
+            if any(char in format_str for char in ['e', '%', 'g']) or ',' in format_str:
+                needs_line_edit = True
+        
+        if needs_line_edit:
+            return self._create_scientific_float_field(field_config)
+        else:
+            return self._create_spinbox_float_field(field_config)
+    
+    def _create_spinbox_float_field(self, field_config: FieldConfig) -> QDoubleSpinBox:
+        """Create a float input field using QDoubleSpinBox for simple decimal formatting."""
         widget = QDoubleSpinBox()
 
         # Set range
@@ -319,12 +335,14 @@ class WidgetFactory:
         else:
             widget.setMaximum(999999999.0)  # Default maximum
 
-        # Extract decimal places from format string (e.g., ".2f" -> 2)
+        # Extract decimal places from format string
         decimals = 2  # Default to 2 decimal places
         if field_config.format_string:
             try:
-                if '.' in field_config.format_string and 'f' in field_config.format_string:
-                    decimal_part = field_config.format_string.split('.')[1]
+                format_str = field_config.format_string.lower()
+                if '.' in format_str and 'f' in format_str:
+                    # Fixed-point notation: ".2f" -> 2
+                    decimal_part = format_str.split('.')[1]
                     decimals = int(decimal_part.replace('f', ''))
             except (ValueError, IndexError):
                 decimals = 2  # Default to 2 decimal places
@@ -342,7 +360,52 @@ class WidgetFactory:
         # Store format string for later use in value retrieval
         if field_config.format_string:
             widget.setProperty("format_string", field_config.format_string)
+        widget.setProperty("field_type", "spinbox_float")
 
+        return widget
+    
+    def _create_scientific_float_field(self, field_config: FieldConfig) -> QLineEdit:
+        """Create a float input field using QLineEdit for scientific notation and special formatting."""
+        from qtpy.QtGui import QDoubleValidator
+        
+        widget = QLineEdit()
+        
+        # Set up validator for floating point numbers (including scientific notation)
+        validator = QDoubleValidator()
+        if field_config.min_value is not None:
+            validator.setBottom(float(field_config.min_value))
+        if field_config.max_value is not None:
+            validator.setTop(float(field_config.max_value))
+        validator.setNotation(QDoubleValidator.ScientificNotation)
+        widget.setValidator(validator)
+        
+        # Set default value
+        if field_config.default_value is not None:
+            if field_config.format_string:
+                try:
+                    # Format the default value according to the format string
+                    formatted_value = format(float(field_config.default_value), field_config.format_string)
+                    widget.setText(formatted_value)
+                except (ValueError, TypeError):
+                    widget.setText(str(field_config.default_value))
+            else:
+                widget.setText(str(field_config.default_value))
+        
+        # Store format string and field type for later use
+        if field_config.format_string:
+            widget.setProperty("format_string", field_config.format_string)
+        widget.setProperty("field_type", "scientific_float")
+        
+        # Set placeholder text to show expected format
+        if field_config.format_string:
+            format_str = field_config.format_string
+            if 'e' in format_str.lower():
+                widget.setPlaceholderText("e.g., 1.23e+06 or 1.23E-05")
+            elif '%' in format_str:
+                widget.setPlaceholderText("e.g., 0.856 (for 85.6%)")
+            elif 'g' in format_str.lower():
+                widget.setPlaceholderText("e.g., 123.456 or 1.23e+06")
+        
         return widget
 
     def _create_email_field(self, field_config: FieldConfig) -> QLineEdit:
@@ -509,7 +572,15 @@ class WidgetFactory:
         widget = self.widgets[field_name]
 
         if isinstance(widget, QLineEdit):
-            return widget.text()
+            text = widget.text()
+            # Check if this is a scientific float field
+            if widget.property("field_type") == "scientific_float":
+                try:
+                    # Parse the text as a float (handles scientific notation)
+                    return float(text)
+                except (ValueError, TypeError):
+                    return 0.0  # Default fallback
+            return text
         elif isinstance(widget, QTextEdit):
             return widget.toPlainText()
         elif isinstance(widget, (QSpinBox, QDoubleSpinBox)):
@@ -518,8 +589,14 @@ class WidgetFactory:
             if isinstance(widget, QDoubleSpinBox) and widget.property("format_string"):
                 format_string = widget.property("format_string")
                 try:
-                    # Apply the format string
-                    return float(format(value, format_string.replace('%', '')))
+                    # For scientific notation and other formats, return the raw value
+                    # The formatting is primarily for display/input validation
+                    if any(char in format_string.lower() for char in ['e', 'g']):
+                        # Scientific or general notation - return raw float
+                        return value
+                    else:
+                        # Fixed-point notation - apply precision
+                        return float(format(value, format_string.replace('%', '')))
                 except (ValueError, TypeError):
                     return value
             return value
@@ -557,7 +634,21 @@ class WidgetFactory:
 
         try:
             if isinstance(widget, QLineEdit):
-                widget.setText(str(value))
+                # Check if this is a scientific float field
+                if widget.property("field_type") == "scientific_float":
+                    try:
+                        float_value = float(value)
+                        format_string = widget.property("format_string")
+                        if format_string:
+                            # Format the value according to the format string
+                            formatted_value = format(float_value, format_string)
+                            widget.setText(formatted_value)
+                        else:
+                            widget.setText(str(float_value))
+                    except (ValueError, TypeError):
+                        widget.setText(str(value))
+                else:
+                    widget.setText(str(value))
             elif isinstance(widget, QTextEdit):
                 widget.setPlainText(str(value))
             elif isinstance(widget, (QSpinBox, QDoubleSpinBox)):

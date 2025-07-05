@@ -453,6 +453,62 @@ def demo_float_fields():
     app.exec()
 
 
+def demo_format_strings():
+    """Demo various format string specifications including scientific notation."""
+    print("Starting Format Strings Demo...")
+
+    # Create the application
+    app = QApplication(sys.argv)
+
+    # Load the format strings example
+    config_path = os.path.join(os.path.dirname(__file__), "examples", "format_strings.json")
+    gui = GuiBuilder(config_path=config_path)
+
+    def handle_submit(form_data):
+        """Handle form submission and show formatted values."""
+        result_text = "Format String Examples:\n" + "="*50 + "\n"
+        
+        # Define format examples with explanations
+        format_examples = {
+            "fixed_point_2": (".2f", "Fixed-point, 2 decimals"),
+            "fixed_point_4": (".4f", "Fixed-point, 4 decimals"),
+            "scientific_2": (".2e", "Scientific notation, 2 decimals"),
+            "scientific_3": (".3E", "Scientific notation, 3 decimals (uppercase)"),
+            "general_format": (".3g", "General format (auto fixed/scientific)"),
+            "percentage": (".1%", "Percentage format"),
+            "currency": (",.2f", "Currency with thousands separator"),
+            "no_decimals": (".0f", "Whole numbers only")
+        }
+        
+        for field_name, value in form_data.items():
+            if field_name != "_metadata" and field_name in format_examples:
+                format_spec, description = format_examples[field_name]
+                try:
+                    # Show the raw value and formatted version
+                    formatted_value = format(value, format_spec)
+                    result_text += f"{field_name}:\n"
+                    result_text += f"  Raw value: {value} ({type(value).__name__})\n"
+                    result_text += f"  Format: {format_spec} ({description})\n"
+                    result_text += f"  Formatted: {formatted_value}\n\n"
+                except ValueError as e:
+                    result_text += f"{field_name}: Format error - {e}\n\n"
+        
+        # Show the values
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Format String Results")
+        msg.setText(result_text)
+        msg.exec_()
+
+    gui.set_submit_callback(handle_submit)
+
+    # Show the GUI
+    gui.show()
+
+    # Run the application
+    app.exec()
+
+
 def main():
     """Main function to run demos."""
     if len(sys.argv) > 1:
@@ -468,8 +524,9 @@ def main():
         print("  python demo.py complex_tabs  - Complex tabbed configuration demo")
         print("  python demo.py nested        - Nested field names demo")
         print("  python demo.py float         - Float fields demo")
+        print("  python demo.py format        - Format strings demo")
         print()
-        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs/nested/float): ").lower()
+        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs/nested/float/format): ").lower()
 
     if demo_type == "registration":
         demo_user_registration()
@@ -489,9 +546,11 @@ def main():
         demo_nested_fields()
     elif demo_type == "float":
         demo_float_fields()
+    elif demo_type == "format":
+        demo_format_strings()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format")
 
 
 if __name__ == "__main__":

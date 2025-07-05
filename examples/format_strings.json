@@ -1,0 +1,80 @@
+{
+  "window": {
+    "title": "Advanced Format Strings Demo",
+    "width": 600,
+    "height": 700
+  },
+  "layout": "form",
+  "fields": [
+    {
+      "name": "fixed_point_2",
+      "type": "float",
+      "label": "Fixed Point (2 decimals)",
+      "format_string": ".2f",
+      "default_value": 123.456,
+      "tooltip": "Fixed-point notation with 2 decimal places"
+    },
+    {
+      "name": "fixed_point_4",
+      "type": "float",
+      "label": "High Precision (4 decimals)",
+      "format_string": ".4f",
+      "default_value": 3.14159265,
+      "tooltip": "Fixed-point notation with 4 decimal places"
+    },
+    {
+      "name": "scientific_2",
+      "type": "float",
+      "label": "Scientific Notation (2 decimals)",
+      "format_string": ".2e",
+      "default_value": 1234567.89,
+      "tooltip": "Scientific notation with 2 decimal places (1.23e+06)"
+    },
+    {
+      "name": "scientific_3",
+      "type": "float",
+      "label": "Scientific Notation (3 decimals)",
+      "format_string": ".3E",
+      "default_value": 0.000012345,
+      "tooltip": "Scientific notation with 3 decimal places (1.235E-05)"
+    },
+    {
+      "name": "general_format",
+      "type": "float",
+      "label": "General Format",
+      "format_string": ".3g",
+      "default_value": 123.456,
+      "tooltip": "General format - chooses between fixed and scientific automatically"
+    },
+    {
+      "name": "percentage",
+      "type": "float",
+      "label": "Percentage",
+      "format_string": ".1%",
+      "min_value": 0.0,
+      "max_value": 1.0,
+      "default_value": 0.856,
+      "tooltip": "Percentage format (85.6%)"
+    },
+    {
+      "name": "currency",
+      "type": "float",
+      "label": "Currency ($)",
+      "format_string": ",.2f",
+      "min_value": 0.0,
+      "default_value": 12345.67,
+      "tooltip": "Currency with thousands separator (12,345.67)"
+    },
+    {
+      "name": "no_decimals",
+      "type": "float",
+      "label": "Whole Numbers Only",
+      "format_string": ".0f",
+      "default_value": 42.789,
+      "tooltip": "Float field displaying whole numbers only"
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Show Formatted Values",
+  "cancel_button": true
+}

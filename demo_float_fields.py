@@ -67,7 +67,7 @@ def demo_float_fields():
                 "min_value": 0.000001,
                 "max_value": 999999.0,
                 "decimals": 6,
-                "format_string": ".6f",
+                "format_string": ".6e",
                 "default_value": 0.000123,
                 "tooltip": "Scientific notation style with 6 decimal places"
             },

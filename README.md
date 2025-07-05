@@ -223,6 +223,44 @@ python qt_backend_demo.py info
   "format_string": ".4f",  // 4 decimal places (0.1234)
   "default_value": 0.0001
 }
+
+{
+  "name": "scientific",
+  "type": "float",
+  "format_string": ".2e",  // Scientific notation (1.23e+06)
+  "default_value": 1234567.89
+}
+
+{
+  "name": "general",
+  "type": "float",
+  "format_string": ".3g",  // General format (123 or 1.23e+06)
+  "default_value": 123.456
+}
+
+{
+  "name": "currency",
+  "type": "float",
+  "format_string": ",.2f", // Thousands separator (12,345.67)
+  "default_value": 12345.67
+}
+
+{
+  "name": "percent_field",
+  "type": "float",
+  "format_string": ".1%",  // Percentage format (85.6%)
+  "default_value": 0.856
+}
+```
+
+#### Supported Format String Types
+
+- **`.2f`, `.4f`**: Fixed-point notation with specified decimal places
+- **`.2e`, `.3E`**: Scientific notation (lowercase/uppercase E)
+- **`.3g`, `.2G`**: General format (automatically chooses fixed-point or scientific)
+- **`.1%`, `.2%`**: Percentage format (multiplies by 100 and adds %)
+- **`,.2f`**: Thousands separator with fixed-point notation
+- **`.0f`**: Whole numbers only (no decimal places)
 ```
 
 ## Layout Types
