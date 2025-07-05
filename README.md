@@ -202,7 +202,7 @@ python qt_backend_demo.py info
 
 #### Float Format Examples
 
-```json
+```jsonc
 {
   "name": "price",
   "type": "float",
@@ -261,7 +261,7 @@ python qt_backend_demo.py info
 - **`.1%`, `.2%`**: Percentage format (multiplies by 100 and adds %)
 - **`,.2f`**: Thousands separator with fixed-point notation
 - **`.0f`**: Whole numbers only (no decimal places)
-```
+
 
 ## Layout Types
 
