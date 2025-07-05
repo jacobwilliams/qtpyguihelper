@@ -408,7 +408,6 @@ print("Registered callbacks:", list(gui.custom_button_callbacks.keys()))
 #### Complete Example
 
 See `examples/custom_buttons.json` and `demo_custom_buttons.py` for a complete working example with multiple custom buttons including validation, clear form, preview, and export functionality.
-```
 
 ### Nested Field Names
 
@@ -646,12 +645,12 @@ Data files with metadata include additional information:
 }
 ```
 
-## Requirements
+<!-- ## Requirements
 
 - Python 3.7+
-- PySide6 6.5.0+
+- PySide6 6.5.0+ -->
 
-## License
+<!-- ## License
 
 This project is open source. Feel free to use and modify as needed.
 
@@ -672,4 +671,4 @@ Contributions are welcome! Please feel free to submit pull requests or open issu
 - Check the example configurations in `examples/`
 - Run the demo script to see working examples
 - Review the configuration reference above
-- Open an issue on the project repository
+- Open an issue on the project repository -->
