@@ -12,7 +12,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(__file__))
 
 from qtpyguihelper.config_loader import ConfigLoader
-from qtpyguihelper.gui_builder import GuiBuilder
+from qtpyguihelper.qt.gui_builder import GuiBuilder
 
 
 def test_data_persistence():

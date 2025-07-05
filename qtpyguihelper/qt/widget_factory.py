@@ -9,12 +9,12 @@ from qtpy.QtWidgets import (
     QCheckBox, QRadioButton, QButtonGroup, QComboBox, QDateEdit,
     QTimeEdit, QDateTimeEdit, QSlider, QProgressBar, QPushButton,
     QFileDialog, QColorDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
-    QGridLayout, QFrame, QGroupBox
+    QGridLayout, QFrame, QGroupBox, QSizePolicy
 )
 from qtpy.QtCore import Qt, QDate, QTime, QDateTime, Signal
 from qtpy.QtGui import QColor, QPixmap, QIcon
 
-from .config_loader import FieldConfig
+from ..config_loader import FieldConfig
 
 
 def set_nested_value(data: Dict[str, Any], key_path: str, value: Any):
@@ -183,6 +183,11 @@ class WidgetFactory:
         self.labels: Dict[str, QLabel] = {}
         self.radio_groups: Dict[str, QButtonGroup] = {}
 
+    def _set_expanding_size_policy(self, widget: QWidget):
+        """Set size policy to make widget expand horizontally to fill available space."""
+        size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        widget.setSizePolicy(size_policy)
+
     def create_widget(self, field_config: FieldConfig) -> QWidget:
         """Create a widget based on the field configuration."""
         widget = None
@@ -234,6 +239,16 @@ class WidgetFactory:
 
         if widget and field_config.height:
             widget.setFixedHeight(field_config.height)
+
+        # Set size policy to make most widgets expand horizontally
+        if widget:
+            # Special handling for textarea - expand both directions
+            if field_config.type == "textarea":
+                size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+                widget.setSizePolicy(size_policy)
+            # For radio buttons and checkboxes, don't force expansion
+            elif field_config.type not in ["radio", "checkbox"]:
+                self._set_expanding_size_policy(widget)
 
         # Store widget reference
         if widget:
@@ -414,6 +429,7 @@ class WidgetFactory:
         widget.setPlaceholderText(field_config.placeholder or "Enter email address")
         if field_config.default_value:
             widget.setText(str(field_config.default_value))
+
         return widget
 
     def _create_password_field(self, field_config: FieldConfig) -> QLineEdit:
@@ -421,6 +437,7 @@ class WidgetFactory:
         widget = QLineEdit()
         widget.setEchoMode(QLineEdit.Password)
         widget.setPlaceholderText(field_config.placeholder or "Enter password")
+
         return widget
 
     def _create_textarea_field(self, field_config: FieldConfig) -> QTextEdit:
@@ -516,7 +533,7 @@ class WidgetFactory:
                 datetime = QDateTime.fromString(field_config.default_value, Qt.ISODate)
                 if datetime.isValid():
                     widget.setDateTime(datetime)
-            except:
+            except (ValueError, TypeError):
                 pass  # Use current datetime as fallback
 
         return widget
@@ -550,7 +567,7 @@ class WidgetFactory:
         if field_config.default_value:
             try:
                 initial_color = QColor(field_config.default_value)
-            except:
+            except (ValueError, TypeError):
                 pass  # Use default color
 
         widget = CustomColorButton(initial_color)
@@ -562,6 +579,7 @@ class WidgetFactory:
         widget.setPlaceholderText(field_config.placeholder or "Enter URL (http://...)")
         if field_config.default_value:
             widget.setText(str(field_config.default_value))
+
         return widget
 
     def get_widget_value(self, field_name: str) -> Any:
@@ -688,7 +706,7 @@ class WidgetFactory:
                         break
 
             return True
-        except:
+        except (ValueError, TypeError, AttributeError):
             return False
 
     def get_all_values(self) -> Dict[str, Any]:

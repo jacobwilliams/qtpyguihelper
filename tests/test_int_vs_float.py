@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 from qtpyguihelper.config_loader import ConfigLoader
-from qtpyguihelper.widget_factory import WidgetFactory
+from qtpyguihelper.qt.widget_factory import WidgetFactory
 from qtpy.QtWidgets import QSpinBox, QDoubleSpinBox
 
 

@@ -3,7 +3,6 @@ Main GUI builder class that creates Qt applications from JSON configuration.
 Compatible with both PySide6 and PyQt6 via qtpy.
 """
 
-import sys
 import json
 from typing import Dict, Any, Callable, Optional, List
 from qtpy.QtWidgets import (
@@ -14,7 +13,7 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
-from .config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
 from .widget_factory import WidgetFactory, get_nested_value
 
 
@@ -78,8 +77,8 @@ class GuiBuilder(QMainWindow):
         if self.config.window.icon and self.config.window.icon.strip():
             try:
                 self.setWindowIcon(QIcon(self.config.window.icon))
-            except:
-                pass  # Ignore icon loading errors
+            except (FileNotFoundError, OSError) as e:
+                print(f"Warning: Could not load window icon '{self.config.window.icon}': {e}")  # Ignore icon loading errors
 
         # Set resizable property
         if not self.config.window.resizable:
@@ -138,9 +137,15 @@ class GuiBuilder(QMainWindow):
         elif self.config.layout == "horizontal":
             return QHBoxLayout(parent_widget)
         elif self.config.layout == "grid":
-            return QGridLayout(parent_widget)
+            layout = QGridLayout(parent_widget)
+            # Set column stretch to make the widget column expand
+            layout.setColumnStretch(1, 1)
+            return layout
         elif self.config.layout == "form":
-            return QFormLayout(parent_widget)
+            layout = QFormLayout(parent_widget)
+            # Set field growth policy to expand fields
+            layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+            return layout
         else:
             # Default to vertical
             return QVBoxLayout(parent_widget)
@@ -209,6 +214,8 @@ class GuiBuilder(QMainWindow):
             tab_layout = QGridLayout(tab_widget)
         elif tab_config.layout == "form":
             tab_layout = QFormLayout(tab_widget)
+            # Set field growth policy to make fields expand horizontally
+            tab_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         else:
             tab_layout = QVBoxLayout(tab_widget)
 
@@ -242,8 +249,8 @@ class GuiBuilder(QMainWindow):
                     try:
                         icon = QIcon(button_config.icon)
                         custom_btn.setIcon(icon)
-                    except:
-                        pass  # Ignore icon loading errors
+                    except (FileNotFoundError, OSError) as e:
+                        print(f"Warning: Could not load button icon '{button_config.icon}': {e}")  # Ignore icon loading errors
 
                 # Connect to custom callback handler
                 def make_button_handler(button_name):

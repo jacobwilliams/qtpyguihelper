@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from qtpyguihelper.gui_builder import GuiBuilder
+from qtpyguihelper.qt.gui_builder import GuiBuilder
 
 
 def demo_float_fields():

@@ -10,7 +10,7 @@ import json
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper.widget_factory import set_nested_value, get_nested_value, flatten_nested_dict
+from qtpyguihelper.qt.widget_factory import set_nested_value, get_nested_value, flatten_nested_dict
 
 
 def test_nested_value_functions():
