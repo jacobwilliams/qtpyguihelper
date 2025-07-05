@@ -12,16 +12,16 @@ sys.path.insert(0, os.path.dirname(__file__))
 def test_wxpython_tabs():
     """Test wxPython backend with tabs to ensure fields expand properly."""
     print("Testing wxPython backend with tabs...")
-    
+
     try:
         # Force wxPython backend
         from qtpyguihelper import set_backend
         set_backend('wx')
         print("✓ wxPython backend selected")
-        
+
         import wx
         from qtpyguihelper import WxGuiBuilder
-        
+
         # Create configuration with tabs
         config = {
             "window": {
@@ -151,37 +151,37 @@ def test_wxpython_tabs():
                 }
             ]
         }
-        
+
         # Create wxPython application
         app = wx.App()
-        
+
         # Create GUI builder with wxPython backend
         gui_builder = WxGuiBuilder(config_dict=config)
-        
+
         # Set up callbacks
         def on_submit(form_data):
             print("wxPython tabs form submitted:")
             for key, value in form_data.items():
                 print(f"  {key}: {value}")
             wx.MessageBox("Tabbed form submitted successfully!", "Success", wx.OK | wx.ICON_INFORMATION)
-        
+
         def on_cancel():
             print("wxPython tabs form cancelled")
             wx.MessageBox("Form cancelled by user", "Cancelled", wx.OK | wx.ICON_INFORMATION)
-        
+
         # Register callbacks
         gui_builder.set_submit_callback(on_submit)
         gui_builder.set_cancel_callback(on_cancel)
-        
+
         # Show the GUI
         gui_builder.Show()
-        
+
         print("✓ wxPython tabbed GUI created and shown")
         print("  Note: Verify that fields in each tab expand to fill the window width")
-        
+
         # Run the application
         app.MainLoop()
-        
+
     except ImportError as e:
         print(f"✗ wxPython not available: {e}")
         print("  Install wxPython with: pip install wxpython")

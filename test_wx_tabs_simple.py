@@ -12,16 +12,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 def test_wx_tabs_simple():
     """Test wxPython backend with tabs using the correct configuration structure."""
     print("Testing wxPython Backend with Tabs (Correct Structure)...")
-    
+
     try:
         # Force wxPython backend
         from qtpyguihelper import set_backend
         set_backend('wx')
         print("✓ wxPython backend selected")
-        
+
         # Import wxPython
         import wx
-        
+
         # Use the same configuration structure as tabbed_config.json
         config = {
             "window": {
@@ -100,7 +100,7 @@ def test_wx_tabs_simple():
                 },
                 {
                     "name": "preferences",
-                    "title": "Preferences", 
+                    "title": "Preferences",
                     "layout": "form",
                     "fields": ["theme", "notifications", "language", "font_size"],
                     "tooltip": "User preferences"
@@ -109,39 +109,39 @@ def test_wx_tabs_simple():
             "submit_button": True,
             "cancel_button": True
         }
-        
+
         # Create wxPython application
         app = wx.App()
-        
+
         # Create GUI builder with wxPython backend
         from qtpyguihelper import WxGuiBuilder
         gui_builder = WxGuiBuilder(config_dict=config)
-        
+
         # Set up callbacks
         def on_submit(form_data):
             print("wxPython tabs form submitted:")
             for key, value in form_data.items():
                 print(f"  {key}: {value}")
             wx.MessageBox("Form submitted successfully! Check console for data.", "Success", wx.OK | wx.ICON_INFORMATION)
-        
+
         def on_cancel():
             print("wxPython tabs form cancelled")
             wx.MessageBox("Form cancelled by user", "Cancelled", wx.OK | wx.ICON_INFORMATION)
-        
+
         # Register callbacks
         gui_builder.set_submit_callback(on_submit)
         gui_builder.set_cancel_callback(on_cancel)
-        
+
         # Show the GUI
         gui_builder.Show()
-        
+
         print("✓ wxPython tabs GUI created and shown")
         print("  - Notice how fields expand to fit the tab width")
         print("  - Switch between tabs to see field expansion in each")
-        
+
         # Run the application
         app.MainLoop()
-        
+
     except ImportError as e:
         print(f"✗ wxPython not available: {e}")
         print("  Install wxPython with: pip install wxpython")

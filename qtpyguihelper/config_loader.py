@@ -194,11 +194,11 @@ class ConfigLoader:
         """Validate the configuration data."""
         # Initialize field names set for later validation
         field_names = set()
-        
+
         # First, collect all field names from the main fields list if it exists
         if "fields" in config_data and isinstance(config_data["fields"], list):
             fields = config_data["fields"]
-            
+
             # Validate each field and collect names
             for i, field in enumerate(fields):
                 if not isinstance(field, dict):
@@ -232,37 +232,37 @@ class ConfigLoader:
                     max_val = field.get("max_value")
                     if min_val is not None and max_val is not None and min_val > max_val:
                         raise ValueError(f"Field {field_name}: min_value cannot be greater than max_value")
-        
+
         # Check if using tabs
         use_tabs = config_data.get("use_tabs", False)
-        
+
         if use_tabs:
             # When using tabs, fields can be in tabs instead of root level
             if "tabs" not in config_data:
                 raise ValueError("Configuration with use_tabs=True must contain 'tabs' key")
-            
+
             tabs = config_data["tabs"]
             if not isinstance(tabs, list) or len(tabs) == 0:
                 raise ValueError("'tabs' must be a non-empty list when use_tabs=True")
-            
+
             # Validate each tab and its fields
             for i, tab in enumerate(tabs):
                 if not isinstance(tab, dict):
                     raise ValueError(f"Tab {i} must be a dictionary")
-                
+
                 required_tab_keys = ["name", "title", "fields"]
                 for key in required_tab_keys:
                     if key not in tab:
                         raise ValueError(f"Tab {i} missing required key: {key}")
-                
+
                 # Validate fields within this tab
                 tab_fields = tab["fields"]
                 if not isinstance(tab_fields, list):
                     raise ValueError(f"Tab {i} 'fields' must be a list")
-                
+
                 # Check if we have a main fields list (field references) or inline field definitions
                 has_main_fields = "fields" in config_data and isinstance(config_data["fields"], list)
-                
+
                 for j, field in enumerate(tab_fields):
                     if has_main_fields:
                         # Fields should be strings referencing the main fields list
@@ -275,7 +275,7 @@ class ConfigLoader:
                         # Fields should be dictionaries (inline field definitions)
                         if not isinstance(field, dict):
                             raise ValueError(f"Tab {i}, field {j} must be a dictionary")
-                        
+
                         # Check required field keys
                         required_keys = ["name", "type", "label"]
                         for key in required_keys:

@@ -16,7 +16,7 @@ from qtpy.QtWidgets import QApplication
 def test_tab_field_expansion():
     """Test that fields in tabs expand to fit the window width."""
     print("Testing tab field expansion...")
-    
+
     config = {
         "window": {
             "title": "Tab Field Expansion Test",
@@ -84,21 +84,21 @@ def test_tab_field_expansion():
         "submit_button": True,
         "cancel_button": True
     }
-    
+
     app = QApplication(sys.argv)
     gui = GuiBuilder(config_dict=config)
-    
+
     def on_submit(form_data):
         print("Tab form submitted:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")
-    
+
     gui.set_submit_callback(on_submit)
     gui.show()
-    
+
     print("✓ Tab field expansion test GUI created")
     print("  Check that form fields in both tabs expand to fit the window width")
-    
+
     return app.exec()
 
 
