@@ -178,7 +178,9 @@ python qt_backend_demo.py info
 | `text` | Single-line text input | `placeholder`, `default_value` |
 | `email` | Email input field | `placeholder`, `default_value` |
 | `password` | Password input (masked) | `placeholder` |
-| `number` | Numeric input | `min_value`, `max_value`, `default_value` |
+| `int` | Integer input (whole numbers) | `min_value`, `max_value`, `default_value` |
+| `float` | Floating-point input with precision control | `min_value`, `max_value`, `default_value`, `format_string` |
+| `number` | Numeric input (legacy - uses float behavior) | `min_value`, `max_value`, `default_value` |
 | `textarea` | Multi-line text input | `placeholder`, `default_value`, `height` |
 | `checkbox` | Checkbox input | `default_value` (boolean) |
 | `radio` | Radio button group | `options` (array), `default_value` |
@@ -190,6 +192,38 @@ python qt_backend_demo.py info
 | `file` | File selection button | `default_value` ("open"/"save") |
 | `color` | Color picker button | `default_value` (hex color) |
 | `url` | URL input field | `placeholder`, `default_value` |
+
+### Numeric Field Types
+
+- **`int`**: Use for whole numbers (age, quantity, score, etc.). Creates QSpinBox widgets.
+- **`float`**: Use for decimal numbers with precision control. Creates QDoubleSpinBox widgets.
+  - `format_string`: Controls decimal places (e.g., ".2f" for 2 decimals, ".1f" for 1 decimal)
+- **`number`**: Legacy type for backward compatibility (behaves like `float`)
+
+#### Float Format Examples
+
+```json
+{
+  "name": "price",
+  "type": "float",
+  "format_string": ".2f",  // 2 decimal places (99.99)
+  "default_value": 29.99
+}
+
+{
+  "name": "percentage", 
+  "type": "float",
+  "format_string": ".1f",  // 1 decimal place (95.5)
+  "max_value": 100.0
+}
+
+{
+  "name": "precision",
+  "type": "float", 
+  "format_string": ".4f",  // 4 decimal places (0.1234)
+  "default_value": 0.0001
+}
+```
 
 ## Layout Types
 

@@ -23,6 +23,7 @@ class FieldConfig:
     tooltip: Optional[str] = None
     width: Optional[int] = None
     height: Optional[int] = None
+    format_string: Optional[str] = None  # For float formatting (e.g., ".2f", ".4f", etc.)
 
 
 @dataclass
@@ -64,7 +65,7 @@ class ConfigLoader:
     """Loads and validates GUI configuration from JSON files."""
 
     SUPPORTED_FIELD_TYPES = {
-        "text", "number", "email", "password", "textarea",
+        "text", "number", "int", "float", "email", "password", "textarea",
         "checkbox", "radio", "select", "date", "time",
         "datetime", "file", "color", "range", "url"
     }
@@ -114,7 +115,8 @@ class ConfigLoader:
                 placeholder=field_data.get("placeholder"),
                 tooltip=field_data.get("tooltip"),
                 width=field_data.get("width"),
-                height=field_data.get("height")
+                height=field_data.get("height"),
+                format_string=field_data.get("format_string")
             )
             fields.append(field_config)
 

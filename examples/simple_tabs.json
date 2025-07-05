@@ -40,6 +40,35 @@
       "label": "Experience Level",
       "options": ["Junior", "Mid-level", "Senior", "Expert"],
       "default_value": "Mid-level"
+    },
+    {
+      "name": "years_experience",
+      "type": "int",
+      "label": "Years of Experience",
+      "min_value": 0,
+      "max_value": 50,
+      "default_value": 5,
+      "tooltip": "Number of years of professional experience"
+    },
+    {
+      "name": "salary",
+      "type": "float",
+      "label": "Expected Salary",
+      "min_value": 0.0,
+      "max_value": 999999.99,
+      "format_string": ".2f",
+      "default_value": 75000.00,
+      "tooltip": "Enter expected annual salary in dollars"
+    },
+    {
+      "name": "rating",
+      "type": "float",
+      "label": "Self Rating (1-10)",
+      "min_value": 1.0,
+      "max_value": 10.0,
+      "format_string": ".1f",
+      "default_value": 7.5,
+      "tooltip": "Rate your overall professional skill level"
     }
   ],
   "tabs": [
@@ -53,7 +82,7 @@
       "name": "professional",
       "title": "Professional Info",
       "layout": "form",
-      "fields": ["company", "position", "experience"]
+      "fields": ["company", "position", "experience", "years_experience", "salary", "rating"]
     }
   ],
   "submit_button": true,

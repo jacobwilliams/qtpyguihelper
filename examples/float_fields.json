@@ -1,0 +1,56 @@
+{
+  "window": {
+    "title": "Float Fields Example",
+    "width": 500,
+    "height": 400
+  },
+  "layout": "form",
+  "fields": [
+    {
+      "name": "basic_float",
+      "type": "float",
+      "label": "Basic Float",
+      "default_value": 3.14159,
+      "tooltip": "Default format uses 2 decimal places"
+    },
+    {
+      "name": "currency",
+      "type": "float",
+      "label": "Price ($)",
+      "min_value": 0.0,
+      "max_value": 999999.99,
+      "format_string": ".2f",
+      "default_value": 299.99,
+      "tooltip": "Currency format with 2 decimal places"
+    },
+    {
+      "name": "percentage",
+      "type": "float",
+      "label": "Success Rate (%)",
+      "min_value": 0.0,
+      "max_value": 100.0,
+      "format_string": ".1f",
+      "default_value": 95.7,
+      "tooltip": "Percentage with 1 decimal place"
+    },
+    {
+      "name": "precision",
+      "type": "float",
+      "label": "Measurement (mm)",
+      "format_string": ".4f",
+      "default_value": 12.3456,
+      "tooltip": "High precision measurement with 4 decimal places"
+    },
+    {
+      "name": "whole_numbers",
+      "type": "float",
+      "label": "Count",
+      "format_string": ".0f",
+      "default_value": 42.0,
+      "tooltip": "Float field displaying whole numbers only"
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Show Values",
+  "cancel_button": true
+}

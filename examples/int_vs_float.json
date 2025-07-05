@@ -1,0 +1,80 @@
+{
+  "window": {
+    "title": "Integer vs Float Fields Demo",
+    "width": 500,
+    "height": 600
+  },
+  "layout": "form",
+  "fields": [
+    {
+      "name": "age",
+      "type": "int",
+      "label": "Age (years)",
+      "min_value": 0,
+      "max_value": 150,
+      "default_value": 25,
+      "tooltip": "Integer field for whole numbers only"
+    },
+    {
+      "name": "quantity",
+      "type": "int",
+      "label": "Quantity",
+      "min_value": 1,
+      "max_value": 1000,
+      "default_value": 10,
+      "tooltip": "Integer field for item count"
+    },
+    {
+      "name": "height_cm",
+      "type": "float",
+      "label": "Height (cm)",
+      "min_value": 50.0,
+      "max_value": 250.0,
+      "format_string": ".1f",
+      "default_value": 175.5,
+      "tooltip": "Float field with 1 decimal place for height"
+    },
+    {
+      "name": "weight_kg",
+      "type": "float",
+      "label": "Weight (kg)",
+      "min_value": 20.0,
+      "max_value": 200.0,
+      "format_string": ".2f",
+      "default_value": 70.25,
+      "tooltip": "Float field with 2 decimal places for weight"
+    },
+    {
+      "name": "temperature",
+      "type": "float",
+      "label": "Temperature (°C)",
+      "min_value": -50.0,
+      "max_value": 50.0,
+      "format_string": ".1f",
+      "default_value": 23.5,
+      "tooltip": "Float field for temperature measurements"
+    },
+    {
+      "name": "score",
+      "type": "int",
+      "label": "Test Score (%)",
+      "min_value": 0,
+      "max_value": 100,
+      "default_value": 85,
+      "tooltip": "Integer field for test scores (whole percentages)"
+    },
+    {
+      "name": "gpa",
+      "type": "float",
+      "label": "GPA",
+      "min_value": 0.0,
+      "max_value": 4.0,
+      "format_string": ".2f",
+      "default_value": 3.75,
+      "tooltip": "Float field for GPA with 2 decimal places"
+    }
+  ],
+  "submit_button": true,
+  "submit_label": "Show Values",
+  "cancel_button": true
+}

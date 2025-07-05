@@ -371,6 +371,88 @@ def demo_nested_fields():
     app.exec()
 
 
+def demo_float_fields():
+    """Demo float fields with various format specifications."""
+    print("Starting Float Fields Demo...")
+
+    # Create the application
+    app = QApplication(sys.argv)
+
+    config = {
+        "window": {
+            "title": "Float Fields Demo",
+            "width": 500,
+            "height": 600
+        },
+        "layout": "form",
+        "fields": [
+            {
+                "name": "basic_float",
+                "type": "float",
+                "label": "Basic Float",
+                "default_value": 3.14159,
+                "tooltip": "A basic float field with default 2 decimal places"
+            },
+            {
+                "name": "currency",
+                "type": "float",
+                "label": "Price ($)",
+                "min_value": 0.0,
+                "max_value": 10000.0,
+                "format_string": ".2f",
+                "default_value": 99.99,
+                "tooltip": "Currency field with 2 decimal places"
+            },
+            {
+                "name": "percentage",
+                "type": "float",
+                "label": "Percentage (%)",
+                "min_value": 0.0,
+                "max_value": 100.0,
+                "format_string": ".1f",
+                "default_value": 85.5,
+                "tooltip": "Percentage with 1 decimal place"
+            },
+            {
+                "name": "precision",
+                "type": "float",
+                "label": "High Precision",
+                "format_string": ".4f",
+                "default_value": 0.0001,
+                "tooltip": "High precision with 4 decimal places"
+            }
+        ],
+        "submit_button": True,
+        "submit_label": "Show Values",
+        "cancel_button": True
+    }
+
+    def handle_submit(form_data):
+        """Handle form submission and show the values with their formats."""
+        result_text = "Float Field Values:\n" + "="*30 + "\n"
+        
+        for field_name, value in form_data.items():
+            if field_name != "_metadata":
+                result_text += f"{field_name}: {value} (type: {type(value).__name__})\n"
+        
+        # Show the values
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Float Field Values")
+        msg.setText(result_text)
+        msg.exec_()
+
+    # Create GUI from config dict
+    gui = GuiBuilder(config_dict=config)
+    gui.set_submit_callback(handle_submit)
+    
+    # Show the GUI
+    gui.show()
+
+    # Run the application
+    app.exec()
+
+
 def main():
     """Main function to run demos."""
     if len(sys.argv) > 1:
@@ -385,8 +467,9 @@ def main():
         print("  python demo.py tabs          - Tabbed interface demo")
         print("  python demo.py complex_tabs  - Complex tabbed configuration demo")
         print("  python demo.py nested        - Nested field names demo")
+        print("  python demo.py float         - Float fields demo")
         print()
-        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs/nested): ").lower()
+        demo_type = input("Enter demo type (registration/settings/project/contact/persistence/tabs/complex_tabs/nested/float): ").lower()
 
     if demo_type == "registration":
         demo_user_registration()
@@ -404,9 +487,11 @@ def main():
         demo_complex_tabs()
     elif demo_type == "nested":
         demo_nested_fields()
+    elif demo_type == "float":
+        demo_float_fields()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float")
 
 
 if __name__ == "__main__":
