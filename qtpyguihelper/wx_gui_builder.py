@@ -2,7 +2,6 @@
 wxPython GUI builder class that creates applications from JSON configuration.
 """
 
-import sys
 import json
 from typing import Dict, Any, Callable, Optional, List
 import wx
@@ -249,8 +248,8 @@ class WxGuiBuilder(wx.Frame):
                                 custom_btn.SetForegroundColour(wx.Colour(255, 255, 255))
                             elif fg_color == 'black':
                                 custom_btn.SetForegroundColour(wx.Colour(0, 0, 0))
-                    except:
-                        pass  # Ignore style parsing errors
+                    except (ValueError, AttributeError) as e:
+                        print(f"Warning: Could not parse button style '{button_config.style}': {e}")  # Ignore style parsing errors
 
                 # Bind event
                 self.Bind(wx.EVT_BUTTON,

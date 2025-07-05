@@ -533,7 +533,7 @@ class WidgetFactory:
                 datetime = QDateTime.fromString(field_config.default_value, Qt.ISODate)
                 if datetime.isValid():
                     widget.setDateTime(datetime)
-            except:
+            except (ValueError, TypeError):
                 pass  # Use current datetime as fallback
 
         return widget
@@ -567,7 +567,7 @@ class WidgetFactory:
         if field_config.default_value:
             try:
                 initial_color = QColor(field_config.default_value)
-            except:
+            except (ValueError, TypeError):
                 pass  # Use default color
 
         widget = CustomColorButton(initial_color)
@@ -706,7 +706,7 @@ class WidgetFactory:
                         break
 
             return True
-        except:
+        except (ValueError, TypeError, AttributeError):
             return False
 
     def get_all_values(self) -> Dict[str, Any]:

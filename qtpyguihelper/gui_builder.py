@@ -3,7 +3,6 @@ Main GUI builder class that creates Qt applications from JSON configuration.
 Compatible with both PySide6 and PyQt6 via qtpy.
 """
 
-import sys
 import json
 from typing import Dict, Any, Callable, Optional, List
 from qtpy.QtWidgets import (
@@ -78,8 +77,8 @@ class GuiBuilder(QMainWindow):
         if self.config.window.icon and self.config.window.icon.strip():
             try:
                 self.setWindowIcon(QIcon(self.config.window.icon))
-            except:
-                pass  # Ignore icon loading errors
+            except (FileNotFoundError, OSError) as e:
+                print(f"Warning: Could not load window icon '{self.config.window.icon}': {e}")  # Ignore icon loading errors
 
         # Set resizable property
         if not self.config.window.resizable:
@@ -250,8 +249,8 @@ class GuiBuilder(QMainWindow):
                     try:
                         icon = QIcon(button_config.icon)
                         custom_btn.setIcon(icon)
-                    except:
-                        pass  # Ignore icon loading errors
+                    except (FileNotFoundError, OSError) as e:
+                        print(f"Warning: Could not load button icon '{button_config.icon}': {e}")  # Ignore icon loading errors
 
                 # Connect to custom callback handler
                 def make_button_handler(button_name):

@@ -610,7 +610,7 @@ class WxWidgetFactory:
                             break
 
             return True
-        except:
+        except (ValueError, TypeError, AttributeError):
             return False
 
     def get_all_values(self) -> Dict[str, Any]:
