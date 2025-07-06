@@ -72,9 +72,8 @@ def test_wxpython_backend_creation():
         }
 
         # Create wxPython app BEFORE creating GUI components
-        import wx
-        if not wx.App.Get():
-            app = wx.App()  # noqa: F841  # pylint: disable=unused-variable
+        from .wx_test_utils import create_wx_app
+        app = create_wx_app()
 
         # Create GUI builder (but don't show it)
         gui_builder = GuiBuilder(config_dict=config)
@@ -147,9 +146,8 @@ def test_advanced_wxpython_features():
         }
 
         # Create wxPython app BEFORE creating advanced GUI
-        import wx
-        if not wx.App.Get():
-            app = wx.App()  # noqa: F841  # pylint: disable=unused-variable
+        from .wx_test_utils import create_wx_app
+        app = create_wx_app()
 
         gui_builder = GuiBuilder(config_dict=advanced_config)
         print("✓ Advanced wxPython GUI created with all field types")

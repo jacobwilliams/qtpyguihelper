@@ -153,8 +153,8 @@ def test_wxpython_tabs():
         }
 
         # Create wxPython application
-        if not wx.App.Get():
-            app = wx.App()
+        from .wx_test_utils import create_wx_app
+        app = create_wx_app()
 
         # Create GUI builder with wxPython backend
         gui_builder = WxGuiBuilder(config_dict=config)
@@ -181,7 +181,16 @@ def test_wxpython_tabs():
         print("  Note: Verify that fields in each tab expand to fill the window width")
 
         # Run the application
-        app.MainLoop()
+        # Check if we're running under pytest to avoid hanging
+        is_pytest = "pytest" in sys.modules or "PYTEST_CURRENT_TEST" in os.environ
+        if is_pytest:
+            print("✓ wxPython tabbed GUI created and shown (pytest mode)")
+            try:
+                gui_builder.Close()
+            except (AttributeError, RuntimeError):
+                pass
+        else:
+            app.MainLoop()
 
     except ImportError as e:
         print(f"✗ wxPython not available: {e}")

@@ -111,8 +111,8 @@ def test_wx_tabs_simple():
         }
 
         # Create wxPython application
-        if not wx.App.Get():
-            app = wx.App()
+        from .wx_test_utils import create_wx_app
+        app = create_wx_app()
 
         # Create GUI builder with wxPython backend
         from qtpyguihelper import WxGuiBuilder
@@ -140,8 +140,11 @@ def test_wx_tabs_simple():
         print("  - Notice how fields expand to fit the tab width")
         print("  - Switch between tabs to see field expansion in each")
 
-        # Run the application
-        app.MainLoop()
+        # Run the application - but not in pytest mode
+        if "pytest" not in sys.modules:
+            app.MainLoop()
+        else:
+            print("✓ Test completed (pytest mode - skipping MainLoop)")
 
     except ImportError as e:
         print(f"✗ wxPython not available: {e}")

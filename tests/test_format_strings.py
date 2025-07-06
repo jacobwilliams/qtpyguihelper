@@ -7,7 +7,7 @@ import os
 import sys
 
 # Add the library to the Python path
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from qtpyguihelper.config_loader import ConfigLoader
 from qtpyguihelper.qt.widget_factory import WidgetFactory
