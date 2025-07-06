@@ -15,7 +15,7 @@ This directory contains example files and demonstrations of the QtPyGuiHelper li
 - Float fields with custom formatting
 - Custom buttons with callbacks
 - Backend-specific demos (Qt, wxPython, and tkinter)
-- Backend comparison
+- Backend comparison (supports all three backends)
 - Unified interface (auto-backend selection)
 
 ### Running the Demo
