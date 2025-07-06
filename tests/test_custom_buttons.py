@@ -123,7 +123,7 @@ def test_config_validation():
         print("✓ Valid configuration accepted")
     except Exception as e:
         print(f"✗ Valid configuration rejected: {e}")
-        return False
+        assert False, "Valid configuration was incorrectly rejected"
 
     # Test missing required keys
     invalid_configs = [
@@ -156,15 +156,15 @@ def test_config_validation():
         try:
             loader.load_from_dict(invalid_config)
             print(f"✗ Invalid configuration {i+1} was accepted")
-            return False
+            assert False, f"Invalid configuration {i+1} should have been rejected"
         except ValueError:
             print(f"✓ Invalid configuration {i+1} correctly rejected")
         except Exception as e:
             print(f"✗ Invalid configuration {i+1} rejected with unexpected error: {e}")
-            return False
+            assert False, f"Invalid configuration {i+1} should have raised ValueError"
 
     print("✓ Configuration validation tests passed")
-    return True
+    assert True, "All configuration validation tests passed"
 
 
 def test_gui_builder_custom_buttons():
@@ -241,11 +241,11 @@ def test_gui_builder_custom_buttons():
         assert "test_btn" not in gui.custom_button_callbacks
 
         print("✓ GuiBuilder custom buttons tests passed")
-        return True
+        assert True, "GuiBuilder custom buttons tests passed successfully"
 
     except Exception as e:
         print(f"✗ GuiBuilder custom buttons test failed: {e}")
-        return False
+        assert False, f"GuiBuilder custom buttons test failed: {e}"
     finally:
         # Clean up temporary file
         try:
@@ -297,11 +297,11 @@ def test_no_custom_buttons():
         assert len(button_names) == 0
 
         print("✓ No custom buttons test passed")
-        return True
+        assert True, "No custom buttons test passed successfully"
 
     except Exception as e:
         print(f"✗ No custom buttons test failed: {e}")
-        return False
+        assert False, f"No custom buttons test failed: {e}"
     finally:
         # Clean up temporary file
         try:
@@ -340,10 +340,10 @@ def main():
 
     if failed == 0:
         print("🎉 All tests passed!")
-        return 0
+        assert True, "All tests passed successfully!"
     else:
         print("❌ Some tests failed!")
-        return 1
+        assert False, "Some tests failed"
 
 
 if __name__ == "__main__":

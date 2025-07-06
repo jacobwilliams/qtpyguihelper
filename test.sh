@@ -23,7 +23,7 @@ python -m pytest tests/test_tabs.py -v
 python -m pytest tests/test_wx_backend.py -v
 python -m pytest tests/test_wx_tabs_simple.py -v
 python -m pytest tests/test_wx_tabs_working.py -v
-# python -m pytest tests/test_wx_tabs.py -v
-# python -m pytest tests/test_wxpython_backend.py -v
-# python -m pytest tests/test_wxpython_integration.py -v
-# python -m pytest tests/test_wxpython_tabs.py -v
+python -m pytest tests/test_wx_tabs.py -v
+python -m pytest tests/test_wxpython_backend.py -v
+python -m pytest tests/test_wxpython_integration.py -v
+python -m pytest tests/test_wxpython_tabs.py -v

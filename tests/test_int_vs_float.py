@@ -116,7 +116,7 @@ def test_int_vs_float_fields():
 
             else:
                 print(f"     - ✗ WRONG widget type")
-                return False
+                assert False, "WRONG widget type"
 
         # Test 3: Value handling
         print("\n3. Testing value handling...")
@@ -143,7 +143,7 @@ def test_int_vs_float_fields():
 
             else:
                 print(f"   ✗ Failed to set value for {field_name}")
-                return False
+                assert False, f"Failed to set value for {field_name}"
 
         # Test 4: Get all values with correct types
         print("\n4. Testing get_all_values with type verification...")
@@ -170,13 +170,13 @@ def test_int_vs_float_fields():
         print("• 'number' fields use QDoubleSpinBox (legacy compatibility)")
         print("• Proper type enforcement and value handling")
 
-        return True
+        assert True, "All tests passed successfully!"
 
     except Exception as e:
         print(f"\n✗ Test failed with error: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, "Int vs Float field tests failed"
 
 
 def main():
@@ -197,10 +197,10 @@ def main():
 
     if success:
         print("\n🎉 All tests passed! Int and float field types are working correctly.")
-        return 0
+        assert True, "All tests passed successfully!"
     else:
         print("\n❌ Some tests failed. Please check the implementation.")
-        return 1
+        assert False, "Some tests failed"
 
 
 if __name__ == "__main__":

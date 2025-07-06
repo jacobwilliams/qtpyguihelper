@@ -98,7 +98,7 @@ def test_data_persistence():
             print("   ✓ Data file loaded correctly")
         else:
             print("   ✗ Data file loading failed")
-            return False
+            assert False, "Data file loading failed"
 
         # Test 4: Default value handling
         print("\n4. Testing default value handling...")
@@ -128,7 +128,7 @@ def test_data_persistence():
             print("   ✗ Default value merging failed")
             print(f"     Expected: {expected_merged}")
             print(f"     Got: {merged_data}")
-            return False
+            assert False, "Default value merging failed"
 
         # Test 5: Metadata generation
         print("\n5. Testing metadata generation...")
@@ -151,7 +151,7 @@ def test_data_persistence():
             print(f"     Field count: {metadata['_metadata']['field_count']}")
         else:
             print("   ✗ Metadata generation failed")
-            return False
+            assert False, "Metadata generation failed"
 
         # Cleanup
         os.unlink(test_data_file)
@@ -166,12 +166,11 @@ def test_data_persistence():
         print("• Generating metadata for saved files")
         print("• Handling partial data files")
 
-        return True
+        assert True, "All data persistence tests passed"
 
     except Exception as e:
         print(f"\n✗ Test failed with error: {e}")
-        return False
-
+        assert False, "Data persistence tests failed"
 
 def main():
     """Run the data persistence tests."""
@@ -182,10 +181,10 @@ def main():
 
     if success:
         print("\n🎉 All tests passed! The data persistence features are working correctly.")
-        return 0
+        assert True, "All tests passed successfully!"
     else:
         print("\n❌ Some tests failed. Please check the implementation.")
-        return 1
+        assert False, "Some tests failed"
 
 
 if __name__ == "__main__":

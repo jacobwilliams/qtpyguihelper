@@ -61,7 +61,7 @@ def test_tab_configuration():
 
     except Exception as e:
         print(f"   ✗ Error loading simple tab config: {e}")
-        return False
+        assert False, "Failed to load simple tab config"
 
     # Test 2: Load example tab files
     print("\n2. Testing example tab configuration files...")
@@ -84,7 +84,7 @@ def test_tab_configuration():
                         print(f"     - Tab '{tab.title}': {len(tab.fields)} fields, layout: {tab.layout}")
             except Exception as e:
                 print(f"   ✗ Error loading {filename}: {e}")
-                return False
+                assert False, f"Failed to load {filename}"
         else:
             print(f"   ! {filename} not found, skipping")
 
@@ -131,12 +131,12 @@ def test_tab_configuration():
         try:
             config = loader.load_from_dict(invalid_config)
             print(f"   ✗ {test_name}: Should have failed but didn't")
-            return False
+            assert False, f"Test {i+1} failed to raise expected exception"
         except ValueError:
             print(f"   ✓ {test_name}: Correctly rejected")
         except Exception as e:
             print(f"   ✗ {test_name}: Unexpected error: {e}")
-            return False
+            assert False, f"Test {i+1} raised unexpected exception"
 
     # Test 4: Mixed tab and non-tab configuration
     print("\n4. Testing mixed configurations...")
@@ -155,7 +155,7 @@ def test_tab_configuration():
         print(f"   ✓ Number of fields: {len(config.fields)}")
     except Exception as e:
         print(f"   ✗ Error with non-tab config: {e}")
-        return False
+        assert False, "Non-tab configuration failed"
 
     print("\n" + "=" * 50)
     print("All tab configuration tests passed! ✓")
@@ -166,7 +166,7 @@ def test_tab_configuration():
     print("• Mixed tab and non-tab configurations")
     print("• Comprehensive tab validation")
 
-    return True
+    assert True, "All tab configuration tests passed successfully"
 
 
 def main():
@@ -178,10 +178,10 @@ def main():
 
     if success:
         print("\n🎉 All tab tests passed! The tab functionality is working correctly.")
-        return 0
+        assert True, "All tab tests passed successfully"
     else:
         print("\n❌ Some tab tests failed. Please check the implementation.")
-        return 1
+        assert False, "Some tab tests failed"
 
 
 if __name__ == "__main__":

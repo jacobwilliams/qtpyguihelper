@@ -51,12 +51,10 @@ def test_config_loading():
                 print(f"  ✓ Required fields: {', '.join(required_fields)}")
 
         except Exception as e:
-            print(f"  ✗ Error loading {filename}: {e}")
-            return False
+            assert False, f"✗ Error loading {filename}: {e}"
 
     print("\n" + "=" * 50)
-    print("All configuration tests passed! ✓")
-    return True
+    assert True, "All configuration tests passed!"
 
 
 def test_programmatic_config():
@@ -95,11 +93,10 @@ def test_programmatic_config():
 
         print("  ✓ Programmatic configuration loaded successfully")
         print(f"  ✓ Fields created: {[f.name for f in config.fields]}")
-        return True
+        assert True, "Successfully created programmatic configuration"
 
     except Exception as e:
-        print(f"  ✗ Error: {e}")
-        return False
+        assert False, f"  ✗ Error: {e}"
 
 
 def test_config_validation():
@@ -145,53 +142,49 @@ def test_config_validation():
     for i, (invalid_config, test_name) in enumerate(zip(invalid_configs, test_names)):
         try:
             config = loader.load_from_dict(invalid_config)
-            print(f"  ✗ {test_name}: Should have failed but didn't")
-            return False
+            assert False, f"✗ {test_name}: Should have failed but didn't"
         except ValueError:
-            print(f"  ✓ {test_name}: Correctly rejected")
+            assert True, f"  ✓ {test_name}: Correctly rejected"
         except Exception as e:
-            print(f"  ✗ {test_name}: Unexpected error: {e}")
-            return False
+            assert False, f"✗ {test_name}: Unexpected error: {e}"
 
-    print("  ✓ All validation tests passed")
-    return True
+    assert True, "  ✓ All validation tests passed"
 
+# def main():
+#     """Run all tests."""
+#     print("QtPyGuiHelper Library Test Suite")
+#     print("=" * 50)
 
-def main():
-    """Run all tests."""
-    print("QtPyGuiHelper Library Test Suite")
-    print("=" * 50)
+#     tests = [
+#         test_config_loading,
+#         test_programmatic_config,
+#         test_config_validation
+#     ]
 
-    tests = [
-        test_config_loading,
-        test_programmatic_config,
-        test_config_validation
-    ]
+#     results = []
+#     for test in tests:
+#         try:
+#             result = test()
+#             results.append(result)
+#         except Exception as e:
+#             print(f"Test failed with exception: {e}")
+#             results.append(False)
 
-    results = []
-    for test in tests:
-        try:
-            result = test()
-            results.append(result)
-        except Exception as e:
-            print(f"Test failed with exception: {e}")
-            results.append(False)
+#     print("\n" + "=" * 50)
+#     print("TEST SUMMARY")
+#     print("=" * 50)
 
-    print("\n" + "=" * 50)
-    print("TEST SUMMARY")
-    print("=" * 50)
+#     passed = sum(results)
+#     total = len(results)
 
-    passed = sum(results)
-    total = len(results)
-
-    if passed == total:
-        print(f"ALL TESTS PASSED! ({passed}/{total})")
-        print("The QtPyGuiHelper library is ready to use.")
-        return 0
-    else:
-        print(f"SOME TESTS FAILED! ({passed}/{total})")
-        return 1
+#     if passed == total:
+#         print(f"ALL TESTS PASSED! ({passed}/{total})")
+#         print("The QtPyGuiHelper library is ready to use.")
+#         assert True, "All tests passed successfully!"
+#     else:
+#         print(f"SOME TESTS FAILED! ({passed}/{total})")
+#         assert False, "Some tests failed"
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+# if __name__ == "__main__":
+#     sys.exit(main())

@@ -172,8 +172,7 @@ def main():
         print("✓ wxPython backend available")
         print("⚠ Qt backend not available (install with: pip install PySide6)")
     else:
-        print("✗ No backends available!")
-        return 1
+        assert False, "✗ No backends available!"
 
     print("✓ All core functionality tests passed")
     print()
@@ -182,7 +181,7 @@ def main():
     print("  python demo_backend_selection.py wx    # Test wxPython backend")
     print("  python demo_backend_selection.py auto  # Test auto-selection")
 
-    return 0
+    assert True, "All tests completed successfully!"
 
 
 if __name__ == "__main__":

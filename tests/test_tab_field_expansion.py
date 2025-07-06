@@ -102,7 +102,9 @@ def test_tab_field_expansion():
     print("✓ Tab field expansion test GUI created")
     print("  Check that form fields in both tabs expand to fit the window width")
 
-    return app.exec()
+    app.exec()
+
+    assert True, 'Tab field expansion test completed successfully'
 
 
 if __name__ == "__main__":

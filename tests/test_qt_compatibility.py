@@ -32,12 +32,11 @@ def test_qtpy_imports():
         from qtpyguihelper.qt.widget_factory import WidgetFactory
         from qtpyguihelper.config_loader import ConfigLoader
         print("✓ QtPyGuiHelper imports successful")
-
-        return True
+        assert True, "All qtpy imports successful"
 
     except ImportError as e:
         print(f"❌ Import error: {e}")
-        return False
+        assert False, "Import error occurred"
 
 
 def test_simple_gui_creation():
@@ -71,11 +70,11 @@ def test_simple_gui_creation():
         assert len(gui.config.fields) == 1
 
         print("✓ GUI creation successful")
-        return True
+        assert True, "GUI created successfully"
 
     except Exception as e:
         print(f"❌ GUI creation error: {e}")
-        return False
+        assert False, "GUI creation failed"
 
 
 def test_available_backends():
@@ -102,10 +101,10 @@ def test_available_backends():
 
     if not backends:
         print("❌ No Qt backends available!")
-        return False
+        assert False, "No Qt backends available"
 
     print(f"✓ Found {len(backends)} Qt backend(s)")
-    return True
+    assert True, "Qt backends available"
 
 
 def main():
@@ -132,10 +131,10 @@ def main():
 
     if passed == total:
         print("🎉 All compatibility tests passed!")
-        return 0
+        assert True, "All tests passed successfully"
     else:
         print("⚠ Some tests failed. Check the output above.")
-        return 1
+        assert False, "Some tests failed"
 
 
 if __name__ == "__main__":

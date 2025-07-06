@@ -136,12 +136,12 @@ def test_format_strings():
                         print(f"     - ✓ CORRECT decimal places")
                     else:
                         print(f"     - ✗ WRONG decimal places")
-                        return False
+                        assert False, "Wrong decimal places"
                 else:
                     print(f"     - ✓ QLineEdit format field (scientific notation supported)")
             else:
                 print(f"   ✗ Failed to create widget for {field.name}")
-                return False
+                assert False, "Failed to create widget"
 
         # Test 3: Value formatting and retrieval
         print("\n3. Testing value formatting...")
@@ -173,7 +173,7 @@ def test_format_strings():
 
             except ValueError as e:
                 print(f"     - ✗ Format error: {e}")
-                return False
+                assert False, "Format error"
 
         # Test 4: Demonstrate format string examples
         print("\n4. Demonstrating format string examples...")
@@ -201,13 +201,13 @@ def test_format_strings():
         print("• ,.2f, etc. - Thousands separator with fixed-point")
         print("• .0f - Whole numbers only")
 
-        return True
+        assert True, "All tests passed successfully!"
 
     except Exception as e:
         print(f"\n✗ Test failed with error: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, "Format string tests failed"
 
 
 def main():
@@ -228,10 +228,10 @@ def main():
 
     if success:
         print("\n🎉 All format string tests passed! Scientific notation and other formats are supported.")
-        return 0
+        assert True, "All tests passed successfully!"
     else:
         print("\n❌ Some tests failed. Please check the implementation.")
-        return 1
+        assert False, "Some tests failed"
 
 
 if __name__ == "__main__":

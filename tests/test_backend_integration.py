@@ -125,10 +125,9 @@ def test_widget_factory_imports():
         print("✓ wxPython widget factory import and creation successful")
 
     except Exception as e:
-        print(f"✗ Widget factory import failed: {e}")
-        return False
+        assert False, f"✗ Widget factory import failed: {e}"
 
-    return True
+    assert True
 
 
 def test_config_compatibility():
@@ -185,13 +184,10 @@ def main():
         print("- Cross-backend configuration compatibility")
         print("- Custom buttons and advanced field types")
 
-        return True
+        assert True, "All tests completed successfully!"
 
     except Exception as e:
-        print(f"\n❌ Test failed: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
+        assert False, "\n❌ Test failed: {e}"
 
 
 if __name__ == "__main__":

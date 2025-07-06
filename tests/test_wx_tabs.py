@@ -31,7 +31,7 @@ def test_wx_tabs():
     config_path = os.path.join(os.path.dirname(__file__), "..", "examples", "tabbed_config.json")
     if not os.path.exists(config_path):
         print(f"✗ Configuration file not found: {config_path}")
-        return
+        assert False, "Configuration file not found"
 
     # Create wxPython application
     try:

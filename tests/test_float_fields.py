@@ -253,10 +253,10 @@ def main():
 
     if passed == total:
         print("\n🎉 All float field tests passed! The functionality is working correctly.")
-        return 0
+        assert True, "All tests passed successfully!"
     else:
         print(f"\n❌ {total - passed} test(s) failed. Please check the implementation.")
-        return 1
+        assert False, "Some tests failed"
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ def test_wxpython_backend_creation():
     # Check if wxPython is available
     if not is_backend_available('wx'):
         print("❌ wxPython backend not available")
-        return False
+        assert False, "wxPython backend not available"
 
     try:
         # Set wxPython backend
@@ -99,13 +99,13 @@ def test_wxpython_backend_creation():
         for key, value in form_data.items():
             print(f"  {key}: {value}")
 
-        return True
+        assert True, "wxPython GUI builder created successfully"
 
     except Exception as e:
         print(f"❌ Error creating wxPython GUI: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, "Error creating wxPython GUI"
 
 
 def test_advanced_wxpython_features():
@@ -115,7 +115,7 @@ def test_advanced_wxpython_features():
 
     if not is_backend_available('wx'):
         print("❌ wxPython backend not available")
-        return False
+        assert False, "wxPython backend not available"
 
     try:
         set_backend('wx')
@@ -180,13 +180,13 @@ def test_advanced_wxpython_features():
             else:
                 print(f"  ⚠ {key}: expected {expected_value}, got {actual_value}")
 
-        return True
+        assert True, "Advanced wxPython features tested successfully"
 
     except Exception as e:
         print(f"❌ Error testing advanced features: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, "Error testing advanced wxPython features"
 
 
 def main():
@@ -221,10 +221,10 @@ def main():
         print("✓ All field types are supported")
         print("✓ Custom buttons work correctly")
         print("✓ Form data handling is working")
-        return 0
+        assert True, "All wxPython tests passed successfully"
     else:
         print(f"SOME TESTS FAILED! ({passed}/{total})")
-        return 1
+        assert False, "Some wxPython tests failed"
 
 
 if __name__ == "__main__":

@@ -43,9 +43,9 @@ def test_backend_switching():
             print(f"✓ {backend} backend set successfully")
         except Exception as e:
             print(f"✗ Error with {backend} backend: {e}")
-            return False
+            assert False, f"Failed to set {backend} backend"
 
-    return True
+    assert True, "All backends tested successfully"
 
 def test_unified_interface():
     """Test the unified GuiBuilder interface."""
@@ -74,11 +74,11 @@ def test_unified_interface():
         assert retrieved_data["test_field"] == "test_value", "Data setting/getting failed"
         print("✓ Form data operations working")
 
-        return True
+        assert True, "Unified interface test passed"
 
     except Exception as e:
         print(f"✗ Unified interface test failed: {e}")
-        return False
+        assert False, "Unified interface test failed"
 
 def test_widget_factories():
     """Test that both widget factories can be imported and work."""
@@ -102,11 +102,11 @@ def test_widget_factories():
         )
         print("✓ Field configuration created successfully")
 
-        return True
+        assert True, "Widget factory test passed"
 
     except Exception as e:
         print(f"✗ Widget factory test failed: {e}")
-        return False
+        assert False, "Widget factory test failed"
 
 def test_configuration_loading():
     """Test configuration loading with both backends."""
@@ -165,11 +165,11 @@ def test_configuration_loading():
         print(f"✓ Custom buttons: {len(config.custom_buttons)}")
         print(f"✓ Field types: {[f.type for f in config.fields]}")
 
-        return True
+        assert True, "Configuration loading test passed"
 
     except Exception as e:
         print(f"✗ Configuration loading test failed: {e}")
-        return False
+        assert False, "Configuration loading test failed"
 
 def main():
     """Run all tests."""
