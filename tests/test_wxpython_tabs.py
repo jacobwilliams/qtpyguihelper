@@ -200,6 +200,3 @@ def test_wxpython_tabs():
         print(f"✗ Error with wxPython tabs backend: {e}")
         import traceback
         traceback.print_exc()
-
-if __name__ == "__main__":
-    test_wxpython_tabs()

@@ -68,6 +68,3 @@ def test_wx_tabs():
         import traceback
         traceback.print_exc()
 
-
-if __name__ == "__main__":
-    test_wx_tabs()

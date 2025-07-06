@@ -149,18 +149,9 @@ def test_widget_factories():
     print()
 
 
-def main():
-    """Run all tests."""
-    print("QtPyGuiHelper Backend Test Suite")
-    print("=" * 40)
-    print()
+def test_get_available_backends():
+    """test get_available_backends."""
 
-    test_backend_detection()
-    test_unified_interface()
-    test_config_loading()
-    test_widget_factories()
-
-    print("=== Summary ===")
     available = get_available_backends()
     if len(available) == 2:
         print("✓ Both Qt and wxPython backends are available")
@@ -174,15 +165,4 @@ def main():
     else:
         assert False, "✗ No backends available!"
 
-    print("✓ All core functionality tests passed")
-    print()
-    print("To test the GUI interfaces:")
-    print("  python demo_backend_selection.py qt    # Test Qt backend")
-    print("  python demo_backend_selection.py wx    # Test wxPython backend")
-    print("  python demo_backend_selection.py auto  # Test auto-selection")
-
-    assert True, "All tests completed successfully!"
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+    assert True, "get_available_backends() test passed"

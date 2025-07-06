@@ -209,30 +209,3 @@ def test_format_strings():
         traceback.print_exc()
         assert False, "Format string tests failed"
 
-
-def main():
-    """Run the format string tests."""
-    print("QtPyGuiHelper Format String Test Suite")
-    print("=" * 50)
-
-    # Create QApplication for widget tests
-    try:
-        from qtpy.QtWidgets import QApplication
-        app = QApplication.instance()
-        if app is None:
-            app = QApplication(sys.argv)
-    except ImportError:
-        print("Warning: Could not create QApplication. Widget tests may fail.")
-
-    success = test_format_strings()
-
-    if success:
-        print("\n🎉 All format string tests passed! Scientific notation and other formats are supported.")
-        assert True, "All tests passed successfully!"
-    else:
-        print("\n❌ Some tests failed. Please check the implementation.")
-        assert False, "Some tests failed"
-
-
-if __name__ == "__main__":
-    sys.exit(main())

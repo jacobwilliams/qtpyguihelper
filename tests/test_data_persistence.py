@@ -171,21 +171,3 @@ def test_data_persistence():
     except Exception as e:
         print(f"\n✗ Test failed with error: {e}")
         assert False, "Data persistence tests failed"
-
-def main():
-    """Run the data persistence tests."""
-    print("QtPyGuiHelper Data Persistence Test Suite")
-    print("=" * 50)
-
-    success = test_data_persistence()
-
-    if success:
-        print("\n🎉 All tests passed! The data persistence features are working correctly.")
-        assert True, "All tests passed successfully!"
-    else:
-        print("\n❌ Some tests failed. Please check the implementation.")
-        assert False, "Some tests failed"
-
-
-if __name__ == "__main__":
-    sys.exit(main())

@@ -126,5 +126,3 @@ def test_wx_tabs():
     # Run appropriately for test environment
     wx_test_utils.run_wx_gui_for_test(app, gui_builder)
 
-if __name__ == "__main__":
-    test_wx_tabs()

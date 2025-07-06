@@ -177,31 +177,3 @@ def test_int_vs_float_fields():
         import traceback
         traceback.print_exc()
         assert False, "Int vs Float field tests failed"
-
-
-def main():
-    """Run the int vs float field tests."""
-    print("QtPyGuiHelper Int vs Float Field Test Suite")
-    print("=" * 50)
-
-    # Create QApplication for widget tests
-    try:
-        from qtpy.QtWidgets import QApplication
-        app = QApplication.instance()
-        if app is None:
-            app = QApplication(sys.argv)
-    except ImportError:
-        print("Warning: Could not create QApplication. Widget tests may fail.")
-
-    success = test_int_vs_float_fields()
-
-    if success:
-        print("\n🎉 All tests passed! Int and float field types are working correctly.")
-        assert True, "All tests passed successfully!"
-    else:
-        print("\n❌ Some tests failed. Please check the implementation.")
-        assert False, "Some tests failed"
-
-
-if __name__ == "__main__":
-    sys.exit(main())

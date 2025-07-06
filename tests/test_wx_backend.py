@@ -105,7 +105,3 @@ def test_wx_backend():
         print(f"✗ Error in wxPython backend test: {e}")
         import traceback
         traceback.print_exc()
-
-
-if __name__ == "__main__":
-    test_wx_backend()

@@ -109,20 +109,3 @@ def test_nested_data_loading():
     else:
         print("⚠ Nested data file not found, skipping this test")
 
-
-if __name__ == "__main__":
-    print("Running nested fields tests...\n")
-
-    try:
-        test_nested_value_functions()
-        test_nested_config_loading()
-        test_nested_data_loading()
-
-        print("\n🎉 All tests passed! Nested fields functionality is working correctly.")
-
-    except AssertionError as e:
-        print(f"\n❌ Test failed: {e}")
-        sys.exit(1)
-    except Exception as e:
-        print(f"\n💥 Unexpected error: {e}")
-        sys.exit(1)

@@ -86,5 +86,4 @@ def test_qt_backend():
     print("✓ GUI created successfully! Close the window to exit.")
     app.exec()
 
-if __name__ == "__main__":
-    test_qt_backend()
+    assert True, "Qt backend test completed successfully"

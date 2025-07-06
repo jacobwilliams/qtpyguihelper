@@ -229,36 +229,3 @@ class TestFileOperations:
         with pytest.raises(FileNotFoundError):
             loader.load_from_file("/nonexistent/file.json")
 
-
-if __name__ == "__main__":
-    # Run basic tests if pytest is not available
-    import unittest
-
-    # Convert pytest tests to unittest format for basic testing
-    def run_basic_tests():
-        print("Running basic configuration tests...")
-
-        # Test config loading
-        config_data = {
-            "window": {"title": "Test App"},
-            "fields": [{"name": "test", "type": "text", "label": "Test"}]
-        }
-
-        loader = ConfigLoader()
-        config = loader.load_from_dict(config_data)
-        assert config.window.title == "Test App"
-        print("✓ Config loading test passed")
-
-        # Test backend detection
-        backends = get_available_backends()
-        assert len(backends) > 0
-        print(f"✓ Backend detection test passed. Available: {backends}")
-
-        print("All basic tests passed!")
-
-    try:
-        import pytest
-        pytest.main([__file__, "-v"])
-    except ImportError:
-        print("pytest not available, running basic tests...")
-        run_basic_tests()

@@ -161,35 +161,3 @@ def test_config_compatibility():
     assert len(gui_config.custom_buttons) == 1
 
     print("✓ Configuration compatibility verified")
-
-
-def main():
-    """Run all tests."""
-    print("QtPyGuiHelper Backend Integration Tests")
-    print("======================================")
-
-    try:
-        test_backend_detection()
-        test_backend_info()
-        test_backend_switching()
-        test_unified_interface()
-        test_widget_factory_imports()
-        test_config_compatibility()
-
-        print("\n🎉 All tests passed! wxPython backend integration successful!")
-        print("\nThe library now supports both Qt and wxPython backends with:")
-        print("- Automatic backend detection")
-        print("- Seamless backend switching")
-        print("- Unified programming interface")
-        print("- Cross-backend configuration compatibility")
-        print("- Custom buttons and advanced field types")
-
-        assert True, "All tests completed successfully!"
-
-    except Exception as e:
-        assert False, "\n❌ Test failed: {e}"
-
-
-if __name__ == "__main__":
-    success = main()
-    sys.exit(0 if success else 1)

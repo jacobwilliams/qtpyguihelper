@@ -155,7 +155,3 @@ def test_wx_tabs_simple():
         print(f"✗ Error with wxPython tabs: {e}")
         import traceback
         traceback.print_exc()
-
-
-if __name__ == "__main__":
-    test_wx_tabs_simple()

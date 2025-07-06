@@ -105,7 +105,3 @@ def test_tab_field_expansion():
     app.exec()
 
     assert True, 'Tab field expansion test completed successfully'
-
-
-if __name__ == "__main__":
-    test_tab_field_expansion()

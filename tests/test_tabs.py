@@ -168,21 +168,3 @@ def test_tab_configuration():
 
     assert True, "All tab configuration tests passed successfully"
 
-
-def main():
-    """Run the tab configuration tests."""
-    print("QtPyGuiHelper Tab Functionality Test Suite")
-    print("=" * 50)
-
-    success = test_tab_configuration()
-
-    if success:
-        print("\n🎉 All tab tests passed! The tab functionality is working correctly.")
-        assert True, "All tab tests passed successfully"
-    else:
-        print("\n❌ Some tab tests failed. Please check the implementation.")
-        assert False, "Some tab tests failed"
-
-
-if __name__ == "__main__":
-    sys.exit(main())

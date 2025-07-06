@@ -105,37 +105,3 @@ def test_available_backends():
 
     print(f"✓ Found {len(backends)} Qt backend(s)")
     assert True, "Qt backends available"
-
-
-def main():
-    """Run all compatibility tests."""
-    print("QtPyGuiHelper Qt Backend Compatibility Test\n")
-
-    tests = [
-        test_available_backends,
-        test_qtpy_imports,
-        test_simple_gui_creation
-    ]
-
-    passed = 0
-    total = len(tests)
-
-    for test in tests:
-        try:
-            if test():
-                passed += 1
-        except Exception as e:
-            print(f"❌ Test {test.__name__} failed with exception: {e}")
-
-    print(f"\nTest Results: {passed}/{total} tests passed")
-
-    if passed == total:
-        print("🎉 All compatibility tests passed!")
-        assert True, "All tests passed successfully"
-    else:
-        print("⚠ Some tests failed. Check the output above.")
-        assert False, "Some tests failed"
-
-
-if __name__ == "__main__":
-    sys.exit(main())

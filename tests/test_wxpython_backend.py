@@ -226,6 +226,3 @@ def main():
         print(f"SOME TESTS FAILED! ({passed}/{total})")
         assert False, "Some wxPython tests failed"
 
-
-if __name__ == "__main__":
-    sys.exit(main())

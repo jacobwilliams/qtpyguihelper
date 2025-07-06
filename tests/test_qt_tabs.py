@@ -153,6 +153,3 @@ def test_qt_tabs():
         import traceback
         traceback.print_exc()
 
-
-if __name__ == "__main__":
-    test_qt_tabs()
