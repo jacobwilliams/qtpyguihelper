@@ -65,9 +65,9 @@ def test_simple_gui_creation():
         gui = GuiBuilder(config_dict=config)
 
         # Test basic functionality
-        assert gui.config is not None
-        assert gui.config.window.title == "Test"
-        assert len(gui.config.fields) == 1
+        assert gui.builder.config is not None
+        assert gui.builder.config.window.title == "Test"
+        assert len(gui.builder.config.fields) == 1
 
         print("✓ GUI creation successful")
         assert True, "GUI created successfully"

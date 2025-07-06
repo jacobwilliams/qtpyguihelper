@@ -234,14 +234,14 @@ def test_gui_builder_custom_buttons():
 
         # Test that we can set and remove callbacks (no direct access to internal state)
         # Since we can't access the internal callbacks dict, we'll test functionality indirectly
-        
+
         # Test removing callback
         gui.remove_custom_button_callback("test_btn")
-        
+
         # Test setting another callback to ensure the methods work
         def another_callback(_form_data):
             pass
-        
+
         gui.set_custom_button_callback("action_btn", another_callback)
         gui.remove_custom_button_callback("action_btn")
 

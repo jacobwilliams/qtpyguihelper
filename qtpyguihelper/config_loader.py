@@ -235,15 +235,19 @@ class ConfigLoader:
 
         # Check if using tabs
         use_tabs = config_data.get("use_tabs", False)
+        has_tabs = "tabs" in config_data and config_data["tabs"]
 
-        if use_tabs:
-            # When using tabs, fields can be in tabs instead of root level
+        if use_tabs or has_tabs:
+            # When using tabs or tabs are present, validate them
             if "tabs" not in config_data:
                 raise ValueError("Configuration with use_tabs=True must contain 'tabs' key")
 
             tabs = config_data["tabs"]
             if not isinstance(tabs, list) or len(tabs) == 0:
                 raise ValueError("'tabs' must be a non-empty list when use_tabs=True")
+
+            # Track tab names to check for duplicates
+            tab_names = set()
 
             # Validate each tab and its fields
             for i, tab in enumerate(tabs):
@@ -254,6 +258,12 @@ class ConfigLoader:
                 for key in required_tab_keys:
                     if key not in tab:
                         raise ValueError(f"Tab {i} missing required key: {key}")
+
+                # Check for duplicate tab names
+                tab_name = tab["name"]
+                if tab_name in tab_names:
+                    raise ValueError(f"Duplicate tab name: {tab_name}")
+                tab_names.add(tab_name)
 
                 # Validate fields within this tab
                 tab_fields = tab["fields"]

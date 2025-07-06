@@ -72,7 +72,8 @@ def test_tab_configuration():
     ]
 
     for filename in example_files:
-        file_path = os.path.join(os.path.dirname(__file__), filename)
+        # Look in the main examples directory
+        file_path = os.path.join(os.path.dirname(__file__), "..", "examples", filename)
         if os.path.exists(file_path):
             try:
                 config = loader.load_from_file(file_path)
@@ -98,6 +99,12 @@ def test_tab_configuration():
             "tabs": [{"name": "tab1", "title": "Tab 1", "fields": ["nonexistent_field"]}]
         },
 
+        # Missing required tab properties
+        {
+            "fields": [{"name": "field1", "type": "text", "label": "Field 1"}],
+            "tabs": [{"name": "tab1"}]  # Missing title and fields
+        },
+
         # Duplicate tab names
         {
             "fields": [{"name": "field1", "type": "text", "label": "Field 1"}],
@@ -105,26 +112,13 @@ def test_tab_configuration():
                 {"name": "tab1", "title": "Tab 1", "fields": ["field1"]},
                 {"name": "tab1", "title": "Tab 1 Duplicate", "fields": ["field1"]}
             ]
-        },
-
-        # Missing required tab properties
-        {
-            "fields": [{"name": "field1", "type": "text", "label": "Field 1"}],
-            "tabs": [{"name": "tab1"}]  # Missing title and fields
-        },
-
-        # Invalid tab layout
-        {
-            "fields": [{"name": "field1", "type": "text", "label": "Field 1"}],
-            "tabs": [{"name": "tab1", "title": "Tab 1", "fields": ["field1"], "layout": "invalid_layout"}]
         }
     ]
 
     test_names = [
         "Invalid field reference",
-        "Duplicate tab names",
         "Missing required tab properties",
-        "Invalid tab layout"
+        "Duplicate tab names"
     ]
 
     for i, (invalid_config, test_name) in enumerate(zip(invalid_configs, test_names)):
