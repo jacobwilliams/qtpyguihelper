@@ -15,14 +15,25 @@ from qtpyguihelper import set_backend, GuiBuilder
 def test_qt_backend():
     """Test basic Qt backend functionality."""
     print("Testing Qt backend...")
-    
+
+    # Create QApplication first if one doesn't exist
+    try:
+        from qtpy.QtWidgets import QApplication
+    except ImportError:
+        from qtpy.QtGui import QApplication
+
+    if not QApplication.instance():
+        app = QApplication(sys.argv)
+    else:
+        app = QApplication.instance()
+
     # Force Qt backend
     set_backend('qt')
-    
+
     # Simple configuration
     config = {
         "window": {
-            "title": "Qt Test", 
+            "title": "Qt Test",
             "width": 400,
             "height": 300,
             "resizable": True
@@ -41,7 +52,7 @@ def test_qt_backend():
             {
                 "name": "age",
                 "type": "int",
-                "label": "Age", 
+                "label": "Age",
                 "min_value": 0,
                 "max_value": 120,
                 "default_value": 25
@@ -54,34 +65,26 @@ def test_qt_backend():
             }
         ]
     }
-    
+
     def on_submit(form_data):
         print("Form submitted:", form_data)
-    
+
     def on_cancel():
         print("Form cancelled")
-    
+
     # Create GUI
     gui = GuiBuilder(config_dict=config)
     gui.set_submit_callback(on_submit)
     gui.set_cancel_callback(on_cancel)
-    
+
     print(f"Created GUI with backend: {gui.backend}")
     print("GUI created successfully! Close the window to exit.")
-    
+
     # Show the window
     gui.show()
-    
-    # Run the application
-    try:
-        from qtpy.QtWidgets import QApplication
-    except ImportError:
-        from qtpy.QtGui import QApplication
-        
-    if not QApplication.instance():
-        app = QApplication(sys.argv)
-        sys.exit(app.exec())
 
+    print("✓ GUI created successfully! Close the window to exit.")
+    app.exec()
 
 if __name__ == "__main__":
     test_qt_backend()

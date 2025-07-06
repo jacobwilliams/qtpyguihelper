@@ -18,6 +18,15 @@ def test_format_strings():
     print("Testing Format String Support...")
     print("=" * 50)
 
+    # Create QApplication if needed
+    try:
+        from qtpy.QtWidgets import QApplication
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+    except ImportError:
+        print("Warning: Could not create QApplication. Widget tests may fail.")
+
     # Test cases for different format strings
     format_test_cases = [
         # Fixed-point notation

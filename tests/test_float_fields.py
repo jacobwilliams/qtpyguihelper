@@ -18,6 +18,15 @@ def test_float_field_configuration():
     print("Testing Float Field Configuration...")
     print("=" * 50)
 
+    # Create QApplication if needed
+    try:
+        from qtpy.QtWidgets import QApplication
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+    except ImportError:
+        print("Warning: Could not create QApplication. Widget tests may fail.")
+
     # Create a test configuration with float fields
     config = {
         "window": {"title": "Float Test Form", "width": 400, "height": 300},
@@ -98,7 +107,7 @@ def test_float_field_configuration():
                     print(f"     - Default value: {widget.value()}")
             else:
                 print(f"   ✗ Failed to create widget for {field.name}")
-                return False
+                assert False, f"Failed to create widget for {field.name}"
 
         # Test 4: Value handling
         print("\n4. Testing float value handling...")
@@ -116,7 +125,7 @@ def test_float_field_configuration():
                 print(f"   ✓ {field_name}: Set {test_value}, Got {retrieved_value}")
             else:
                 print(f"   ✗ Failed to set value for {field_name}")
-                return False
+                assert False, f"Failed to set value for {field_name}"
 
         # Test 5: Get all values
         print("\n5. Testing get_all_values...")
@@ -135,19 +144,28 @@ def test_float_field_configuration():
         print("• Proper step size based on decimal precision")
         print("• Integration with existing widget factory")
 
-        return True
+        # Test completed successfully
 
     except Exception as e:
         print(f"\n✗ Test failed with error: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, f"Test failed with error: {e}"
 
 
 def test_float_format_strings():
     """Test various format string scenarios."""
     print("\nTesting Float Format Strings...")
     print("=" * 50)
+
+    # Create QApplication if needed
+    try:
+        from qtpy.QtWidgets import QApplication
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+    except ImportError:
+        print("Warning: Could not create QApplication. Widget tests may fail.")
 
     format_tests = [
         {"format_string": ".2f", "expected_decimals": 2},
@@ -189,10 +207,10 @@ def test_float_format_strings():
             print("  ✓ PASS")
         else:
             print("  ✗ FAIL")
-            return False
+            assert False, f"Expected {test_case['expected_decimals']} decimals, got {actual_decimals}"
 
     print("\n✓ All format string tests passed!")
-    return True
+    # Test completed successfully
 
 
 def main():
@@ -217,8 +235,8 @@ def main():
     results = []
     for test_func in tests:
         try:
-            result = test_func()
-            results.append(result)
+            test_func()  # Tests now use assertions instead of returning values
+            results.append(True)
         except Exception as e:
             print(f"Test failed with exception: {e}")
             import traceback

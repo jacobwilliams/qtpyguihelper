@@ -19,6 +19,15 @@ def test_int_vs_float_fields():
     print("Testing Int vs Float Field Types...")
     print("=" * 50)
 
+    # Create QApplication if needed
+    try:
+        from qtpy.QtWidgets import QApplication
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+    except ImportError:
+        print("Warning: Could not create QApplication. Widget tests may fail.")
+
     # Create a test configuration with both int and float fields
     config = {
         "window": {"title": "Int vs Float Test", "width": 400, "height": 300},

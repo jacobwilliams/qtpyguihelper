@@ -11,7 +11,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from qtpyguihelper import GuiBuilder, set_backend, get_backend_info, is_backend_available
 
-
 def test_wxpython_backend_creation():
     """Test that we can create a wxPython GUI builder without showing it."""
     print("Testing wxPython Backend Creation")
