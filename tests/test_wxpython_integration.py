@@ -130,7 +130,7 @@ def test_widget_factories():
         assert False, "Widget factory test failed"
 
 def test_configuration_loading():
-    """Test configuration loading with both backends."""
+    """Test configuration loading with all backends."""
     print("\n=== Configuration Loading Test ===")
 
     try:

@@ -131,7 +131,7 @@ def test_widget_factory_imports():
 
 
 def test_config_compatibility():
-    """Test that configurations work with both backends."""
+    """Test that configurations work with all backends."""
     print("\n=== Configuration Compatibility Test ===")
 
     from qtpyguihelper.config_loader import ConfigLoader
