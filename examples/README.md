@@ -36,7 +36,7 @@ python examples/demo.py unified
 ### Available Demo Types
 
 - `registration` - User registration form (Qt)
-- `settings` - Application settings form (Qt)  
+- `settings` - Application settings form (Qt)
 - `project` - Project data entry form (Qt)
 - `contact` - Programmatic contact form (Qt)
 - `persistence` - Data loading and saving demo (Qt)
@@ -72,6 +72,6 @@ For a quick demonstration, run the root `demo.py` which provides simple access t
 ```bash
 python demo.py comprehensive  # Full featured demo
 python demo.py quick-qt       # Simple Qt demo
-python demo.py quick-wx       # Simple wxPython demo  
+python demo.py quick-wx       # Simple wxPython demo
 python demo.py backend        # Backend comparison
 ```

@@ -627,7 +627,7 @@ The library includes comprehensive examples in the `examples/` directory:
 
 ### Configuration Files
 - `user_registration.json` - Complete user registration form
-- `settings_form.json` - Application settings with various widget types  
+- `settings_form.json` - Application settings with various widget types
 - `project_form.json` - Project data entry form with grid layout
 - `custom_buttons.json` - Demonstrates custom buttons with callbacks
 - `tabbed_config.json` - Complex tabbed interface configuration
@@ -641,7 +641,7 @@ The library includes comprehensive examples in the `examples/` directory:
 python demo.py                # Interactive demo launcher
 python demo.py comprehensive  # Full-featured demo
 python demo.py quick-qt       # Simple Qt demo
-python demo.py quick-wx       # Simple wxPython demo  
+python demo.py quick-wx       # Simple wxPython demo
 python demo.py backend        # Backend comparison
 ```
 
@@ -677,7 +677,7 @@ from qtpyguihelper import GuiBuilder, set_backend
 
 config = {
     "window": {"title": "Cross-Platform Demo", "width": 500, "height": 400},
-    "layout": "form", 
+    "layout": "form",
     "fields": [
         {"name": "name", "type": "text", "label": "Name", "required": True},
         {"name": "age", "type": "int", "label": "Age", "min_value": 0, "max_value": 120},
@@ -694,7 +694,7 @@ config = {
 set_backend('qt')
 qt_gui = GuiBuilder(config_dict=config)
 
-# Test with wxPython backend  
+# Test with wxPython backend
 set_backend('wx')
 wx_gui = GuiBuilder(config_dict=config)
 
