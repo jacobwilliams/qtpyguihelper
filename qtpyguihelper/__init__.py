@@ -50,7 +50,7 @@ class GuiBuilder:
         Args:
             config_path: Path to JSON configuration file
             config_dict: Configuration dictionary (alternative to config_path)
-            backend: Force a specific backend ('qt' or 'wx'). If None, auto-detects.
+            backend: Force a specific backend ('qt', 'wx', or 'tk'). If None, auto-detects.
         """
         self._backend = None
         self._builder = None
@@ -183,7 +183,7 @@ class GuiBuilder:
         Args:
             config_path: Path to JSON configuration file
             config_dict: Configuration dictionary (alternative to config_path)
-            backend: Force a specific backend ('qt' or 'wx'). If None, auto-detects.
+            backend: Force a specific backend ('qt', 'wx', or 'tk'). If None, auto-detects.
 
         Returns:
             GuiBuilder instance

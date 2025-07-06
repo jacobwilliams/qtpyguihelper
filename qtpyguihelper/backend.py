@@ -1,6 +1,6 @@
 """
 Backend detection and selection for qtpyguihelper.
-Supports both Qt (via qtpy) and wxPython backends.
+Supports Qt (via qtpy), wxPython, and tkinter backends.
 """
 
 import os

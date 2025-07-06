@@ -14,7 +14,7 @@ This directory contains example files and demonstrations of the QtPyGuiHelper li
 - Nested field names
 - Float fields with custom formatting
 - Custom buttons with callbacks
-- Backend-specific demos (Qt and wxPython)
+- Backend-specific demos (Qt, wxPython, and tkinter)
 - Backend comparison
 - Unified interface (auto-backend selection)
 
@@ -29,6 +29,7 @@ python examples/demo.py registration
 python examples/demo.py float
 python examples/demo.py custom_buttons
 python examples/demo.py wxpython
+python examples/demo.py tkinter
 python examples/demo.py compare
 python examples/demo.py unified
 ```
@@ -47,7 +48,8 @@ python examples/demo.py unified
 - `format` - Format strings demo (Qt)
 - `custom_buttons` - Custom buttons demo (Qt)
 - `wxpython` - wxPython backend demo
-- `compare` - Compare Qt vs wxPython backends
+- `tkinter` - tkinter backend demo
+- `compare` - Compare all backends (Qt, wxPython, tkinter)
 - `unified` - Unified interface (auto-backend)
 
 ### Simple Examples
