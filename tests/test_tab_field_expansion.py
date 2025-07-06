@@ -23,62 +23,62 @@ def test_tab_field_expansion():
             "width": 600,
             "height": 400
         },
-        "layout": "tabs",
-        "tabs": [
+        "use_tabs": True,
+        "fields": [
             {
-                "title": "User Info",
-                "layout": "form",
-                "enabled": True,
-                "fields": [
-                    {
-                        "name": "full_name",
-                        "type": "text",
-                        "label": "Full Name",
-                        "placeholder": "Enter your full name",
-                        "required": True
-                    },
-                    {
-                        "name": "email",
-                        "type": "email",
-                        "label": "Email Address",
-                        "placeholder": "your.email@example.com"
-                    },
-                    {
-                        "name": "age",
-                        "type": "int",
-                        "label": "Age",
-                        "min_value": 18,
-                        "max_value": 100,
-                        "default_value": 25
-                    }
-                ]
+                "name": "full_name",
+                "type": "text",
+                "label": "Full Name",
+                "placeholder": "Enter your full name",
+                "required": True
             },
             {
+                "name": "email",
+                "type": "email",
+                "label": "Email Address",
+                "placeholder": "your.email@example.com"
+            },
+            {
+                "name": "age",
+                "type": "int",
+                "label": "Age",
+                "min_value": 18,
+                "max_value": 100,
+                "default_value": 25
+            },
+            {
+                "name": "notification_email",
+                "type": "email",
+                "label": "Notification Email",
+                "placeholder": "notifications@example.com"
+            },
+            {
+                "name": "theme",
+                "type": "select",
+                "label": "Theme",
+                "options": ["Light", "Dark", "Auto"],
+                "default_value": "Auto"
+            },
+            {
+                "name": "description",
+                "type": "textarea",
+                "label": "Description",
+                "placeholder": "Enter a description...",
+                "height": 80
+            }
+        ],
+        "tabs": [
+            {
+                "name": "user_info",
+                "title": "User Info",
+                "layout": "form",
+                "fields": ["full_name", "email", "age"]
+            },
+            {
+                "name": "settings",
                 "title": "Settings",
                 "layout": "form",
-                "enabled": True,
-                "fields": [
-                    {
-                        "name": "notification_email",
-                        "type": "email",
-                        "label": "Notification Email",
-                        "placeholder": "notifications@example.com"
-                    },
-                    {
-                        "name": "theme",
-                        "type": "select",
-                        "label": "Theme",
-                        "options": ["Light", "Dark", "Auto"],
-                        "default_value": "Auto"
-                    },
-                    {
-                        "name": "description",
-                        "type": "textarea",
-                        "label": "Description",
-                        "placeholder": "Enter a description...",
-                        "height": 80
-                    }
-                ]
+                "fields": ["notification_email", "theme", "description"]
             }
         ],
         "submit_button": True,

@@ -72,7 +72,7 @@ def test_tab_configuration():
     ]
 
     for filename in example_files:
-        file_path = os.path.join(os.path.dirname(__file__), "examples", filename)
+        file_path = os.path.join(os.path.dirname(__file__), filename)
         if os.path.exists(file_path):
             try:
                 config = loader.load_from_file(file_path)

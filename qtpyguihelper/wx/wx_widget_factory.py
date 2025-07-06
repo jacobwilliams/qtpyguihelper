@@ -412,9 +412,11 @@ class WxWidgetFactory:
             try:
                 # Parse HH:MM format
                 hour, minute = map(int, field_config.default_value.split(':'))
-                time_val = wx.DateTime()
+                # Create a valid datetime first, then set the time
+                time_val = wx.DateTime.Now()
                 time_val.SetHour(hour)
                 time_val.SetMinute(minute)
+                time_val.SetSecond(0)
                 widget.SetValue(time_val)
             except (ValueError, AttributeError):
                 pass  # Use current time as fallback
@@ -446,9 +448,11 @@ class WxWidgetFactory:
                 date_val = wx.DateTime(dt.day, dt.month - 1, dt.year)
                 date_picker.SetValue(date_val)
 
-                time_val = wx.DateTime()
+                # Create a valid datetime first, then set the time
+                time_val = wx.DateTime.Now()
                 time_val.SetHour(dt.hour)
                 time_val.SetMinute(dt.minute)
+                time_val.SetSecond(0)
                 time_picker.SetValue(time_val)
             except (ValueError, AttributeError):
                 pass  # Use current datetime as fallback
@@ -585,9 +589,11 @@ class WxWidgetFactory:
             elif isinstance(widget, wx.adv.TimePickerCtrl):
                 # Parse HH:MM format
                 hour, minute = map(int, str(value).split(':'))
-                time_val = wx.DateTime()
+                # Create a valid datetime first, then set the time
+                time_val = wx.DateTime.Now()
                 time_val.SetHour(hour)
                 time_val.SetMinute(minute)
+                time_val.SetSecond(0)
                 widget.SetValue(time_val)
             elif isinstance(widget, wx.Slider):
                 widget.SetValue(int(value))

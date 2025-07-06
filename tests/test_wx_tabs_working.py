@@ -22,7 +22,7 @@ def test_wx_tabs():
         import wx
 
         # Use the existing tabbed_config.json file
-        config_path = os.path.join(os.path.dirname(__file__), "examples", "tabbed_config.json")
+        config_path = os.path.join(os.path.dirname(__file__), "..", "examples", "tabbed_config.json")
 
         from qtpyguihelper import GuiBuilder
 
@@ -46,7 +46,7 @@ def test_wx_tabs():
         gui_builder.set_cancel_callback(on_cancel)
 
         # Show the GUI
-        gui_builder.Show()
+        gui_builder.show()
 
         print("✓ wxPython tabbed GUI created successfully")
         print("  - Check that fields in tabs expand to fit the window width")

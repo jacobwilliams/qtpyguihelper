@@ -71,6 +71,10 @@ def test_wxpython_backend_creation():
             ]
         }
 
+        # Create wxPython app BEFORE creating GUI components
+        import wx
+        app = wx.App()  # noqa: F841  # pylint: disable=unused-variable
+
         # Create GUI builder (but don't show it)
         gui_builder = GuiBuilder(config_dict=config)
         print("✓ wxPython GUI builder created successfully")
@@ -140,6 +144,11 @@ def test_advanced_wxpython_features():
                 {"name": "url_field", "type": "url", "label": "URL"}
             ]
         }
+
+        # Create wxPython app BEFORE creating advanced GUI
+        import wx
+        if not wx.App.Get():
+            app = wx.App()  # noqa: F841  # pylint: disable=unused-variable
 
         gui_builder = GuiBuilder(config_dict=advanced_config)
         print("✓ Advanced wxPython GUI created with all field types")
