@@ -623,46 +623,61 @@ gui.clear_form()
 
 ## Examples
 
-The library includes several example configurations in the `examples/` directory:
+The library includes comprehensive examples in the `examples/` directory:
 
+### Configuration Files
 - `user_registration.json` - Complete user registration form
-- `settings_form.json` - Application settings with various widget types
+- `settings_form.json` - Application settings with various widget types  
 - `project_form.json` - Project data entry form with grid layout
 - `custom_buttons.json` - Demonstrates custom buttons with callbacks
+- `tabbed_config.json` - Complex tabbed interface configuration
+- `float_fields.json` - Float fields with custom formatting
+- `nested_config.json` - Nested field names with dot notation
 
-### Running Demo Scripts
+### Demo Scripts
 
+**Quick Demos** (from root directory):
 ```bash
-python demo.py registration  # User registration form
-python demo.py settings      # Application settings form
-python demo.py project       # Project data entry form
-python demo.py contact       # Programmatic contact form
-python demo.py persistence   # Data loading and saving demo
-python demo.py tabs          # Tabbed interface demo
-python demo.py complex_tabs  # Complex tabbed configuration demo
-python demo.py nested        # Nested field names demo
-
-# Custom buttons demo
-python demo_custom_buttons.py
-
-# Backend selection demos
-python demo_backend_selection.py auto  # Auto-detect backend
-python demo_backend_selection.py qt    # Force Qt backend
-python demo_backend_selection.py wx    # Force wxPython backend
-python demo_backend_selection.py wx    # Force wxPython backend
+python demo.py                # Interactive demo launcher
+python demo.py comprehensive  # Full-featured demo
+python demo.py quick-qt       # Simple Qt demo
+python demo.py quick-wx       # Simple wxPython demo  
+python demo.py backend        # Backend comparison
 ```
 
-### Backend Comparison Demo
+**Comprehensive Demo** (from examples directory):
+```bash
+# Interactive demo with all features
+python examples/demo.py
 
-The `demo_backend_selection.py` script demonstrates all features working across both backends:
+# Specific demos
+python examples/demo.py registration  # User registration form
+python examples/demo.py settings      # Application settings form
+python examples/demo.py project       # Project data entry form
+python examples/demo.py tabs          # Tabbed interface demo
+python examples/demo.py float         # Float fields demo
+python examples/demo.py custom_buttons # Custom buttons demo
+python examples/demo.py wxpython      # wxPython backend demo
+python examples/demo.py compare       # Backend comparison
+python examples/demo.py unified       # Unified interface (auto-backend)
+```
+
+**Simple Examples**:
+```bash
+python examples/simple_example.py     # Basic getting-started example
+python examples/qt_backend_demo.py    # Qt backend selection demo
+```
+
+### Backend Comparison
+
+The library provides seamless switching between Qt and wxPython backends. Both backends support all features with identical APIs:
 
 ```python
-# Example: Test both backends with the same configuration
 from qtpyguihelper import GuiBuilder, set_backend
 
 config = {
     "window": {"title": "Cross-Platform Demo", "width": 500, "height": 400},
-    "layout": "form",
+    "layout": "form", 
     "fields": [
         {"name": "name", "type": "text", "label": "Name", "required": True},
         {"name": "age", "type": "int", "label": "Age", "min_value": 0, "max_value": 120},
@@ -679,11 +694,17 @@ config = {
 set_backend('qt')
 qt_gui = GuiBuilder(config_dict=config)
 
-# Test with wxPython backend
+# Test with wxPython backend  
 set_backend('wx')
 wx_gui = GuiBuilder(config_dict=config)
 
 # Both GUIs work identically!
+```
+
+**Auto-Backend Selection** (recommended):
+```python
+# Automatically uses the best available backend
+gui = GuiBuilder(config_dict=config)  # No backend selection needed!
 ```
 
 ## Advanced Usage

@@ -49,7 +49,7 @@ def demo_user_registration():
     app = QApplication(sys.argv)
 
     # Create GUI from JSON file
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "user_registration.json")
+    config_path = os.path.join(os.path.dirname(__file__), "user_registration.json")
     gui = GuiBuilder(config_path=config_path)
 
     # Set callbacks
@@ -71,7 +71,7 @@ def demo_settings_form():
     app = QApplication(sys.argv)
 
     # Create GUI from JSON file
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "settings_form.json")
+    config_path = os.path.join(os.path.dirname(__file__), "settings_form.json")
     gui = GuiBuilder(config_path=config_path)
 
     # Set callbacks
@@ -92,7 +92,7 @@ def demo_project_form():
     app = QApplication(sys.argv)
 
     # Create GUI from JSON file
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "project_form.json")
+    config_path = os.path.join(os.path.dirname(__file__), "project_form.json")
     gui = GuiBuilder(config_path=config_path)
 
     # Set callbacks
@@ -197,11 +197,11 @@ def demo_data_persistence():
     app = QApplication(sys.argv)
 
     # Create GUI from JSON file
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "project_form.json")
+    config_path = os.path.join(os.path.dirname(__file__), "project_form.json")
     gui = GuiBuilder(config_path=config_path)
 
     # Load existing data if available
-    data_path = os.path.join(os.path.dirname(__file__), "examples", "project_data.json")
+    data_path = os.path.join(os.path.dirname(__file__), "project_data.json")
     if os.path.exists(data_path):
         success = gui.load_data_from_file(data_path)
         if success:
@@ -251,7 +251,7 @@ def demo_tabbed_interface():
     app = QApplication(sys.argv)
 
     # Create GUI from JSON file
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "simple_tabs.json")
+    config_path = os.path.join(os.path.dirname(__file__), "simple_tabs.json")
     gui = GuiBuilder(config_path=config_path)
 
     # Set callbacks
@@ -284,7 +284,7 @@ def demo_complex_tabs():
     app = QApplication(sys.argv)
 
     # Create GUI from JSON file
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "tabbed_config.json")
+    config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
     gui = GuiBuilder(config_path=config_path)
 
     # Set callbacks
@@ -323,11 +323,11 @@ def demo_nested_fields():
     app = QApplication(sys.argv)
 
     # Create GUI from JSON file
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "nested_config.json")
+    config_path = os.path.join(os.path.dirname(__file__), "nested_config.json")
     gui = GuiBuilder(config_path=config_path)
 
     # Load existing nested data if available
-    data_path = os.path.join(os.path.dirname(__file__), "examples", "nested_data.json")
+    data_path = os.path.join(os.path.dirname(__file__), "nested_data.json")
     if os.path.exists(data_path):
         success = gui.load_data_from_file(data_path)
         if success:
@@ -461,7 +461,7 @@ def demo_format_strings():
     app = QApplication(sys.argv)
 
     # Load the format strings example
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "format_strings.json")
+    config_path = os.path.join(os.path.dirname(__file__), "format_strings.json")
     gui = GuiBuilder(config_path=config_path)
 
     def handle_submit(form_data):
@@ -516,7 +516,7 @@ def demo_custom_buttons():
     app = QApplication(sys.argv)
 
     # Load custom buttons configuration
-    config_path = os.path.join(os.path.dirname(__file__), "examples", "custom_buttons.json")
+    config_path = os.path.join(os.path.dirname(__file__), "custom_buttons.json")
     gui = GuiBuilder(config_path=config_path)
 
     def validate_data_callback(form_data):
