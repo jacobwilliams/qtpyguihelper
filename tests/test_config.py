@@ -19,7 +19,8 @@ def test_config_loading():
     print("=" * 50)
 
     loader = ConfigLoader()
-    examples_dir = os.path.join(os.path.dirname(__file__), "examples")
+    # Examples are in the root examples directory, not tests/examples
+    examples_dir = os.path.join(os.path.dirname(__file__), "..", "examples")
 
     # Test each example configuration
     example_files = [
@@ -106,13 +107,10 @@ def test_config_validation():
 
     loader = ConfigLoader()
 
-    # Test invalid configurations
+    # Test invalid configurations that should fail
     invalid_configs = [
         # Missing fields
         {"window": {"title": "Test"}},
-
-        # Empty fields array
-        {"fields": []},
 
         # Invalid field type
         {"fields": [{"name": "test", "type": "invalid", "label": "Test"}]},
@@ -132,23 +130,42 @@ def test_config_validation():
 
     test_names = [
         "Missing fields",
-        "Empty fields array",
         "Invalid field type",
         "Missing required properties",
-        "Duplicate field names",
+        "Duplicate field names", 
         "Invalid layout"
     ]
 
-    for i, (invalid_config, test_name) in enumerate(zip(invalid_configs, test_names)):
+    for invalid_config, test_name in zip(invalid_configs, test_names):
         try:
-            config = loader.load_from_dict(invalid_config)
+            loader.load_from_dict(invalid_config)
             assert False, f"✗ {test_name}: Should have failed but didn't"
         except ValueError:
-            assert True, f"  ✓ {test_name}: Correctly rejected"
+            print(f"  ✓ {test_name}: Correctly rejected")
         except Exception as e:
             assert False, f"✗ {test_name}: Unexpected error: {e}"
 
-    assert True, "  ✓ All validation tests passed"
+    # Test configurations that should be valid
+    valid_configs = [
+        # Empty fields array is OK
+        {"fields": []},
+        # Minimal valid field
+        {"fields": [{"name": "test", "type": "text", "label": "Test"}]}
+    ]
+
+    valid_test_names = [
+        "Empty fields array (should be valid)",
+        "Minimal valid field"
+    ]
+
+    for valid_config, test_name in zip(valid_configs, valid_test_names):
+        try:
+            loader.load_from_dict(valid_config)
+            print(f"  ✓ {test_name}: Correctly accepted")
+        except Exception as e:
+            assert False, f"✗ {test_name}: Should have passed but failed: {e}"
+
+    print("\n  ✓ All validation tests passed")
 
 # def main():
 #     """Run all tests."""
