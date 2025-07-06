@@ -111,7 +111,8 @@ def test_wx_tabs_simple():
         }
 
         # Create wxPython application
-        app = wx.App()
+        if not wx.App.Get():
+            app = wx.App()
 
         # Create GUI builder with wxPython backend
         from qtpyguihelper import WxGuiBuilder

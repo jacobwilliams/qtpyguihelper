@@ -153,7 +153,8 @@ def test_wxpython_tabs():
         }
 
         # Create wxPython application
-        app = wx.App()
+        if not wx.App.Get():
+            app = wx.App()
 
         # Create GUI builder with wxPython backend
         gui_builder = WxGuiBuilder(config_dict=config)

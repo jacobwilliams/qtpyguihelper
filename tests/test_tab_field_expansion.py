@@ -85,7 +85,10 @@ def test_tab_field_expansion():
         "cancel_button": True
     }
 
-    app = QApplication(sys.argv)
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
     gui = GuiBuilder(config_dict=config)
 
     def on_submit(form_data):

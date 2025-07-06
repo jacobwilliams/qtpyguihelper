@@ -27,7 +27,8 @@ def test_wx_tabs():
         from qtpyguihelper import GuiBuilder
 
         # Create wxPython application
-        app = wx.App()
+        if not wx.App.Get():
+            app = wx.App()
 
         # Create GUI builder with the existing configuration
         gui_builder = GuiBuilder(config_path=config_path)

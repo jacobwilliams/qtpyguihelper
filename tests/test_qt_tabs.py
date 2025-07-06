@@ -29,7 +29,9 @@ def test_qt_tabs():
             return
 
         # Create Qt application
-        app = QApplication(sys.argv)
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
 
         # Create GUI builder with Qt backend using the config file
         from qtpyguihelper import GuiBuilder
