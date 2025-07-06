@@ -7,6 +7,7 @@ and automatically generate the corresponding interface using either Qt (PySide6/
 Backend Support:
 - Qt backend via qtpy (supports PySide6/PyQt6)
 - wxPython backend as an alternative
+- tkinter backend (built into Python)
 
 Usage:
     # Using the unified interface (auto-detects backend)
@@ -15,7 +16,7 @@ Usage:
 
     # Explicit backend selection
     from qtpyguihelper import set_backend, GuiBuilder
-    set_backend('wx')  # or 'qt'
+    set_backend('tk')  # or 'qt' or 'wx'
     app = GuiBuilder.create_and_run('config.json')
 """
 
@@ -23,6 +24,8 @@ from .qt.gui_builder import GuiBuilder as QtGuiBuilder
 from .qt.widget_factory import WidgetFactory
 from .wx.wx_gui_builder import WxGuiBuilder
 from .wx.wx_widget_factory import WxWidgetFactory
+from .tk.tk_gui_builder import TkGuiBuilder
+from .tk.tk_widget_factory import TkWidgetFactory
 from .config_loader import ConfigLoader, CustomButtonConfig
 from .backend import (
     get_backend, set_backend, get_available_backends,
@@ -35,9 +38,9 @@ class GuiBuilder:
     """
     Unified GUI builder that automatically selects the appropriate backend.
 
-    This class provides a consistent interface that works with both Qt and wxPython
-    backends, automatically selecting the available backend or using the one
-    specified via set_backend().
+    This class provides a consistent interface that works with Qt, wxPython,
+    and tkinter backends, automatically selecting the available backend or using
+    the one specified via set_backend().
     """
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, backend: Optional[str] = None):
@@ -66,6 +69,8 @@ class GuiBuilder:
             self._builder = QtGuiBuilder(config_path, config_dict)
         elif self._backend == 'wx':
             self._builder = WxGuiBuilder(config_path, config_dict)
+        elif self._backend == 'tk':
+            self._builder = TkGuiBuilder(config_path, config_dict)
         else:
             raise BackendError(f"Unsupported backend: {self._backend}")
 
@@ -75,7 +80,7 @@ class GuiBuilder:
         return self._backend
 
     @property
-    def builder(self) -> Union[QtGuiBuilder, WxGuiBuilder]:
+    def builder(self) -> Union[QtGuiBuilder, WxGuiBuilder, TkGuiBuilder]:
         """Get the underlying builder instance."""
         return self._builder
 
@@ -153,6 +158,21 @@ class GuiBuilder:
         """Save current form data to a JSON file."""
         return self._builder.save_data_to_file(data_file_path, include_empty)
 
+    def run(self):
+        """Run the GUI application (start the main loop)."""
+        if hasattr(self._builder, 'run'):
+            self._builder.run()
+        else:
+            # For backends that don't have a run method, try to show and start mainloop
+            self.show()
+            if hasattr(self._builder, 'mainloop'):
+                self._builder.mainloop()
+
+    def close(self):
+        """Close the GUI application."""
+        if hasattr(self._builder, 'close'):
+            self._builder.close()
+
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,
                       config_dict: Optional[Dict[str, Any]] = None,
@@ -178,6 +198,8 @@ class GuiBuilder:
             return QtGuiBuilder.create_and_run(config_path, config_dict)
         elif current_backend == 'wx':
             return WxGuiBuilder.create_and_run(config_path, config_dict)
+        elif current_backend == 'tk':
+            return TkGuiBuilder.create_and_run(config_path, config_dict)
         else:
             raise BackendError(f"Unsupported backend: {current_backend}")
 
@@ -186,8 +208,8 @@ __version__ = "1.0.0"
 __author__ = "QtPyGuiHelper Team"
 
 __all__ = [
-    "GuiBuilder", "QtGuiBuilder", "WxGuiBuilder",
-    "ConfigLoader", "WidgetFactory", "WxWidgetFactory", "CustomButtonConfig",
+    "GuiBuilder", "QtGuiBuilder", "WxGuiBuilder", "TkGuiBuilder",
+    "ConfigLoader", "WidgetFactory", "WxWidgetFactory", "TkWidgetFactory", "CustomButtonConfig",
     "get_backend", "set_backend", "get_available_backends",
     "get_backend_info", "is_backend_available", "BackendError"
 ]

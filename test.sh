@@ -20,6 +20,7 @@ python -m pytest tests/test_qt_compatibility.py -v
 python -m pytest tests/test_qt_tabs.py -v
 python -m pytest tests/test_tab_field_expansion.py -v
 python -m pytest tests/test_tabs.py -v
+python -m pytest tests/test_tkinter_backend.py -v
 python -m pytest tests/test_wx_backend.py -v
 python -m pytest tests/test_wx_tabs_simple.py -v
 python -m pytest tests/test_wx_tabs_working.py -v

@@ -16,7 +16,7 @@ class BackendError(Exception):
 class BackendManager:
     """Manages GUI backend selection and availability."""
 
-    SUPPORTED_BACKENDS = ['qt', 'wx']
+    SUPPORTED_BACKENDS = ['qt', 'wx', 'tk']
     DEFAULT_BACKEND = 'qt'
 
     def __init__(self):
@@ -39,6 +39,13 @@ class BackendManager:
             self._backend_available['wx'] = True
         except ImportError:
             self._backend_available['wx'] = False
+
+        # Check tkinter availability
+        try:
+            import tkinter  # noqa: F401
+            self._backend_available['tk'] = True
+        except ImportError:
+            self._backend_available['tk'] = False
 
     def get_available_backends(self) -> list:
         """Get list of available backends."""
@@ -119,6 +126,13 @@ class BackendManager:
                 import wx
                 info['wx_version'] = wx.version()
                 info['wx_platform'] = wx.Platform
+            except ImportError:
+                pass
+        elif backend == 'tk':
+            try:
+                import tkinter
+                info['tk_version'] = tkinter.TkVersion
+                info['tcl_version'] = tkinter.TclVersion
             except ImportError:
                 pass
 

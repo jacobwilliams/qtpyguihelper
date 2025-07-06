@@ -794,28 +794,196 @@ def demo_wxpython_backend():
         print(f"✗ Error with wxPython backend: {e}")
 
 
+def demo_tkinter_backend():
+    """Demo the tkinter backend with a working GUI."""
+    print("Starting tkinter Backend Demo...")
+
+    try:
+        # Force tkinter backend
+        from qtpyguihelper import set_backend
+        set_backend('tk')
+        print("✓ tkinter backend selected")
+
+        # Import tkinter
+        import tkinter as tk
+        from tkinter import messagebox
+
+        # Create configuration
+        config = {
+            "window": {
+                "title": "tkinter Backend Demo - Cross-Platform GUI",
+                "width": 600,
+                "height": 500,
+                "resizable": True
+            },
+            "layout": "form",
+            "submit_button": True,
+            "cancel_button": True,
+            "submit_label": "Submit Data",
+            "cancel_label": "Cancel",
+            "fields": [
+                {
+                    "name": "name",
+                    "type": "text",
+                    "label": "Full Name",
+                    "placeholder": "Enter your full name",
+                    "required": True
+                },
+                {
+                    "name": "age",
+                    "type": "int",
+                    "label": "Age",
+                    "min_value": 0,
+                    "max_value": 120,
+                    "default_value": 25
+                },
+                {
+                    "name": "height",
+                    "type": "float",
+                    "label": "Height (m)",
+                    "min_value": 0.5,
+                    "max_value": 3.0,
+                    "default_value": 1.75
+                },
+                {
+                    "name": "email",
+                    "type": "email",
+                    "label": "Email Address",
+                    "placeholder": "your.email@example.com",
+                    "required": True
+                },
+                {
+                    "name": "subscribe",
+                    "type": "checkbox",
+                    "label": "Subscribe to newsletter",
+                    "default_value": True
+                },
+                {
+                    "name": "category",
+                    "type": "select",
+                    "label": "Category",
+                    "options": ["Student", "Professional", "Retired", "Other"],
+                    "default_value": "Professional"
+                },
+                {
+                    "name": "priority",
+                    "type": "radio",
+                    "label": "Priority Level",
+                    "options": ["Low", "Medium", "High"],
+                    "default_value": "Medium"
+                },
+                {
+                    "name": "birth_date",
+                    "type": "date",
+                    "label": "Birth Date",
+                    "default_value": "1990-01-01"
+                },
+                {
+                    "name": "notes",
+                    "type": "textarea",
+                    "label": "Additional Notes",
+                    "placeholder": "Enter any additional information...",
+                    "height": 80
+                }
+            ],
+            "custom_buttons": [
+                {
+                    "name": "clear_form",
+                    "label": "Clear Form",
+                    "tooltip": "Clear all form fields"
+                },
+                {
+                    "name": "load_demo",
+                    "label": "Load Demo Data",
+                    "tooltip": "Load sample data into the form"
+                }
+            ]
+        }
+
+        # Create GUI builder with tkinter backend
+        from qtpyguihelper import TkGuiBuilder
+        gui_builder = TkGuiBuilder(config_dict=config)
+
+        # Set up callbacks
+        def on_submit(form_data):
+            print("tkinter form submitted:")
+            for key, value in form_data.items():
+                print(f"  {key}: {value}")
+            messagebox.showinfo("Success", "Form submitted successfully!")
+
+        def on_cancel():
+            print("tkinter form cancelled")
+            messagebox.showinfo("Cancelled", "Form cancelled by user")
+
+        def clear_form(button_config, form_data):
+            gui_builder.clear_form()
+            print("Form cleared")
+            messagebox.showinfo("Cleared", "Form cleared successfully!")
+
+        def load_demo_data(button_config, form_data):
+            demo_data = {
+                "name": "Alice Johnson",
+                "age": 32,
+                "height": 1.68,
+                "email": "alice.johnson@example.com",
+                "subscribe": True,
+                "category": "Professional",
+                "priority": "High",
+                "birth_date": "1991-05-15",
+                "notes": "Demo data for tkinter backend testing."
+            }
+            gui_builder.set_form_data(demo_data)
+            print("Demo data loaded")
+            messagebox.showinfo("Data Loaded", "Demo data loaded successfully!")
+
+        # Register callbacks
+        gui_builder.set_submit_callback(on_submit)
+        gui_builder.set_cancel_callback(on_cancel)
+        gui_builder.set_custom_button_callback("clear_form", clear_form)
+        gui_builder.set_custom_button_callback("load_demo", load_demo_data)
+
+        # Show the GUI
+        gui_builder.show()
+
+        print("✓ tkinter GUI created and shown")
+
+        # Run the application
+        gui_builder.run()
+
+    except ImportError as e:
+        print(f"✗ tkinter not available: {e}")
+        print("  tkinter should be included with Python by default")
+    except Exception as e:
+        print(f"✗ Error with tkinter backend: {e}")
+
+
 def demo_backend_comparison():
-    """Demo both Qt and wxPython backends side by side."""
+    """Demo Qt, wxPython, and tkinter backends side by side."""
     print("Starting Backend Comparison Demo...")
 
     from qtpyguihelper import get_available_backends, get_backend_info
 
     print(f"Available backends: {get_available_backends()}")
 
-    backend_choice = input("Choose backend (qt/wx/both): ").lower()
+    backend_choice = input("Choose backend (qt/wx/tk/all): ").lower()
 
     if backend_choice == "qt":
         demo_user_registration()  # Existing Qt demo
     elif backend_choice == "wx":
-        demo_wxpython_backend()   # New wxPython demo
-    elif backend_choice == "both":
+        demo_wxpython_backend()   # wxPython demo
+    elif backend_choice == "tk":
+        demo_tkinter_backend()    # New tkinter demo
+    elif backend_choice == "all":
         print("\n=== Running Qt Backend Demo ===")
         demo_user_registration()
 
         print("\n=== Running wxPython Backend Demo ===")
         demo_wxpython_backend()
+
+        print("\n=== Running tkinter Backend Demo ===")
+        demo_tkinter_backend()
     else:
-        print("Invalid choice. Available options: qt, wx, both")
+        print("Invalid choice. Available options: qt, wx, tk, all")
 
 
 def demo_unified_interface():
@@ -891,6 +1059,12 @@ def demo_unified_interface():
         gui.set_submit_callback(on_submit_unified)
         gui.show()
         app.MainLoop()
+    elif info['backend'] == 'tk':
+        # tkinter backend manages its own main loop
+        gui = GuiBuilder(config_dict=config)
+        gui.set_submit_callback(on_submit_unified)
+        gui.show()
+        gui.run()
     else:
         # Use the create_and_run method as fallback
         gui = GuiBuilder(config_dict=config)
@@ -918,7 +1092,8 @@ def main():
         print()
         print("Backend-specific demos:")
         print("  python demo.py wxpython      - wxPython backend demo")
-        print("  python demo.py compare       - Compare Qt vs wxPython backends")
+        print("  python demo.py tkinter       - tkinter backend demo")
+        print("  python demo.py compare       - Compare all backends")
         print("  python demo.py unified       - Unified interface (auto-backend)")
         print()
         demo_type = input("Enter demo type: ").lower()
@@ -947,13 +1122,15 @@ def main():
         demo_custom_buttons()
     elif demo_type == "wx" or demo_type == "wxpython":
         demo_wxpython_backend()
+    elif demo_type == "tk" or demo_type == "tkinter":
+        demo_tkinter_backend()
     elif demo_type == "backend_comparison" or demo_type == "compare":
         demo_backend_comparison()
     elif demo_type == "unified":
         demo_unified_interface()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format, custom_buttons, wx, wxpython, compare, backend_comparison, unified")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format, custom_buttons, wx, wxpython, tk, tkinter, compare, backend_comparison, unified")
 
 
 if __name__ == "__main__":
