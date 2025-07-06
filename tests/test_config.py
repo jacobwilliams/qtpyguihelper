@@ -132,7 +132,7 @@ def test_config_validation():
         "Missing fields",
         "Invalid field type",
         "Missing required properties",
-        "Duplicate field names", 
+        "Duplicate field names",
         "Invalid layout"
     ]
 
