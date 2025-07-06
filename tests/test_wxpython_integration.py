@@ -24,7 +24,7 @@ def test_backend_detection():
     current_info = get_backend_info()
     print(f"Current backend: {current_info['backend']}")
 
-    return len(available) > 0
+    assert len(available) > 0, "No available backends detected"
 
 def test_backend_switching():
     """Test switching between backends."""
@@ -52,7 +52,7 @@ def test_unified_interface():
     print("\n=== Unified Interface Test ===")
 
     try:
-        from qtpyguihelper import GuiBuilder
+        from qtpyguihelper import GuiBuilder, set_backend, is_backend_available
 
         # Create a simple configuration
         config = {
@@ -61,6 +61,27 @@ def test_unified_interface():
                 {"name": "test_field", "type": "text", "label": "Test Field"}
             ]
         }
+
+        # Force wxPython backend for this test if available
+        if is_backend_available('wx'):
+            # Create wxPython app before setting backend
+            from .wx_test_utils import create_wx_app
+            _app = create_wx_app()  # Keep app alive during test
+
+            # Set wxPython backend
+            set_backend('wx')
+            print("✓ wxPython backend set for unified interface test")
+        elif is_backend_available('qt'):
+            # Fall back to Qt if wxPython not available
+            from qtpy.QtWidgets import QApplication
+            qt_app = QApplication.instance()
+            if qt_app is None:
+                _qt_app = QApplication(sys.argv)
+            set_backend('qt')
+            print("✓ Qt backend set for unified interface test (wxPython not available)")
+        else:
+            print("✗ No GUI backends available")
+            assert False, "No GUI backends available for testing"
 
         # Test that we can create the builder without errors
         builder = GuiBuilder(config_dict=config)
