@@ -6,7 +6,11 @@ Test script for wxPython backend tabs to verify field expansion.
 import sys
 import os
 
-from . import wx_test_utils
+# Handle imports for both direct execution and pytest
+try:
+    from . import wx_test_utils
+except ImportError:
+    import wx_test_utils
 
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
