@@ -247,8 +247,38 @@ __version__ = "1.0.0"
 __author__ = "QtPyGuiHelper Team"
 
 __all__ = [
-    "GuiBuilder", "QtGuiBuilder", "WxGuiBuilder", "TkGuiBuilder",
-    "ConfigLoader", "WidgetFactory", "WxWidgetFactory", "TkWidgetFactory", "CustomButtonConfig",
+    "GuiBuilder", "QtGuiBuilder", "WxGuiBuilder", "TkGuiBuilder", "GtkGuiBuilder",
+    "ConfigLoader", "WidgetFactory", "WxWidgetFactory", "TkWidgetFactory", "GtkWidgetFactory", "CustomButtonConfig",
     "get_backend", "set_backend", "get_available_backends",
     "get_backend_info", "is_backend_available", "BackendError"
 ]
+
+# Make backend-specific classes available for direct import
+def __getattr__(name):
+    """Lazy import backend classes when accessed directly."""
+    if name == 'QtGuiBuilder':
+        QtGuiBuilder, _ = _lazy_import_qt()
+        return QtGuiBuilder
+    elif name == 'WxGuiBuilder':
+        WxGuiBuilder, _ = _lazy_import_wx()
+        return WxGuiBuilder
+    elif name == 'TkGuiBuilder':
+        TkGuiBuilder, _ = _lazy_import_tk()
+        return TkGuiBuilder
+    elif name == 'GtkGuiBuilder':
+        GtkGuiBuilder, _ = _lazy_import_gtk()
+        return GtkGuiBuilder
+    elif name == 'WidgetFactory':
+        _, WidgetFactory = _lazy_import_qt()
+        return WidgetFactory
+    elif name == 'WxWidgetFactory':
+        _, WxWidgetFactory = _lazy_import_wx()
+        return WxWidgetFactory
+    elif name == 'TkWidgetFactory':
+        _, TkWidgetFactory = _lazy_import_tk()
+        return TkWidgetFactory
+    elif name == 'GtkWidgetFactory':
+        _, GtkWidgetFactory = _lazy_import_gtk()
+        return GtkWidgetFactory
+    else:
+        raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
