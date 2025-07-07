@@ -1039,21 +1039,23 @@ def demo_gtk_backend():
 
 
 def demo_backend_comparison():
-    """Demo Qt, wxPython, and tkinter backends side by side."""
+    """Demo Qt, wxPython, tkinter, and GTK backends side by side."""
     print("Starting Backend Comparison Demo...")
 
     from qtpyguihelper import get_available_backends, get_backend_info
 
     print(f"Available backends: {get_available_backends()}")
 
-    backend_choice = input("Choose backend (qt/wx/tk/all): ").lower()
+    backend_choice = input("Choose backend (qt/wx/tk/gtk/all): ").lower()
 
     if backend_choice == "qt":
         demo_user_registration()  # Existing Qt demo
     elif backend_choice == "wx":
         demo_wxpython_backend()   # wxPython demo
     elif backend_choice == "tk":
-        demo_tkinter_backend()    # New tkinter demo
+        demo_tkinter_backend()    # tkinter demo
+    elif backend_choice == "gtk":
+        demo_gtk_backend()        # GTK demo
     elif backend_choice == "all":
         print("\n=== Running Qt Backend Demo ===")
         demo_user_registration()
@@ -1063,8 +1065,11 @@ def demo_backend_comparison():
 
         print("\n=== Running tkinter Backend Demo ===")
         demo_tkinter_backend()
+
+        print("\n=== Running GTK Backend Demo ===")
+        demo_gtk_backend()
     else:
-        print("Invalid choice. Available options: qt, wx, tk, all")
+        print("Invalid choice. Available options: qt, wx, tk, gtk, all")
 
 
 def demo_unified_interface():
