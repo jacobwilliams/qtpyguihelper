@@ -45,14 +45,12 @@ class TkGuiBuilder:
     def load_config_from_file(self, config_path: str):
         """Load configuration from a JSON file."""
         self.config = self.config_loader.load_from_file(config_path)
-        if self.config:
-            self._setup_ui()
+        # Note: UI setup is deferred until needed
 
     def load_config_from_dict(self, config_dict: Dict[str, Any]):
         """Load configuration from a dictionary."""
         self.config = self.config_loader.load_from_dict(config_dict)
-        if self.config:
-            self._setup_ui()
+        # Note: UI setup is deferred until needed
 
     def _setup_ui(self):
         """Set up the user interface based on the loaded configuration."""
@@ -400,6 +398,10 @@ class TkGuiBuilder:
 
     def show(self):
         """Show the GUI window and bring it to the front."""
+        # Ensure UI is set up before showing
+        if self.root is None:
+            self._setup_ui()
+
         if self.root:
             self.root.deiconify()
             self.root.lift()
@@ -414,6 +416,10 @@ class TkGuiBuilder:
 
     def run(self):
         """Run the GUI application (start the main loop)."""
+        # Ensure UI is set up before running
+        if self.root is None:
+            self._setup_ui()
+
         if self.root:
             # Ensure window is properly shown and focused before starting main loop
             self.show()
@@ -421,6 +427,9 @@ class TkGuiBuilder:
 
     def get_form_data(self) -> Dict[str, Any]:
         """Get all form data as a dictionary."""
+        # Ensure UI is set up before trying to get data
+        if self.root is None and self.config:
+            self._setup_ui()
         return self.widget_factory.get_all_values()
 
     def set_form_data(self, data: Dict[str, Any]):
@@ -433,10 +442,16 @@ class TkGuiBuilder:
 
     def get_field_value(self, field_name: str) -> Any:
         """Get the value of a specific field."""
+        # Ensure UI is set up before trying to get field value
+        if self.root is None:
+            self._setup_ui()
         return self.widget_factory.get_widget_value(field_name)
 
     def set_field_value(self, field_name: str, value: Any) -> bool:
         """Set the value of a specific field."""
+        # Ensure UI is set up before trying to set field value
+        if self.root is None:
+            self._setup_ui()
         return self.widget_factory.set_widget_value(field_name, value)
 
     def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]):
@@ -485,5 +500,7 @@ class TkGuiBuilder:
         if self.root:
             try:
                 self.root.destroy()
-            except:
-                pass  # Window might already be destroyed
+            except (tk.TclError, AttributeError):
+                pass  # Window might already be destroyed or Tk might be gone
+
+

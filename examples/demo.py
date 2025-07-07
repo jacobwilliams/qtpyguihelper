@@ -737,8 +737,9 @@ def demo_wxpython_backend():
         app = wx.App()
 
         # Create GUI builder with wxPython backend
-        from qtpyguihelper import WxGuiBuilder
-        gui_builder = WxGuiBuilder(config_dict=config)
+        from qtpyguihelper import set_backend, GuiBuilder
+        set_backend('wx')
+        gui_builder = GuiBuilder(config_dict=config)
 
         # Set up callbacks
         def on_submit(form_data):
@@ -779,7 +780,7 @@ def demo_wxpython_backend():
         gui_builder.set_custom_button_callback("load_demo", load_demo_data)
 
         # Show the GUI
-        gui_builder.Show()
+        gui_builder.show()
 
         print("✓ wxPython GUI created and shown")
         print("  - Custom buttons available:", gui_builder.get_custom_button_names())
@@ -901,8 +902,9 @@ def demo_tkinter_backend():
         }
 
         # Create GUI builder with tkinter backend
-        from qtpyguihelper import TkGuiBuilder
-        gui_builder = TkGuiBuilder(config_dict=config)
+        from qtpyguihelper import set_backend, GuiBuilder
+        set_backend('tk')
+        gui_builder = GuiBuilder(config_dict=config)
 
         # Set up callbacks
         def on_submit(form_data):
@@ -962,11 +964,12 @@ def demo_gtk_backend():
     print("Starting GTK Backend Demo...")
 
     try:
-        from qtpyguihelper.gtk import GtkGuiBuilder
+        from qtpyguihelper import set_backend, GuiBuilder
+        set_backend('gtk')
 
         # Simple form configuration
         config = {
-            "title": "GTK Demo - Settings Form",
+            "window": {"title": "GTK Demo - Settings Form"},
             "fields": [
                 {
                     "name": "theme",
@@ -1018,10 +1021,8 @@ def demo_gtk_backend():
                 print(f"  {key}: {value}")
 
         # Create the GUI builder
-        gui_builder = GtkGuiBuilder(
-            config_dict=config,
-            submit_callback=on_gtk_submit
-        )
+        gui_builder = GuiBuilder(config_dict=config)
+        gui_builder.set_submit_callback(on_gtk_submit)
 
         print("✓ GTK backend demo starting...")
         print("  Close the window or click 'Close' to exit")

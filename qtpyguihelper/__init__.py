@@ -20,22 +20,32 @@ Usage:
     app = GuiBuilder.create_and_run('config.json')
 """
 
-from .qt.gui_builder import GuiBuilder as QtGuiBuilder
-from .qt.widget_factory import WidgetFactory
-from .wx.wx_gui_builder import WxGuiBuilder
-from .wx.wx_widget_factory import WxWidgetFactory
-from .tk.tk_gui_builder import TkGuiBuilder
-from .tk.tk_widget_factory import TkWidgetFactory
+# Don't import GUI backends immediately - use lazy loading instead
+# This prevents conflicts between different GUI frameworks
 
-# Import GTK backend conditionally
-try:
+def _lazy_import_qt():
+    """Lazy import Qt backend."""
+    from .qt.gui_builder import GuiBuilder as QtGuiBuilder
+    from .qt.widget_factory import WidgetFactory
+    return QtGuiBuilder, WidgetFactory
+
+def _lazy_import_wx():
+    """Lazy import wxPython backend."""
+    from .wx.wx_gui_builder import WxGuiBuilder
+    from .wx.wx_widget_factory import WxWidgetFactory
+    return WxGuiBuilder, WxWidgetFactory
+
+def _lazy_import_tk():
+    """Lazy import tkinter backend."""
+    from .tk.tk_gui_builder import TkGuiBuilder
+    from .tk.tk_widget_factory import TkWidgetFactory
+    return TkGuiBuilder, TkWidgetFactory
+
+def _lazy_import_gtk():
+    """Lazy import GTK backend."""
     from .gtk.gtk_gui_builder import GtkGuiBuilder
     from .gtk.gtk_widget_factory import GtkWidgetFactory
-    _gtk_available = True
-except ImportError:
-    GtkGuiBuilder = None
-    GtkWidgetFactory = None
-    _gtk_available = False
+    return GtkGuiBuilder, GtkWidgetFactory
 
 from .config_loader import ConfigLoader, CustomButtonConfig
 from .backend import (
@@ -75,15 +85,22 @@ class GuiBuilder:
         # Get current backend
         self._backend = get_backend()
 
-        # Create appropriate builder
+        # Create appropriate builder using lazy imports
         if self._backend == 'qt':
+            QtGuiBuilder, _ = _lazy_import_qt()
             self._builder = QtGuiBuilder(config_path, config_dict)
         elif self._backend == 'wx':
+            WxGuiBuilder, _ = _lazy_import_wx()
             self._builder = WxGuiBuilder(config_path, config_dict)
         elif self._backend == 'tk':
+            TkGuiBuilder, _ = _lazy_import_tk()
             self._builder = TkGuiBuilder(config_path, config_dict)
-        elif self._backend == 'gtk' and _gtk_available:
-            self._builder = GtkGuiBuilder(config_path, config_dict)
+        elif self._backend == 'gtk':
+            try:
+                GtkGuiBuilder, _ = _lazy_import_gtk()
+                self._builder = GtkGuiBuilder(config_path, config_dict)
+            except ImportError:
+                raise BackendError(f"GTK backend is not available (missing dependencies)")
         else:
             raise BackendError(f"Unsupported backend: {self._backend}")
 
@@ -93,7 +110,7 @@ class GuiBuilder:
         return self._backend
 
     @property
-    def builder(self) -> Union[QtGuiBuilder, WxGuiBuilder, TkGuiBuilder, 'GtkGuiBuilder']:
+    def builder(self) -> Any:  # Use Any to avoid import issues with type hints
         """Get the underlying builder instance."""
         return self._builder
 
@@ -208,11 +225,20 @@ class GuiBuilder:
         current_backend = get_backend()
 
         if current_backend == 'qt':
+            QtGuiBuilder, _ = _lazy_import_qt()
             return QtGuiBuilder.create_and_run(config_path, config_dict)
         elif current_backend == 'wx':
+            WxGuiBuilder, _ = _lazy_import_wx()
             return WxGuiBuilder.create_and_run(config_path, config_dict)
         elif current_backend == 'tk':
+            TkGuiBuilder, _ = _lazy_import_tk()
             return TkGuiBuilder.create_and_run(config_path, config_dict)
+        elif current_backend == 'gtk':
+            try:
+                GtkGuiBuilder, _ = _lazy_import_gtk()
+                return GtkGuiBuilder.create_and_run(config_path, config_dict)
+            except ImportError:
+                raise BackendError(f"GTK backend is not available (missing dependencies)")
         else:
             raise BackendError(f"Unsupported backend: {current_backend}")
 

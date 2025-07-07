@@ -21,48 +21,70 @@ class BackendManager:
 
     def __init__(self):
         self._current_backend: Optional[str] = None
-        self._backend_available: Dict[str, bool] = {}
-        self._check_backend_availability()
+        self._backend_available: Dict[str, Optional[bool]] = {}
 
-    def _check_backend_availability(self):
-        """Check which backends are available."""
+    def _check_backend_availability(self, backend: str) -> bool:
+        """Check if a specific backend is available (lazy loading)."""
+        if backend in self._backend_available:
+            return self._backend_available[backend]
+
         # Check Qt availability
-        try:
-            import qtpy
-            self._backend_available['qt'] = True
-        except ImportError:
-            self._backend_available['qt'] = False
+        if backend == 'qt':
+            try:
+                import qtpy  # noqa: F401
+                self._backend_available['qt'] = True
+                return True
+            except ImportError:
+                self._backend_available['qt'] = False
+                return False
 
         # Check wxPython availability
-        try:
-            import wx
-            self._backend_available['wx'] = True
-        except ImportError:
-            self._backend_available['wx'] = False
+        elif backend == 'wx':
+            try:
+                import wx  # noqa: F401
+                self._backend_available['wx'] = True
+                return True
+            except ImportError:
+                self._backend_available['wx'] = False
+                return False
 
         # Check tkinter availability
-        try:
-            import tkinter  # noqa: F401
-            self._backend_available['tk'] = True
-        except ImportError:
-            self._backend_available['tk'] = False
+        elif backend == 'tk':
+            try:
+                import tkinter  # noqa: F401
+                self._backend_available['tk'] = True
+                return True
+            except ImportError:
+                self._backend_available['tk'] = False
+                return False
 
         # Check GTK availability
-        try:
-            import gi
-            gi.require_version('Gtk', '3.0')
-            from gi.repository import Gtk  # noqa: F401
-            self._backend_available['gtk'] = True
-        except (ImportError, ValueError):
-            self._backend_available['gtk'] = False
+        elif backend == 'gtk':
+            try:
+                import gi
+                gi.require_version('Gtk', '3.0')
+                from gi.repository import Gtk  # noqa: F401
+                self._backend_available['gtk'] = True
+                return True
+            except (ImportError, ValueError):
+                self._backend_available['gtk'] = False
+                return False
+
+        else:
+            self._backend_available[backend] = False
+            return False
 
     def get_available_backends(self) -> list:
         """Get list of available backends."""
-        return [backend for backend, available in self._backend_available.items() if available]
+        available = []
+        for backend in self.SUPPORTED_BACKENDS:
+            if self._check_backend_availability(backend):
+                available.append(backend)
+        return available
 
     def is_backend_available(self, backend: str) -> bool:
         """Check if a specific backend is available."""
-        return self._backend_available.get(backend.lower(), False)
+        return self._check_backend_availability(backend.lower())
 
     def get_backend(self) -> str:
         """Get the current backend, detecting automatically if not set."""
