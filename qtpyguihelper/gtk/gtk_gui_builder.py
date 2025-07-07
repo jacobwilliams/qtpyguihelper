@@ -106,16 +106,16 @@ class GtkGuiBuilder:
 
         # Make window resizable
         self.window.set_resizable(True)
-        
+
         # Ensure window can receive focus and comes to front
         self.window.set_can_focus(True)
         self.window.set_accept_focus(True)
-        
+
         # Additional window properties to ensure it comes to front
         self.window.set_focus_on_map(True)
         self.window.set_type_hint(Gdk.WindowTypeHint.NORMAL)
         self.window.set_modal(False)  # Ensure it's not modal
-        
+
         # Set window to always be visible when shown
         self.window.set_skip_taskbar_hint(False)
         self.window.set_skip_pager_hint(False)
@@ -426,13 +426,13 @@ class GtkGuiBuilder:
         if self.window:
             import platform
             system = platform.system()
-            
+
             # Make sure window is visible
             self.window.show_all()
-            
+
             # Cross-platform window activation
             self.window.present()
-            
+
             # Platform-specific window focusing
             if system == 'Darwin':  # macOS
                 try:
@@ -441,15 +441,15 @@ class GtkGuiBuilder:
                     self.window.present_with_time(0)
                     self.window.set_keep_above(True)
                     self.window.grab_focus()
-                    
+
                     # Try AppleScript to bring app to front
                     try:
                         import subprocess
-                        subprocess.run(['osascript', '-e', 'tell application "System Events" to set frontmost of every process whose unix id is {} to true'.format(os.getpid())], 
+                        subprocess.run(['osascript', '-e', 'tell application "System Events" to set frontmost of every process whose unix id is {} to true'.format(os.getpid())],
                                      capture_output=True, timeout=1, check=False)
                     except (subprocess.SubprocessError, FileNotFoundError):
                         pass  # AppleScript not available or failed
-                    
+
                     # Reset keep_above after a short delay
                     def reset_macos_hints():
                         if self.window:
@@ -457,46 +457,46 @@ class GtkGuiBuilder:
                             self.window.set_urgency_hint(False)
                         return False
                     GLib.timeout_add(500, reset_macos_hints)
-                    
+
                 except Exception:
                     pass  # Fall back to basic present() if anything fails
-                    
+
             elif system == 'Windows':  # Windows
                 try:
                     # Windows-specific activation
                     self.window.set_urgency_hint(True)
                     self.window.present_with_time(0)
                     self.window.grab_focus()
-                    
+
                     # Reset urgency hint after a delay
                     def reset_windows_hints():
                         if self.window:
                             self.window.set_urgency_hint(False)
                         return False
                     GLib.timeout_add(200, reset_windows_hints)
-                    
+
                 except Exception:
                     pass  # Fall back to basic present() if anything fails
-                    
+
             else:  # Linux and other Unix systems
                 try:
                     # Linux-specific activation
                     self.window.set_urgency_hint(True)
                     self.window.present_with_time(0)
-                    
+
                     # On some Linux desktop environments, grab_focus might help
                     try:
                         self.window.grab_focus()
                     except Exception:
                         pass  # Some WMs don't support this
-                    
+
                     # Reset urgency hint after a delay
                     def reset_linux_hints():
                         if self.window:
                             self.window.set_urgency_hint(False)
                         return False
                     GLib.timeout_add(300, reset_linux_hints)
-                    
+
                 except Exception:
                     pass  # Fall back to basic present() if anything fails
 

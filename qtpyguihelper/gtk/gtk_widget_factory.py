@@ -40,7 +40,7 @@ class GtkWidgetFactory:
         """Initialize the widget factory."""
         if not GTK_AVAILABLE:
             raise ImportError("GTK backend is not available. Please install PyGObject and GTK development files.")
-        
+
         self.widgets: Dict[str, Gtk.Widget] = {}
         self.labels: Dict[str, Gtk.Label] = {}
         self.field_configs: Dict[str, FieldConfig] = {}
@@ -55,7 +55,7 @@ class GtkWidgetFactory:
         label = Gtk.Label(label=label_text)
         label.set_halign(Gtk.Align.START)
         label.set_valign(Gtk.Align.CENTER)
-        
+
         self.labels[field_config.name] = label
         return label
 
@@ -103,23 +103,23 @@ class GtkWidgetFactory:
     def _create_text_widget(self, field_config: FieldConfig) -> Gtk.Entry:
         """Create a text entry widget."""
         entry = Gtk.Entry()
-        
+
         if field_config.placeholder:
             entry.set_placeholder_text(field_config.placeholder)
-        
+
         if field_config.default_value:
             entry.set_text(str(field_config.default_value))
-        
+
         if field_config.type == 'password':
             entry.set_visibility(False)
-        
+
         return entry
 
     def _create_int_widget(self, field_config: FieldConfig) -> Gtk.SpinButton:
         """Create an integer spin button widget."""
         min_val = field_config.min_value if field_config.min_value is not None else -2147483648
         max_val = field_config.max_value if field_config.max_value is not None else 2147483647
-        
+
         adjustment = Gtk.Adjustment(
             value=field_config.default_value or 0,
             lower=min_val,
@@ -127,17 +127,17 @@ class GtkWidgetFactory:
             step_increment=1,
             page_increment=10
         )
-        
+
         spin_button = Gtk.SpinButton(adjustment=adjustment)
         spin_button.set_digits(0)
-        
+
         return spin_button
 
     def _create_float_widget(self, field_config: FieldConfig) -> Gtk.SpinButton:
         """Create a float spin button widget."""
         min_val = field_config.min_value if field_config.min_value is not None else -1e6
         max_val = field_config.max_value if field_config.max_value is not None else 1e6
-        
+
         # Determine decimal places from format string
         digits = 2  # default
         if hasattr(field_config, 'format_string') and field_config.format_string:
@@ -147,7 +147,7 @@ class GtkWidgetFactory:
                     digits = int(format_str.split('.')[1].split('f')[0])
                 except (ValueError, IndexError):
                     digits = 2
-        
+
         adjustment = Gtk.Adjustment(
             value=field_config.default_value or 0.0,
             lower=min_val,
@@ -155,54 +155,54 @@ class GtkWidgetFactory:
             step_increment=10 ** (-digits),
             page_increment=1.0
         )
-        
+
         spin_button = Gtk.SpinButton(adjustment=adjustment)
         spin_button.set_digits(digits)
-        
+
         return spin_button
 
     def _create_textarea_widget(self, field_config: FieldConfig) -> Gtk.ScrolledWindow:
         """Create a multi-line text widget."""
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        
+
         text_view = Gtk.TextView()
         text_view.set_wrap_mode(Gtk.WrapMode.WORD)
-        
+
         if field_config.default_value:
             buffer = text_view.get_buffer()
             buffer.set_text(str(field_config.default_value))
-        
+
         # Set minimum height if specified
         if hasattr(field_config, 'height') and field_config.height:
             text_view.set_size_request(-1, field_config.height)
-        
+
         scrolled_window.add(text_view)
-        
+
         # Store reference to text_view for value retrieval
         scrolled_window._text_view = text_view
-        
+
         return scrolled_window
 
     def _create_checkbox_widget(self, field_config: FieldConfig) -> Gtk.CheckButton:
         """Create a checkbox widget."""
         checkbox = Gtk.CheckButton(label=field_config.label or field_config.name)
-        
+
         if field_config.default_value:
             checkbox.set_active(bool(field_config.default_value))
-        
+
         return checkbox
 
     def _create_radio_widget(self, field_config: FieldConfig) -> Gtk.Box:
         """Create a radio button group widget."""
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-        
+
         if not field_config.options:
             return box
-        
+
         radio_group = None
         box._radio_buttons = []  # Store radio buttons for value retrieval
-        
+
         for option in field_config.options:
             if radio_group is None:
                 radio_button = Gtk.RadioButton(label=str(option))
@@ -210,60 +210,60 @@ class GtkWidgetFactory:
             else:
                 radio_button = Gtk.RadioButton.new_from_widget(radio_group)
                 radio_button.set_label(str(option))
-            
+
             if field_config.default_value and str(field_config.default_value) == str(option):
                 radio_button.set_active(True)
-            
+
             box._radio_buttons.append((radio_button, option))
             box.pack_start(radio_button, False, False, 0)
-        
+
         return box
 
     def _create_select_widget(self, field_config: FieldConfig) -> Gtk.ComboBoxText:
         """Create a combobox widget."""
         combo = Gtk.ComboBoxText()
-        
+
         # Support both "options" and "choices" attributes
         options = field_config.options or getattr(field_config, 'choices', None)
-        
+
         if options:
             for option in options:
                 combo.append_text(str(option))
-            
+
             if field_config.default_value:
                 try:
                     index = options.index(field_config.default_value)
                     combo.set_active(index)
                 except ValueError:
                     pass
-        
+
         return combo
 
     def _create_date_widget(self, field_config: FieldConfig) -> Gtk.Entry:
         """Create a date entry widget."""
         entry = Gtk.Entry()
         entry.set_placeholder_text("YYYY-MM-DD")
-        
+
         if field_config.default_value:
             entry.set_text(str(field_config.default_value))
-        
+
         return entry
 
     def _create_time_widget(self, field_config: FieldConfig) -> Gtk.Entry:
         """Create a time entry widget."""
         entry = Gtk.Entry()
         entry.set_placeholder_text("HH:MM")
-        
+
         if field_config.default_value:
             entry.set_text(str(field_config.default_value))
-        
+
         return entry
 
     def _create_range_widget(self, field_config: FieldConfig) -> Gtk.Scale:
         """Create a range/slider widget."""
         min_val = field_config.min_value or 0
         max_val = field_config.max_value or 100
-        
+
         adjustment = Gtk.Adjustment(
             value=field_config.default_value or min_val,
             lower=min_val,
@@ -271,24 +271,24 @@ class GtkWidgetFactory:
             step_increment=1,
             page_increment=10
         )
-        
+
         scale = Gtk.Scale(orientation=Gtk.Orientation.HORIZONTAL, adjustment=adjustment)
         scale.set_draw_value(True)
         scale.set_value_pos(Gtk.PositionType.BOTTOM)
-        
+
         return scale
 
     def _create_file_widget(self, field_config: FieldConfig) -> Gtk.Box:
         """Create a file chooser widget."""
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
-        
+
         entry = Gtk.Entry()
         entry.set_placeholder_text("No file selected")
         if field_config.default_value:
             entry.set_text(str(field_config.default_value))
-        
+
         button = Gtk.Button(label="Browse...")
-        
+
         def on_browse_clicked(widget):
             dialog = Gtk.FileChooserDialog(
                 title="Select File",
@@ -299,28 +299,28 @@ class GtkWidgetFactory:
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_OPEN, Gtk.ResponseType.OK
             )
-            
+
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 filename = dialog.get_filename()
                 entry.set_text(filename)
-            
+
             dialog.destroy()
-        
+
         button.connect("clicked", on_browse_clicked)
-        
+
         box.pack_start(entry, True, True, 0)
         box.pack_start(button, False, False, 0)
-        
+
         # Store reference to entry for value retrieval
         box._entry = entry
-        
+
         return box
 
     def _create_color_widget(self, field_config: FieldConfig) -> Gtk.ColorButton:
         """Create a color chooser widget."""
         color_button = Gtk.ColorButton()
-        
+
         if field_config.default_value:
             try:
                 # Parse hex color
@@ -333,7 +333,7 @@ class GtkWidgetFactory:
                     color_button.set_rgba(color)
             except (ValueError, AttributeError):
                 pass
-        
+
         return color_button
 
     def _setup_change_callback(self, field_name: str, widget: Gtk.Widget):
