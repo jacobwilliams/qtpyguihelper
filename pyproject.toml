@@ -42,7 +42,7 @@ pyside6 = [
     "qtpy>=2.0.0",
 ]
 pyqt6 = [
-    "PyQt6>=6.5.0", 
+    "PyQt6>=6.5.0",
     "qtpy>=2.0.0",
 ]
 qt = [
@@ -58,7 +58,7 @@ gtk = [
 all = [
     "qtpy>=2.0.0",
     "PySide6>=6.5.0",
-    "wxPython>=4.2.0", 
+    "wxPython>=4.2.0",
     "PyGObject>=3.42.0",
 ]
 dev = [
@@ -160,7 +160,7 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "gui: marks tests that require GUI interaction",
     "qt: marks tests specific to Qt backend",
-    "wx: marks tests specific to wxPython backend", 
+    "wx: marks tests specific to wxPython backend",
     "tk: marks tests specific to tkinter backend",
     "gtk: marks tests specific to GTK backend",
 ]
