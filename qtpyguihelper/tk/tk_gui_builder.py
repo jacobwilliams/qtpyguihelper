@@ -109,10 +109,7 @@ class TkGuiBuilder:
             self._build_form_interface()
 
         # Add custom buttons
-        self._add_custom_buttons()
-
-        # Add default buttons (Submit/Cancel)
-        self._add_default_buttons()
+        self._add_buttons()
 
         # Set up field change monitoring
         self._setup_field_change_monitoring()
@@ -122,6 +119,63 @@ class TkGuiBuilder:
             canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
         canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
+    def _add_buttons(self):
+        """Add all buttons (custom and default) in a single frame for proper alignment."""
+        if not self.config:
+            return
+
+        # Only create button frame if we have buttons to add
+        has_custom_buttons = self.config.custom_buttons and len(self.config.custom_buttons) > 0
+        has_default_buttons = self.config.submit_button or self.config.cancel_button
+
+        if not (has_custom_buttons or has_default_buttons):
+            return
+
+        # Create single frame for all buttons
+        button_frame = ttk.Frame(self.main_frame)
+        button_frame.pack(fill="x", padx=10, pady=10)
+
+        # Add custom buttons on the left
+        if has_custom_buttons:
+            for button_config in self.config.custom_buttons:
+                button = tk.Button(
+                    button_frame,
+                    text=button_config.label,
+                    command=lambda btn=button_config: self._handle_custom_button_click(btn)
+                )
+
+                # Apply button styling if specified
+                if hasattr(button_config, 'style') and button_config.style:
+                    style = button_config.style
+                    if 'background' in style:
+                        button.config(bg=style['background'])
+                    if 'foreground' in style:
+                        button.config(fg=style['foreground'])
+
+                button.pack(side="left", padx=(0, 5))
+
+        # Add default buttons on the right
+        if has_default_buttons:
+            # Cancel button
+            if self.config.cancel_button:
+                cancel_text = self.config.cancel_label or "Cancel"
+                cancel_button = tk.Button(
+                    button_frame,
+                    text=cancel_text,
+                    command=self._handle_cancel
+                )
+                cancel_button.pack(side="right", padx=(5, 0))
+
+            # Submit button
+            if self.config.submit_button:
+                submit_text = self.config.submit_label or "Submit"
+                submit_button = tk.Button(
+                    button_frame,
+                    text=submit_text,
+                    command=self._handle_submit
+                )
+                submit_button.pack(side="right")
 
     def _build_form_interface(self):
         """Build a simple form interface."""
@@ -194,61 +248,6 @@ class TkGuiBuilder:
             # Add tooltip if specified
             if field_config.tooltip:
                 self._add_tooltip(widget, field_config.tooltip)
-
-    def _add_custom_buttons(self):
-        """Add custom buttons defined in the configuration."""
-        if not self.config or not self.config.custom_buttons:
-            return
-
-        # Create frame for custom buttons
-        button_frame = ttk.Frame(self.main_frame)
-        button_frame.pack(fill="x", padx=10, pady=(0, 5))
-
-        for button_config in self.config.custom_buttons:
-            button = tk.Button(
-                button_frame,
-                text=button_config.label,
-                command=lambda btn=button_config: self._handle_custom_button_click(btn)
-            )
-
-            # Apply button styling if specified
-            if hasattr(button_config, 'style') and button_config.style:
-                style = button_config.style
-                if 'background' in style:
-                    button.config(bg=style['background'])
-                if 'foreground' in style:
-                    button.config(fg=style['foreground'])
-
-            button.pack(side="left", padx=(0, 5))
-
-    def _add_default_buttons(self):
-        """Add default Submit and Cancel buttons."""
-        if not self.config:
-            return
-
-        # Create frame for default buttons
-        button_frame = ttk.Frame(self.main_frame)
-        button_frame.pack(fill="x", padx=10, pady=10)
-
-        # Cancel button
-        if self.config.cancel_button:
-            cancel_text = self.config.cancel_label or "Cancel"
-            cancel_button = tk.Button(
-                button_frame,
-                text=cancel_text,
-                command=self._handle_cancel
-            )
-            cancel_button.pack(side="right", padx=(5, 0))
-
-        # Submit button
-        if self.config.submit_button:
-            submit_text = self.config.submit_label or "Submit"
-            submit_button = tk.Button(
-                button_frame,
-                text=submit_text,
-                command=self._handle_submit
-            )
-            submit_button.pack(side="right")
 
     def _setup_field_change_monitoring(self):
         """Set up field change monitoring."""
