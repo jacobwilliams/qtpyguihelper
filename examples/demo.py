@@ -957,6 +957,87 @@ def demo_tkinter_backend():
         print(f"✗ Error with tkinter backend: {e}")
 
 
+def demo_gtk_backend():
+    """Demo the GTK backend specifically."""
+    print("Starting GTK Backend Demo...")
+
+    try:
+        from qtpyguihelper.gtk import GtkGuiBuilder
+
+        # Simple form configuration
+        config = {
+            "title": "GTK Demo - Settings Form",
+            "fields": [
+                {
+                    "name": "theme",
+                    "label": "Theme",
+                    "type": "combo",
+                    "choices": ["Dark", "Light", "Auto"],
+                    "default_value": "Auto",
+                    "required": True
+                },
+                {
+                    "name": "notifications",
+                    "label": "Enable Notifications",
+                    "type": "checkbox",
+                    "default_value": True
+                },
+                {
+                    "name": "volume",
+                    "label": "Volume",
+                    "type": "int",
+                    "min_value": 0,
+                    "max_value": 100,
+                    "default_value": 75
+                },
+                {
+                    "name": "username",
+                    "label": "Username",
+                    "type": "text",
+                    "required": True,
+                    "default_value": "user123"
+                },
+                {
+                    "name": "description",
+                    "label": "Description",
+                    "type": "textarea",
+                    "default_value": "GTK backend demo application"
+                }
+            ],
+            "buttons": [
+                {"label": "Save Settings", "action": "submit"},
+                {"label": "Reset", "action": "reset"},
+                {"label": "Close", "action": "cancel"}
+            ]
+        }
+
+        def on_gtk_submit(form_data):
+            """Handle GTK form submission."""
+            print("GTK Form submitted with data:")
+            for key, value in form_data.items():
+                print(f"  {key}: {value}")
+
+        # Create the GUI builder
+        gui_builder = GtkGuiBuilder(
+            config_dict=config,
+            submit_callback=on_gtk_submit
+        )
+
+        print("✓ GTK backend demo starting...")
+        print("  Close the window or click 'Close' to exit")
+
+        # Run the application
+        gui_builder.run()
+
+    except ImportError as e:
+        print(f"✗ GTK not available: {e}")
+        print("  Install GTK with: pip install PyGObject")
+        print("  On macOS: brew install gtk+3 pygobject3")
+        print("  On Ubuntu: sudo apt-get install python3-gi python3-gi-cairo gir1.2-gtk-3.0")
+    except Exception as e:
+        print(f"✗ Error with GTK backend: {e}")
+
+
 def demo_backend_comparison():
     """Demo Qt, wxPython, and tkinter backends side by side."""
     print("Starting Backend Comparison Demo...")
@@ -1093,6 +1174,7 @@ def main():
         print("Backend-specific demos:")
         print("  python demo.py wxpython      - wxPython backend demo")
         print("  python demo.py tkinter       - tkinter backend demo")
+        print("  python demo.py gtk           - GTK backend demo")
         print("  python demo.py compare       - Compare all backends")
         print("  python demo.py unified       - Unified interface (auto-backend)")
         print()
@@ -1124,13 +1206,15 @@ def main():
         demo_wxpython_backend()
     elif demo_type == "tk" or demo_type == "tkinter":
         demo_tkinter_backend()
+    elif demo_type == "gtk":
+        demo_gtk_backend()
     elif demo_type == "backend_comparison" or demo_type == "compare":
         demo_backend_comparison()
     elif demo_type == "unified":
         demo_unified_interface()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format, custom_buttons, wx, wxpython, tk, tkinter, compare, backend_comparison, unified")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format, custom_buttons, wx, wxpython, tk, tkinter, gtk, compare, backend_comparison, unified")
 
 
 if __name__ == "__main__":

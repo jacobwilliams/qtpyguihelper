@@ -9,6 +9,7 @@ from dataclasses import dataclass
 
 
 @dataclass
+@dataclass
 class FieldConfig:
     """Configuration for a single form field."""
     name: str
@@ -125,6 +126,7 @@ class ConfigLoader:
                 min_value=field_data.get("min_value"),
                 max_value=field_data.get("max_value"),
                 options=field_data.get("options"),
+                choices=field_data.get("choices"),  # Add support for choices
                 placeholder=field_data.get("placeholder"),
                 tooltip=field_data.get("tooltip"),
                 width=field_data.get("width"),

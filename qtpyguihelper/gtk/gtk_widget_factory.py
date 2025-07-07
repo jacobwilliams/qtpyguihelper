@@ -224,7 +224,11 @@ class GtkWidgetFactory:
         combo = Gtk.ComboBoxText()
 
         # Support both "options" and "choices" attributes
-        options = field_config.options or getattr(field_config, 'choices', None)
+        options = None
+        if hasattr(field_config, 'choices') and field_config.choices:
+            options = field_config.choices
+        elif hasattr(field_config, 'options') and field_config.options:
+            options = field_config.options
 
         if options:
             for option in options:
@@ -234,8 +238,10 @@ class GtkWidgetFactory:
                 try:
                     index = options.index(field_config.default_value)
                     combo.set_active(index)
-                except ValueError:
-                    pass
+                except (ValueError, AttributeError):
+                    # If default_value not found in options, just set first option
+                    if len(options) > 0:
+                        combo.set_active(0)
 
         return combo
 
