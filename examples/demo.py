@@ -625,6 +625,25 @@ def demo_custom_buttons():
     return app.exec()
 
 
+def demo_complex_tabs_wx():
+        # Force wxPython backend
+        from qtpyguihelper import set_backend
+        set_backend('wx')
+        print("✓ wxPython backend selected")
+        from qtpyguihelper import GuiBuilder
+        import wx
+
+        app = wx.App()
+
+        config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
+        gui = GuiBuilder(config_path=config_path)
+
+        # Show the GUI
+        gui.show()
+
+        # Run the application
+        app.MainLoop()
+
 def demo_wxpython_backend():
     """Demo the wxPython backend with a working GUI."""
     print("Starting wxPython Backend Demo...")
@@ -1165,17 +1184,18 @@ def main():
         demo_type = sys.argv[1].lower()
     else:
         print("Available demos:")
-        print("  python demo.py registration  - User registration form (Qt)")
-        print("  python demo.py settings      - Application settings form (Qt)")
-        print("  python demo.py project       - Project data entry form (Qt)")
-        print("  python demo.py contact       - Programmatic contact form (Qt)")
-        print("  python demo.py persistence   - Data loading and saving demo (Qt)")
-        print("  python demo.py tabs          - Tabbed interface demo (Qt)")
-        print("  python demo.py complex_tabs  - Complex tabbed configuration demo (Qt)")
-        print("  python demo.py nested        - Nested field names demo (Qt)")
-        print("  python demo.py float         - Float fields demo (Qt)")
-        print("  python demo.py format        - Format strings demo (Qt)")
-        print("  python demo.py custom_buttons - Custom buttons demo (Qt)")
+        print("  python demo.py registration    - User registration form (Qt)")
+        print("  python demo.py settings        - Application settings form (Qt)")
+        print("  python demo.py project         - Project data entry form (Qt)")
+        print("  python demo.py contact         - Programmatic contact form (Qt)")
+        print("  python demo.py persistence     - Data loading and saving demo (Qt)")
+        print("  python demo.py tabs            - Tabbed interface demo (Qt)")
+        print("  python demo.py complex_tabs    - Complex tabbed configuration demo (Qt)")
+        print("  python demo.py complex_tabs_wx - Complex tabbed configuration demo (wxPython)")
+        print("  python demo.py nested          - Nested field names demo (Qt)")
+        print("  python demo.py float           - Float fields demo (Qt)")
+        print("  python demo.py format          - Format strings demo (Qt)")
+        print("  python demo.py custom_buttons  - Custom buttons demo (Qt)")
         print()
         print("Backend-specific demos:")
         print("  python demo.py wxpython      - wxPython backend demo")
@@ -1208,6 +1228,8 @@ def main():
         demo_format_strings()
     elif demo_type == "custom_buttons":
         demo_custom_buttons()
+    elif demo_type == "complex_tabs_wx":
+        demo_complex_tabs_wx()
     elif demo_type == "wx" or demo_type == "wxpython":
         demo_wxpython_backend()
     elif demo_type == "tk" or demo_type == "tkinter":
