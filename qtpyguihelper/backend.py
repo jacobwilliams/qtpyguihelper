@@ -16,7 +16,7 @@ class BackendError(Exception):
 class BackendManager:
     """Manages GUI backend selection and availability."""
 
-    SUPPORTED_BACKENDS = ['qt', 'wx', 'tk']
+    SUPPORTED_BACKENDS = ['qt', 'wx', 'tk', 'gtk']
     DEFAULT_BACKEND = 'qt'
 
     def __init__(self):
@@ -46,6 +46,15 @@ class BackendManager:
             self._backend_available['tk'] = True
         except ImportError:
             self._backend_available['tk'] = False
+
+        # Check GTK availability
+        try:
+            import gi
+            gi.require_version('Gtk', '3.0')
+            from gi.repository import Gtk  # noqa: F401
+            self._backend_available['gtk'] = True
+        except (ImportError, ValueError):
+            self._backend_available['gtk'] = False
 
     def get_available_backends(self) -> list:
         """Get list of available backends."""
@@ -134,6 +143,15 @@ class BackendManager:
                 info['tk_version'] = tkinter.TkVersion
                 info['tcl_version'] = tkinter.TclVersion
             except ImportError:
+                pass
+        elif backend == 'gtk':
+            try:
+                import gi
+                gi.require_version('Gtk', '3.0')
+                from gi.repository import Gtk
+                info['gtk_version'] = f"{Gtk.get_major_version()}.{Gtk.get_minor_version()}.{Gtk.get_micro_version()}"
+                info['glib_version'] = gi.version_info
+            except (ImportError, ValueError):
                 pass
 
         return info

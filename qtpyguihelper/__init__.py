@@ -26,6 +26,17 @@ from .wx.wx_gui_builder import WxGuiBuilder
 from .wx.wx_widget_factory import WxWidgetFactory
 from .tk.tk_gui_builder import TkGuiBuilder
 from .tk.tk_widget_factory import TkWidgetFactory
+
+# Import GTK backend conditionally
+try:
+    from .gtk.gtk_gui_builder import GtkGuiBuilder
+    from .gtk.gtk_widget_factory import GtkWidgetFactory
+    _gtk_available = True
+except ImportError:
+    GtkGuiBuilder = None
+    GtkWidgetFactory = None
+    _gtk_available = False
+
 from .config_loader import ConfigLoader, CustomButtonConfig
 from .backend import (
     get_backend, set_backend, get_available_backends,
@@ -71,6 +82,8 @@ class GuiBuilder:
             self._builder = WxGuiBuilder(config_path, config_dict)
         elif self._backend == 'tk':
             self._builder = TkGuiBuilder(config_path, config_dict)
+        elif self._backend == 'gtk' and _gtk_available:
+            self._builder = GtkGuiBuilder(config_path, config_dict)
         else:
             raise BackendError(f"Unsupported backend: {self._backend}")
 
@@ -80,7 +93,7 @@ class GuiBuilder:
         return self._backend
 
     @property
-    def builder(self) -> Union[QtGuiBuilder, WxGuiBuilder, TkGuiBuilder]:
+    def builder(self) -> Union[QtGuiBuilder, WxGuiBuilder, TkGuiBuilder, 'GtkGuiBuilder']:
         """Get the underlying builder instance."""
         return self._builder
 

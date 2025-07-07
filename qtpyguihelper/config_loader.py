@@ -19,6 +19,7 @@ class FieldConfig:
     min_value: Optional[float] = None
     max_value: Optional[float] = None
     options: Optional[List[str]] = None
+    choices: Optional[List[str]] = None  # Alternative to options for combo/select fields
     placeholder: Optional[str] = None
     tooltip: Optional[str] = None
     width: Optional[int] = None
@@ -78,8 +79,8 @@ class ConfigLoader:
 
     SUPPORTED_FIELD_TYPES = {
         "text", "number", "int", "float", "email", "password", "textarea",
-        "checkbox", "radio", "select", "date", "time",
-        "datetime", "file", "color", "range", "url"
+        "checkbox", "check", "radio", "select", "combo", "date", "time",
+        "datetime", "file", "color", "range", "spin", "url"
     }
 
     SUPPORTED_LAYOUTS = {"vertical", "horizontal", "grid", "form"}
@@ -221,10 +222,14 @@ class ConfigLoader:
                 if field_type not in self.SUPPORTED_FIELD_TYPES:
                     raise ValueError(f"Unsupported field type: {field_type}")
 
-                # Validate options for select/radio fields
-                if field_type in ["select", "radio"]:
+                # Validate options for select/radio/combo fields
+                if field_type in ["select", "radio", "combo"]:
                     if "options" not in field or not field["options"]:
-                        raise ValueError(f"Field {field_name} of type {field_type} must have 'options'")
+                        # For combo fields, also check for "choices" as an alternative
+                        if field_type == "combo" and "choices" in field and field["choices"]:
+                            pass  # choices is acceptable for combo fields
+                        else:
+                            raise ValueError(f"Field {field_name} of type {field_type} must have 'options' or 'choices'")
 
                 # Validate numeric constraints
                 if field_type in ["number", "range"]:

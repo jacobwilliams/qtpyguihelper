@@ -6,8 +6,9 @@ A Python library for creating GUI applications from JSON configuration files. Th
 - **Qt backend** via qtpy (supports PySide6/PyQt6)
 - **wxPython backend** as a cross-platform alternative
 - **tkinter backend** built into Python (no additional dependencies)
+- **GTK backend** via PyGObject (native Linux desktop integration)
 
-The library automatically detects available backends and provides a unified interface, allowing you to switch between Qt, wxPython, and tkinter seamlessly.
+The library automatically detects available backends and provides a unified interface, allowing you to switch between Qt, wxPython, tkinter, and GTK seamlessly.
 
 ## Features
 
