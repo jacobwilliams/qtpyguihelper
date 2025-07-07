@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "qtpyguihelper"
 version = "1.0.0"
-description = "A Python library for creating Qt GUIs from JSON configuration files. Compatible with both PySide6 and PyQt6."
+description = "A Python library for creating cross-platform GUIs from JSON configuration files. Supports Qt (PySide6/PyQt6), wxPython, tkinter, and GTK backends."
 readme = "README.md"
-requires-python = ">=3.7"
-license = {text = "MIT"}
+requires-python = ">=3.8"
+license = "MIT"
 authors = [
     {name = "QtPyGuiHelper Team"},
 ]
@@ -18,30 +18,48 @@ maintainers = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: User Interfaces",
     "Topic :: Desktop Environment",
+    "Topic :: Software Development :: Widget Sets",
 ]
-keywords = ["pyside6", "pyqt6", "qt", "gui", "json", "configuration", "form", "builder", "qtpy"]
+keywords = ["gui", "json", "configuration", "form", "builder", "qt", "pyside6", "pyqt6", "qtpy", "wxpython", "tkinter", "gtk", "cross-platform", "desktop"]
 dependencies = [
-    "qtpy>=2.0.0",
+    # No required dependencies - all GUI backends are optional
 ]
 
 [project.optional-dependencies]
 pyside6 = [
     "PySide6>=6.5.0",
+    "qtpy>=2.0.0",
 ]
 pyqt6 = [
-    "PyQt6>=6.5.0",
+    "PyQt6>=6.5.0", 
+    "qtpy>=2.0.0",
+]
+qt = [
+    "qtpy>=2.0.0",
+    # Note: Requires either PySide6 or PyQt6 to be installed separately
+]
+wxpython = [
+    "wxPython>=4.2.0",
+]
+gtk = [
+    "PyGObject>=3.42.0",
+]
+all = [
+    "qtpy>=2.0.0",
+    "PySide6>=6.5.0",
+    "wxPython>=4.2.0", 
+    "PyGObject>=3.42.0",
 ]
 dev = [
     "pytest>=6.0",
@@ -51,6 +69,9 @@ dev = [
     "mypy>=0.910",
     "pre-commit>=2.15.0",
     "PySide6>=6.5.0",  # Default to PySide6 for development
+    "qtpy>=2.0.0",
+    "wxPython>=4.2.0",  # Optional: for wxPython testing
+    "PyGObject>=3.42.0",  # Optional: for GTK testing
 ]
 test = [
     "pytest>=6.0",
@@ -63,7 +84,7 @@ docs = [
 ]
 
 [project.scripts]
-qtpyguihelper-demo = "demo:main"
+qtpyguihelper-demo = "examples.demo:main"
 
 [project.urls]
 Homepage = "https://github.com/yourusername/qtpyguihelper"
@@ -78,17 +99,17 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["qtpyguihelper*"]
+include = ["qtpyguihelper*", "examples*"]
 exclude = ["tests*", "docs*"]
 
 [tool.setuptools.package-data]
 qtpyguihelper = ["*.py"]
-"*" = ["examples/*.json", "README.md"]
+examples = ["*.json", "*.py", "*.md"]
 
 # Black configuration
 [tool.black]
 line-length = 100
-target-version = ['py37']
+target-version = ['py38']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -116,7 +137,7 @@ ensure_newline_before_comments = true
 
 # mypy configuration
 [tool.mypy]
-python_version = "3.7"
+python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -138,6 +159,10 @@ testpaths = ["tests"]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "gui: marks tests that require GUI interaction",
+    "qt: marks tests specific to Qt backend",
+    "wx: marks tests specific to wxPython backend", 
+    "tk: marks tests specific to tkinter backend",
+    "gtk: marks tests specific to GTK backend",
 ]
 
 # Coverage configuration
