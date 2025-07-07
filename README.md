@@ -10,6 +10,14 @@ A Python library for creating GUI applications from JSON configuration files. Th
 
 The library automatically detects available backends and provides a unified interface, allowing you to switch between Qt, wxPython, tkinter, and GTK seamlessly.
 
+## Examples
+
+### PySide6 backend:
+![Qt Backend](media/qt.png)
+
+### WxPython backend:
+![wxPython Backend](media/wx.png)
+
 ## Features
 
 - 🎯 **JSON-Driven**: Define your entire GUI in JSON configuration files
