@@ -65,8 +65,6 @@ def demo_pyqt6():
 
     except ImportError as e:
         print(f"PyQt6 not available: {e}")
-        print("Please install PyQt6: pip install PyQt6")
-
 
 def show_current_backend():
     """Show which Qt backend is currently being used."""

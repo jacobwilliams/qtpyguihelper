@@ -809,7 +809,6 @@ def demo_wxpython_backend():
 
     except ImportError as e:
         print(f"✗ wxPython not available: {e}")
-        print("  Install wxPython with: pip install wxpython")
     except Exception as e:
         print(f"✗ Error with wxPython backend: {e}")
 
@@ -1051,9 +1050,6 @@ def demo_gtk_backend():
 
     except ImportError as e:
         print(f"✗ GTK not available: {e}")
-        print("  Install GTK with: pip install PyGObject")
-        print("  On macOS: brew install gtk+3 pygobject3")
-        print("  On Ubuntu: sudo apt-get install python3-gi python3-gi-cairo gir1.2-gtk-3.0")
     except Exception as e:
         print(f"✗ Error with GTK backend: {e}")
 

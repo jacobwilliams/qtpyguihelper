@@ -158,10 +158,10 @@ def test_get_available_backends():
         print("✓ Full cross-platform support enabled")
     elif 'qt' in available:
         print("✓ Qt backend available")
-        print("⚠ wxPython backend not available (install with: pip install wxpython)")
+        print("⚠ wxPython backend not available")
     elif 'wx' in available:
         print("✓ wxPython backend available")
-        print("⚠ Qt backend not available (install with: pip install PySide6)")
+        print("⚠ Qt backend not available")
     else:
         assert False, "✗ No backends available!"
 

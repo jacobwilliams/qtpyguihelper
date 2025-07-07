@@ -86,6 +86,4 @@ try:
 
 except ImportError as e:
     print(f"Import error: {e}")
-    print("Make sure you have a Qt binding installed: pip install PySide6 (or PyQt6) and qtpy")
-    print("You may need to run this from the qtpyguihelper directory.")
-    sys.exit(1)
+    print("Make sure you have a Qt binding installed: PySide6 (or PyQt6) and qtpy")

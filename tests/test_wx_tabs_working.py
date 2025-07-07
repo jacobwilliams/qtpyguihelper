@@ -62,7 +62,6 @@ def test_wx_tabs():
 
     except ImportError as e:
         print(f"✗ wxPython not available: {e}")
-        print("  Install wxPython with: pip install wxpython")
     except Exception as e:
         print(f"✗ Error with wxPython tabs: {e}")
         import traceback

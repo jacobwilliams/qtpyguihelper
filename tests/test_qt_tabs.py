@@ -147,7 +147,6 @@ def test_qt_tabs():
 
     except ImportError as e:
         print(f"✗ Qt not available: {e}")
-        print("  Install Qt with: pip install PySide6 or pip install PyQt6")
     except Exception as e:
         print(f"✗ Error with Qt tabs test: {e}")
         import traceback
