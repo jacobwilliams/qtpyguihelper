@@ -13,7 +13,7 @@ The library automatically detects available backends and provides a unified inte
 ## Features
 
 - 🎯 **JSON-Driven**: Define your entire GUI in JSON configuration files
-- 🔀 **Multi-Backend**: Support for Qt (PySide6/PyQt6), wxPython, and tkinter backends
+- 🔀 **Multi-Backend**: Support for Qt (PySide6/PyQt6), wxPython, GTK, and tkinter backends
 - 🎨 **Multiple Layouts**: Support for vertical, horizontal, grid, and form layouts
 - 🧩 **Rich Widget Set**: Text fields, numbers, dates, checkboxes, radio buttons, file pickers, color pickers, and more
 - ✅ **Form Validation**: Built-in validation for required fields and data types
@@ -33,6 +33,7 @@ QtPyGuiHelper supports multiple GUI backends for maximum flexibility and cross-p
 
 **Qt Backend (Default)**: Uses `qtpy` as an abstraction layer, supporting both PySide6 and PyQt6.
 **wxPython Backend**: Alternative cross-platform GUI toolkit with native look and feel.
+**GTK Backend**: PyGObject is a Python package which provides bindings for GObject based libraries such as GTK.
 **tkinter Backend**: Built into Python, requires no additional dependencies, perfect for simple GUIs.
 
 ### Option 1: Install with Qt Backend (PySide6 - Recommended)
@@ -69,29 +70,40 @@ pip install wxpython>=4.2.0
 pip install -e .
 ```
 
-### Option 5: Install All Backends
+### Option 5: Install with GTK Backend
+
+```bash
+git clone https://github.com/yourusername/qtpyguihelper.git
+cd qtpyguihelper
+pip install pygobject>=3.42.0
+pip install -e .
+```
+
+### Option 6: Install All Backends
 
 ```bash
 git clone https://github.com/yourusername/qtpyguihelper.git
 cd qtpyguihelper
 pip install .[pyside6]
 pip install wxpython>=4.2.0
+pip install pygobject>=3.42.0
 # tkinter is included with Python by default
 ```
 
-### Option 6: Development installation
+### Option 7: Development installation
 
 ```bash
 git clone https://github.com/yourusername/qtpyguihelper.git
 cd qtpyguihelper
 pip install -e .[dev]
 pip install wxpython>=4.2.0  # Optional: for wxPython support
+pip install pygobject>=3.42.0  # Optional: for GTK support
 # tkinter is included with Python by default
 ```
 
-### Option 7: Manual dependency installation
+### Option 8: Manual dependency installation
 
-If you already have Qt, wxPython, or want to use tkinter:
+If you already have Qt, wxPython, GTK, or want to use tkinter:
 
 ```bash
 # For Qt backend
@@ -100,7 +112,25 @@ pip install qtpy>=2.0.0
 # For wxPython backend
 pip install wxpython>=4.2.0
 
+# For GTK backend
+pip install pygobject>=3.42.0
+
 # For tkinter backend - no installation needed (built into Python)
+```
+
+### Option 9: Pixi dependency installation
+
+To build a pixi environment and run all the tests:
+
+```
+mkdir env
+cd env
+pixi init .
+pixi add gtk3 pygobject pyside6 pytest python qtpy wxpython
+pixi install
+pixi shell
+cd ..
+./test.sh
 ```
 
 ## Quick Start
@@ -216,6 +246,10 @@ python your_app.py
 export GUI_BACKEND=tk
 python your_app.py
 
+# Use GTK backend
+export GUI_BACKEND=gtk
+python your_app.py
+
 # For Qt backend, you can also specify the Qt binding
 export QT_API=pyside6  # or pyqt6
 python your_app.py
@@ -237,6 +271,10 @@ gui = GuiBuilder(config_path="form.json")
 # Force tkinter backend
 set_backend('tk')
 gui = GuiBuilder(config_path="form.json")
+
+# Force GTK backend
+set_backend('gtk')
+gui = GuiBuilder(config_path="form.json")
 ```
 
 #### Method 3: Constructor Parameter
@@ -245,7 +283,7 @@ gui = GuiBuilder(config_path="form.json")
 from qtpyguihelper import GuiBuilder
 
 # Force specific backend during construction
-gui = GuiBuilder(config_path="form.json", backend='wx')  # or 'qt', 'tk'
+gui = GuiBuilder(config_path="form.json", backend='wx')  # or 'qt', 'tk', 'gtk'
 ```
 
 ### Backend-Specific Features
@@ -271,9 +309,17 @@ gui = GuiBuilder(config_path="form.json", backend='wx')  # or 'qt', 'tk'
 - Simple and reliable
 - Perfect for basic to moderate GUI needs
 
+#### GTK Backend Features
+- Native Linux desktop integration
+- Modern GTK 3.0+ styling and themes
+- Accessibility support
+- Rich widget library
+- Strong integration with GNOME desktop
+- Cross-platform with native look on Linux
+
 ### Backend Compatibility
 
-All core features work identically across all three backends:
+All core features work identically across all four backends:
 - ✅ All field types (text, number, date, etc.)
 - ✅ All layout types (form, grid, vertical, horizontal)
 - ✅ Custom buttons with callbacks
@@ -297,6 +343,9 @@ if is_backend_available('tk'):
 
 if is_backend_available('qt'):
     print("Qt backend is available")
+
+if is_backend_available('gtk'):
+    print("GTK backend is available")
 ```
 
 ## Supported Field Types
@@ -689,6 +738,8 @@ python examples/demo.py tabs          # Tabbed interface demo
 python examples/demo.py float         # Float fields demo
 python examples/demo.py custom_buttons # Custom buttons demo
 python examples/demo.py wxpython      # wxPython backend demo
+python examples/demo.py tkinter       # tkinter backend demo
+python examples/demo.py gtk           # GTK backend demo
 python examples/demo.py compare       # Backend comparison
 python examples/demo.py unified       # Unified interface (auto-backend)
 ```
@@ -701,7 +752,7 @@ python examples/qt_backend_demo.py    # Qt backend selection demo
 
 ### Backend Comparison
 
-The library provides seamless switching between Qt, wxPython, and tkinter backends. All backends support all features with identical APIs:
+The library provides seamless switching between Qt, wxPython, tkinter, and GTK backends. All backends support all features with identical APIs:
 
 ```python
 from qtpyguihelper import GuiBuilder, set_backend
@@ -729,7 +780,15 @@ qt_gui = GuiBuilder(config_dict=config)
 set_backend('wx')
 wx_gui = GuiBuilder(config_dict=config)
 
-# Both GUIs work identically!
+# Test with tkinter backend
+set_backend('tk')
+tk_gui = GuiBuilder(config_dict=config)
+
+# Test with GTK backend
+set_backend('gtk')
+gtk_gui = GuiBuilder(config_dict=config)
+
+# All GUIs work identically!
 ```
 
 **Auto-Backend Selection** (recommended):
@@ -852,57 +911,18 @@ Data files with metadata include additional information:
 #### wxPython Backend
 - wxPython 4.2.0+
 
+#### GTK Backend
+- PyGObject 3.42.0+
+- GTK 3.0+
+
+#### tkinter Backend
+- No additional requirements (built into Python)
+
 ### Backend Selection Priority
 1. If all backends are available, Qt is preferred by default
 2. tkinter is second priority (always available with Python)
 3. wxPython is third priority
-4. Use `GUI_BACKEND` environment variable to force selection
-5. Use `set_backend()` function for programmatic control
+4. GTK is fourth priority
+5. Use `GUI_BACKEND` environment variable to force selection
+6. Use `set_backend()` function for programmatic control
 
-## License
-
-This project is open source. Feel free to use and modify as needed.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Backend not available errors**:
-   - For Qt: `pip install PySide6` or `pip install PyQt6`
-   - For wxPython: `pip install wxpython`
-   - For tkinter: Usually included with Python (check Python installation)
-
-2. **Import errors**: Make sure at least one backend is installed
-   ```bash
-   # Check available backends
-   python -c "from qtpyguihelper import get_available_backends; print(get_available_backends())"
-   ```
-
-3. **Configuration validation errors**: Check that all required fields in your JSON are present
-
-4. **Widget not displaying**: Verify the field type is supported and properly configured
-
-5. **Backend-specific issues**:
-   - Qt: Check `QT_API` environment variable if using specific Qt binding
-   - wxPython: Ensure compatible version (4.2.0+) for your platform
-   - tkinter: Usually works out of the box, check if Python includes tk support
-
-### Backend-Specific Features
-
-Some advanced features may behave slightly differently between backends:
-- **Styling**: Qt has more advanced theming, wxPython has native platform look, tkinter has basic but consistent styling
-- **Events**: All support core events, but Qt has the most granular signal system
-- **Performance**: tkinter has fastest startup, wxPython has smallest memory footprint, Qt has richest features
-- **Platform integration**: wxPython may have better native integration, tkinter works everywhere Python does
-
-### Getting Help
-
-- Check the example configurations in `examples/`
-- Run the demo script to see working examples: `python examples/demo.py compare`
-- Review the configuration reference above
-- Test all backends: `python examples/demo.py tk`, `python examples/demo.py qt`, and `python examples/demo.py wx`
-- Open an issue on the project repository
