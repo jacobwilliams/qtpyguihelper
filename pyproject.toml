@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "qtpyguihelper"
 version = "1.0.0"
-description = "A Python library for creating cross-platform GUIs from JSON configuration files. Supports Qt (PySide6/PyQt6), wxPython, tkinter, and GTK backends."
+description = "A Python library for creating cross-platform GUIs from JSON configuration files. Supports Qt (PySide6/PyQt6), wxPython, tkinter, and GTK3/GTK4 backends."
 readme = "README.md"
 requires-python = ">=3.8"
 license = "MIT"
@@ -31,7 +31,7 @@ classifiers = [
     "Topic :: Desktop Environment",
     "Topic :: Software Development :: Widget Sets",
 ]
-keywords = ["gui", "json", "configuration", "form", "builder", "qt", "pyside6", "pyqt6", "qtpy", "wxpython", "tkinter", "gtk", "cross-platform", "desktop"]
+keywords = ["gui", "json", "configuration", "form", "builder", "qt", "pyside6", "pyqt6", "qtpy", "wxpython", "tkinter", "gtk", "gtk3", "gtk4", "cross-platform", "desktop"]
 dependencies = [
     # No required dependencies - all GUI backends are optional
 ]
@@ -53,6 +53,12 @@ wxpython = [
     "wxPython>=4.2.0",
 ]
 gtk = [
+    "PyGObject>=3.42.0",
+]
+gtk3 = [
+    "PyGObject>=3.42.0",
+]
+gtk4 = [
     "PyGObject>=3.42.0",
 ]
 all = [

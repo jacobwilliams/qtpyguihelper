@@ -13,12 +13,33 @@ from qtpyguihelper.config_loader import FieldConfig
 
 try:
     import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk, GLib
+
+    # Try to determine GTK version
+    GTK_VERSION = None
+    GTK_MAJOR_VERSION = None
+
+    # Try GTK4 first
+    try:
+        gi.require_version('Gtk', '4.0')
+        from gi.repository import Gtk, GLib
+        GTK_VERSION = '4.0'
+        GTK_MAJOR_VERSION = 4
+    except (ValueError, ImportError):
+        # Fallback to GTK3
+        try:
+            gi.require_version('Gtk', '3.0')
+            from gi.repository import Gtk, GLib
+            GTK_VERSION = '3.0'
+            GTK_MAJOR_VERSION = 3
+        except (ValueError, ImportError):
+            raise ImportError("No compatible GTK version found")
+
     GTK_AVAILABLE = True
 except (ImportError, ValueError) as e:
     print(f"GTK widgets not available: {e}")
     GTK_AVAILABLE = False
+    GTK_VERSION = None
+    GTK_MAJOR_VERSION = None
     # Create dummy classes for type hints
     class Gtk:
         class Widget: pass
@@ -33,6 +54,44 @@ except (ImportError, ValueError) as e:
         class ColorButton: pass
 
 
+def _gtk_version_compat():
+    """Return compatibility helpers for different GTK versions."""
+    if GTK_MAJOR_VERSION == 4:
+        return {
+            'orientation_horizontal': Gtk.Orientation.HORIZONTAL,
+            'orientation_vertical': Gtk.Orientation.VERTICAL,
+            'box_new': lambda orientation, spacing: Gtk.Box(orientation=orientation, spacing=spacing),
+            'label_new': lambda text: Gtk.Label(label=text),
+            'entry_new': lambda: Gtk.Entry(),
+            'button_new': lambda text: Gtk.Button(label=text),
+            'checkbutton_new': lambda text: Gtk.CheckButton(label=text),
+            'combobox_new': lambda: Gtk.ComboBoxText(),
+            'spinbutton_new': lambda adj, rate, digits: Gtk.SpinButton(adjustment=adj, climb_rate=rate, digits=digits),
+            'scale_new': lambda orientation, adj: Gtk.Scale(orientation=orientation, adjustment=adj),
+            'scrolled_new': lambda: Gtk.ScrolledWindow(),
+            'set_scrolled_policy': lambda sw, h, v: sw.set_policy(h, v),
+            'container_add': lambda container, child: container.set_child(child),
+            'set_margin': lambda widget, margin: widget.set_margin_start(margin) or widget.set_margin_end(margin) or widget.set_margin_top(margin) or widget.set_margin_bottom(margin),
+        }
+    else:  # GTK3
+        return {
+            'orientation_horizontal': Gtk.Orientation.HORIZONTAL,
+            'orientation_vertical': Gtk.Orientation.VERTICAL,
+            'box_new': lambda orientation, spacing: Gtk.Box(orientation=orientation, spacing=spacing),
+            'label_new': lambda text: Gtk.Label(label=text),
+            'entry_new': lambda: Gtk.Entry(),
+            'button_new': lambda text: Gtk.Button(label=text),
+            'checkbutton_new': lambda text: Gtk.CheckButton(label=text),
+            'combobox_new': lambda: Gtk.ComboBoxText(),
+            'spinbutton_new': lambda adj, rate, digits: Gtk.SpinButton(adjustment=adj, climb_rate=rate, digits=digits),
+            'scale_new': lambda orientation, adj: Gtk.Scale(orientation=orientation, adjustment=adj),
+            'scrolled_new': lambda: Gtk.ScrolledWindow(),
+            'set_scrolled_policy': lambda sw, h, v: sw.set_policy(h, v),
+            'container_add': lambda container, child: container.add(child),
+            'set_margin': lambda widget, margin: widget.set_margin_left(margin) or widget.set_margin_right(margin) or widget.set_margin_top(margin) or widget.set_margin_bottom(margin),
+        }
+
+
 class GtkWidgetFactory:
     """Factory for creating GTK widgets from field configurations."""
 
@@ -45,6 +104,7 @@ class GtkWidgetFactory:
         self.labels: Dict[str, Gtk.Label] = {}
         self.field_configs: Dict[str, FieldConfig] = {}
         self.change_callbacks: Dict[str, List[Callable]] = {}
+        self._compat = _gtk_version_compat()
 
     def create_label(self, parent: Gtk.Widget, field_config: FieldConfig) -> Gtk.Label:
         """Create a label for a field."""
@@ -52,7 +112,7 @@ class GtkWidgetFactory:
         if field_config.required:
             label_text += " *"
 
-        label = Gtk.Label(label=label_text)
+        label = self._compat['label_new'](label_text)
         label.set_halign(Gtk.Align.START)
         label.set_valign(Gtk.Align.CENTER)
 
@@ -102,7 +162,7 @@ class GtkWidgetFactory:
 
     def _create_text_widget(self, field_config: FieldConfig) -> Gtk.Entry:
         """Create a text entry widget."""
-        entry = Gtk.Entry()
+        entry = self._compat['entry_new']()
 
         if field_config.placeholder:
             entry.set_placeholder_text(field_config.placeholder)
@@ -128,8 +188,7 @@ class GtkWidgetFactory:
             page_increment=10
         )
 
-        spin_button = Gtk.SpinButton(adjustment=adjustment)
-        spin_button.set_digits(0)
+        spin_button = self._compat['spinbutton_new'](adjustment, 1.0, 0)
 
         return spin_button
 
@@ -163,8 +222,8 @@ class GtkWidgetFactory:
 
     def _create_textarea_widget(self, field_config: FieldConfig) -> Gtk.ScrolledWindow:
         """Create a multi-line text widget."""
-        scrolled_window = Gtk.ScrolledWindow()
-        scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        scrolled_window = self._compat['scrolled_new']()
+        self._compat['set_scrolled_policy'](scrolled_window, Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
         text_view = Gtk.TextView()
         text_view.set_wrap_mode(Gtk.WrapMode.WORD)
@@ -177,7 +236,7 @@ class GtkWidgetFactory:
         if hasattr(field_config, 'height') and field_config.height:
             text_view.set_size_request(-1, field_config.height)
 
-        scrolled_window.add(text_view)
+        self._compat['container_add'](scrolled_window, text_view)
 
         # Store reference to text_view for value retrieval
         scrolled_window._text_view = text_view

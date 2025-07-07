@@ -11,13 +11,35 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
     import gi
-    gi.require_version('Gtk', '3.0')
-    gi.require_version('Gdk', '3.0')
-    from gi.repository import Gtk, GLib, Gdk
+
+    # Try to determine GTK version
+    GTK_VERSION = None
+    GTK_MAJOR_VERSION = None
+
+    # Try GTK4 first
+    try:
+        gi.require_version('Gtk', '4.0')
+        gi.require_version('Gdk', '4.0')
+        from gi.repository import Gtk, GLib, Gdk
+        GTK_VERSION = '4.0'
+        GTK_MAJOR_VERSION = 4
+    except (ValueError, ImportError):
+        # Fallback to GTK3
+        try:
+            gi.require_version('Gtk', '3.0')
+            gi.require_version('Gdk', '3.0')
+            from gi.repository import Gtk, GLib, Gdk
+            GTK_VERSION = '3.0'
+            GTK_MAJOR_VERSION = 3
+        except (ValueError, ImportError):
+            raise ImportError("No compatible GTK version found")
+
     GTK_AVAILABLE = True
 except (ImportError, ValueError) as e:
     print(f"GTK backend not available: {e}")
     GTK_AVAILABLE = False
+    GTK_VERSION = None
+    GTK_MAJOR_VERSION = None
     # Create dummy classes for type hints
     class Gtk:
         class Window: pass
@@ -86,9 +108,12 @@ class GtkGuiBuilder:
         if not self.config:
             return
 
+        # Get compatibility helpers
+        compat = self._gtk_version_compat()
+
         # Create window if it doesn't exist
         if self.window is None:
-            self.window = Gtk.Window()
+            self.window = compat['window_new']()
 
         # Set window properties
         if self.config.window.title:
@@ -101,36 +126,36 @@ class GtkGuiBuilder:
         else:
             self.window.set_default_size(600, 400)
 
-        # Center window on screen
-        self.window.set_position(Gtk.WindowPosition.CENTER)
+        # Center window on screen (GTK3 only)
+        compat['set_window_position'](self.window)
 
         # Make window resizable
         self.window.set_resizable(True)
 
-        # Ensure window can receive focus and comes to front
-        self.window.set_can_focus(True)
-        self.window.set_accept_focus(True)
+        # Version-specific window setup
+        if GTK_MAJOR_VERSION == 3:
+            # GTK3-specific window properties
+            self.window.set_can_focus(True)
+            self.window.set_accept_focus(True)
+            self.window.set_focus_on_map(True)
+            if compat['window_type_hint']:
+                self.window.set_type_hint(compat['window_type_hint'])
+            self.window.set_modal(False)
+            self.window.set_skip_taskbar_hint(False)
+            self.window.set_skip_pager_hint(False)
+        # GTK4 handles many of these automatically
 
-        # Additional window properties to ensure it comes to front
-        self.window.set_focus_on_map(True)
-        self.window.set_type_hint(Gdk.WindowTypeHint.NORMAL)
-        self.window.set_modal(False)  # Ensure it's not modal
-
-        # Set window to always be visible when shown
-        self.window.set_skip_taskbar_hint(False)
-        self.window.set_skip_pager_hint(False)
-
-        # Connect window close event
-        self.window.connect("delete-event", self._on_window_close)
+        # Connect window close event using compatibility helper
+        compat['connect_delete_event'](self.window, self._on_window_close)
 
         # Create main scrolled window
-        scrolled_window = Gtk.ScrolledWindow()
-        scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        scrolled_window.set_border_width(10)
+        scrolled_window = compat['scrolled_new']()
+        compat['set_scrolled_policy'](scrolled_window, Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        compat['set_border_width'](scrolled_window, 10)
 
         # Create main container
-        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        scrolled_window.add(main_box)
+        main_box = compat['box_new'](compat['orientation_vertical'], 10)
+        compat['container_add'](scrolled_window, main_box)
         self.main_container = main_box
 
         # Build the interface
@@ -149,20 +174,23 @@ class GtkGuiBuilder:
         self._setup_field_change_monitoring()
 
         # Add scrolled window to main window
-        self.window.add(scrolled_window)
+        compat['container_add'](self.window, scrolled_window)
 
     def _build_form_interface(self):
         """Build a simple form interface."""
         if not self.config or not self.config.fields:
             return
 
+        # Get compatibility helpers
+        compat = self._gtk_version_compat()
+
         # Create form grid
         form_grid = Gtk.Grid()
         form_grid.set_column_spacing(10)
         form_grid.set_row_spacing(10)
-        form_grid.set_border_width(10)
+        compat['set_border_width'](form_grid, 10)
 
-        self.main_container.pack_start(form_grid, True, True, 0)
+        compat['box_pack_start'](self.main_container, form_grid, True, True, 0)
 
         row = 0
         for field_config in self.config.fields:
@@ -244,27 +272,30 @@ class GtkGuiBuilder:
         if not self.config:
             return
 
+        # Get compatibility helpers
+        compat = self._gtk_version_compat()
+
         # Create frame for default buttons
-        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
-        button_box.set_border_width(10)
+        button_box = compat['box_new'](compat['orientation_horizontal'], 5)
+        compat['set_border_width'](button_box, 10)
         button_box.set_halign(Gtk.Align.END)
 
         # Submit button
         if self.config.submit_button:
             submit_text = self.config.submit_label or "Submit"
-            submit_button = Gtk.Button(label=submit_text)
+            submit_button = compat['button_new'](submit_text)
             submit_button.connect("clicked", lambda btn: self._handle_submit())
             submit_button.get_style_context().add_class("suggested-action")
-            button_box.pack_start(submit_button, False, False, 0)
+            compat['box_pack_start'](button_box, submit_button, False, False, 0)
 
         # Cancel button
         if self.config.cancel_button:
             cancel_text = self.config.cancel_label or "Cancel"
-            cancel_button = Gtk.Button(label=cancel_text)
+            cancel_button = compat['button_new'](cancel_text)
             cancel_button.connect("clicked", lambda btn: self._handle_cancel())
-            button_box.pack_start(cancel_button, False, False, 0)
+            compat['box_pack_start'](button_box, cancel_button, False, False, 0)
 
-        self.main_container.pack_start(button_box, False, False, 0)
+        compat['box_pack_start'](self.main_container, button_box, False, False, 0)
 
     def _setup_field_change_monitoring(self):
         """Set up field change monitoring."""
@@ -313,7 +344,8 @@ class GtkGuiBuilder:
         else:
             # Default behavior - close the window
             if self.window:
-                Gtk.main_quit()
+                compat = self._gtk_version_compat()
+                compat['main_quit']()
 
     def _handle_custom_button_click(self, button_config: CustomButtonConfig):
         """Handle custom button click."""
@@ -386,7 +418,9 @@ class GtkGuiBuilder:
         scrolled.add(text_view)
         dialog.get_content_area().add(scrolled)
 
-        dialog.show_all()
+        # Get compatibility helpers
+        compat = self._gtk_version_compat()
+        compat['show_all'](dialog)
         dialog.run()
         dialog.destroy()
 
@@ -418,7 +452,8 @@ class GtkGuiBuilder:
 
     def _on_window_close(self, widget, event):
         """Handle window close event."""
-        Gtk.main_quit()
+        compat = self._gtk_version_compat()
+        compat['main_quit']()
         return False
 
     def show(self):
@@ -427,8 +462,11 @@ class GtkGuiBuilder:
             import platform
             system = platform.system()
 
+            # Get compatibility helpers
+            compat = self._gtk_version_compat()
+
             # Make sure window is visible
-            self.window.show_all()
+            compat['show_all'](self.window)
 
             # Cross-platform window activation
             self.window.present()
@@ -509,7 +547,8 @@ class GtkGuiBuilder:
         """Run the GUI application (start the main loop)."""
         if self.window:
             self.show()
-            Gtk.main()
+            compat = self._gtk_version_compat()
+            compat['main_loop']()
 
     def get_form_data(self) -> Dict[str, Any]:
         """Get all form data as a dictionary."""
@@ -574,7 +613,8 @@ class GtkGuiBuilder:
     def close(self):
         """Close the GUI application."""
         if self.window:
-            Gtk.main_quit()
+            compat = self._gtk_version_compat()
+            compat['main_quit']()
             self.window.destroy()
             self.window = None
 
@@ -585,3 +625,62 @@ class GtkGuiBuilder:
                 self.window.destroy()
             except Exception:
                 pass  # Window might already be destroyed
+
+    def _run_gtk4_loop(self):
+        """Run GTK4 main loop using GLib.MainLoop."""
+        if not hasattr(self, '_main_loop'):
+            self._main_loop = GLib.MainLoop()
+        self._main_loop.run()
+
+    def _quit_gtk4_loop(self):
+        """Quit GTK4 main loop."""
+        if hasattr(self, '_main_loop') and self._main_loop.is_running():
+            self._main_loop.quit()
+
+    def _gtk_version_compat(self):
+        """Return compatibility helpers for different GTK versions."""
+        if GTK_MAJOR_VERSION == 4:
+            return {
+                'window_new': lambda: Gtk.Window(),
+                'set_window_position': lambda window: None,  # GTK4 doesn't have set_position
+                'orientation_horizontal': Gtk.Orientation.HORIZONTAL,
+                'orientation_vertical': Gtk.Orientation.VERTICAL,
+                'box_new': lambda orientation, spacing: Gtk.Box(orientation=orientation, spacing=spacing),
+                'button_new': lambda text: Gtk.Button(label=text),
+                'window_type_hint': None,  # GTK4 doesn't have type hints
+                'connect_delete_event': lambda window, callback: window.connect('close-request', lambda w: callback(w, None) or True),
+                'scrolled_new': lambda: Gtk.ScrolledWindow(),
+                'set_scrolled_policy': lambda sw, h, v: sw.set_policy(h, v),
+                'set_border_width': lambda widget, width: None,  # GTK4 doesn't have border_width
+                'container_add': lambda container, child: container.set_child(child),
+                'box_pack_start': lambda box, child, expand, fill, padding: box.append(child),
+                'box_pack_end': lambda box, child, expand, fill, padding: box.append(child),
+                'show_all': lambda window: window.show(),
+                'main_loop': lambda: self._run_gtk4_loop(),
+                'main_quit': lambda: self._quit_gtk4_loop(),
+            }
+        else:  # GTK3
+            return {
+                'window_new': lambda: Gtk.Window(),
+                'set_window_position': lambda window: window.set_position(Gtk.WindowPosition.CENTER),
+                'orientation_horizontal': Gtk.Orientation.HORIZONTAL,
+                'orientation_vertical': Gtk.Orientation.VERTICAL,
+                'box_new': lambda orientation, spacing: Gtk.Box(orientation=orientation, spacing=spacing),
+                'button_new': lambda text: Gtk.Button(label=text),
+                'window_type_hint': Gdk.WindowTypeHint.NORMAL,
+                'connect_delete_event': lambda window, callback: window.connect('delete-event', callback),
+                'scrolled_new': lambda: Gtk.ScrolledWindow(),
+                'set_scrolled_policy': lambda sw, h, v: sw.set_policy(h, v),
+                'set_border_width': lambda widget, width: widget.set_border_width(width),
+                'container_add': lambda container, child: container.add(child),
+                'box_pack_start': lambda box, child, expand, fill, padding: box.pack_start(child, expand, fill, padding),
+                'box_pack_end': lambda box, child, expand, fill, padding: box.pack_end(child, expand, fill, padding),
+                'show_all': lambda window: window.show_all(),
+                'main_loop': lambda: Gtk.main(),
+                'main_quit': lambda: Gtk.main_quit(),
+            }
+
+    @property
+    def backend(self) -> str:
+        """Return the backend name with version info."""
+        return f"gtk{GTK_MAJOR_VERSION}" if GTK_MAJOR_VERSION else "gtk"

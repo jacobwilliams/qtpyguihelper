@@ -61,11 +61,13 @@ class BackendManager:
         # Check GTK availability
         elif backend == 'gtk':
             try:
-                import gi
-                gi.require_version('Gtk', '3.0')
-                from gi.repository import Gtk  # noqa: F401
-                self._backend_available['gtk'] = True
-                return True
+                from .gtk import GTK_VERSION, GTK_MAJOR_VERSION, Gtk
+                if GTK_VERSION and Gtk:
+                    self._backend_available['gtk'] = True
+                    return True
+                else:
+                    self._backend_available['gtk'] = False
+                    return False
             except (ImportError, ValueError):
                 self._backend_available['gtk'] = False
                 return False

@@ -6,7 +6,7 @@ A Python library for creating GUI applications from JSON configuration files. Th
 - **Qt backend** via qtpy (supports PySide6/PyQt6)
 - **wxPython backend** as a cross-platform alternative
 - **tkinter backend** built into Python (no additional dependencies)
-- **GTK backend** via PyGObject (native Linux desktop integration)
+- **GTK backend** via PyGObject (native Linux desktop integration, GTK3/GTK4 support)
 
 The library automatically detects available backends and provides a unified interface, allowing you to switch between Qt, wxPython, tkinter, and GTK seamlessly.
 
@@ -36,101 +36,59 @@ QtPyGuiHelper supports multiple GUI backends for maximum flexibility and cross-p
 **GTK Backend**: PyGObject is a Python package which provides bindings for GObject based libraries such as GTK.
 **tkinter Backend**: Built into Python, requires no additional dependencies, perfect for simple GUIs.
 
-### Option 1: Install with Qt Backend (PySide6 - Recommended)
+### Dependency installation
+
+The preferred way to install all the dependencies is via `conda-forge`. For example, using `pixi`, to build an environment. Here is an example using `pixi` and running all the tests:
 
 ```bash
-git clone https://github.com/yourusername/qtpyguihelper.git
-cd qtpyguihelper
-pip install .[pyside6]
-```
-
-### Option 2: Install with Qt Backend (PyQt6)
-
-```bash
-git clone https://github.com/yourusername/qtpyguihelper.git
-cd qtpyguihelper
-pip install .[pyqt6]
-```
-
-### Option 3: Install with tkinter Backend (No Extra Dependencies)
-
-```bash
-git clone https://github.com/yourusername/qtpyguihelper.git
-cd qtpyguihelper
-pip install -e .
-# tkinter is included with Python by default
-```
-
-### Option 4: Install with wxPython Backend
-
-```bash
-git clone https://github.com/yourusername/qtpyguihelper.git
-cd qtpyguihelper
-pip install wxpython>=4.2.0
-pip install -e .
-```
-
-### Option 5: Install with GTK Backend
-
-```bash
-git clone https://github.com/yourusername/qtpyguihelper.git
-cd qtpyguihelper
-pip install pygobject>=3.42.0
-pip install -e .
-```
-
-### Option 6: Install All Backends
-
-```bash
-git clone https://github.com/yourusername/qtpyguihelper.git
-cd qtpyguihelper
-pip install .[pyside6]
-pip install wxpython>=4.2.0
-pip install pygobject>=3.42.0
-# tkinter is included with Python by default
-```
-
-### Option 7: Development installation
-
-```bash
-git clone https://github.com/yourusername/qtpyguihelper.git
-cd qtpyguihelper
-pip install -e .[dev]
-pip install wxpython>=4.2.0  # Optional: for wxPython support
-pip install pygobject>=3.42.0  # Optional: for GTK support
-# tkinter is included with Python by default
-```
-
-### Option 8: Manual dependency installation
-
-If you already have Qt, wxPython, GTK, or want to use tkinter:
-
-```bash
-# For Qt backend
-pip install qtpy>=2.0.0
-
-# For wxPython backend
-pip install wxpython>=4.2.0
-
-# For GTK backend
-pip install pygobject>=3.42.0
-
-# For tkinter backend - no installation needed (built into Python)
-```
-
-### Option 9: Pixi dependency installation
-
-To build a pixi environment and run all the tests:
-
-```
 mkdir env
 cd env
 pixi init .
-pixi add gtk3 pygobject pyside6 pytest python qtpy wxpython
+
+pixi add python
+pixi add pytest
+### for GTK backend:
+pixi add pygobject
+pixi add gtk3
+# or pixi add gtk4
+### for Qt/PyQt6 backend:
+pixi add pyside6
+pixi add qtpy
+### for wxPython backend:
+pixi add wxpython
+
 pixi install
 pixi shell
 cd ..
 ./test.sh
+```
+
+### Other installation options:
+
+```bash
+git clone https://github.com/yourusername/qtpyguihelper.git
+cd qtpyguihelper
+pip install -e .        # Install with tkinter Backend (No Extra Dependencies)
+
+pip install .[pyside6]  # install with PySide6 Backend
+
+pip install .[pyqt6]    # Install with Qt Backend (PyQt6)
+
+pip install wxpython>=4.2.0  # Install with wxPython Backend
+pip install -e .
+
+pip install pygobject>=3.42.0  # Install with GTK Backend
+pip install -e .
+# System dependencies for GTK development (Linux)
+# GTK3:
+sudo apt-get install libgtk-3-dev  # Ubuntu/Debian
+sudo dnf install gtk3-devel        # Fedora
+# GTK4:
+sudo apt-get install libgtk-4-dev  # Ubuntu/Debian
+sudo dnf install gtk4-devel        # Fedora
+# macOS (with Homebrew)
+brew install gtk+3 gtk4 pygobject3
+# Windows: Use MSYS2 or pre-built wheels
 ```
 
 ## Quick Start
@@ -311,11 +269,17 @@ gui = GuiBuilder(config_path="form.json", backend='wx')  # or 'qt', 'tk', 'gtk'
 
 #### GTK Backend Features
 - Native Linux desktop integration
-- Modern GTK 3.0+ styling and themes
+- **Automatic GTK version detection** (supports both GTK3 and GTK4)
+- Modern GTK 3.0+ / 4.0+ styling and themes
 - Accessibility support
 - Rich widget library
 - Strong integration with GNOME desktop
 - Cross-platform with native look on Linux
+
+**GTK Version Support:**
+- GTK4 (preferred): Automatically detected if available
+- GTK3: Fallback when GTK4 is not available
+- Force specific version with: `export QTPYGUIHELPER_GTK_VERSION=3.0` or `4.0`
 
 ### Backend Compatibility
 
