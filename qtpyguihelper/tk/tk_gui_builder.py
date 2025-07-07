@@ -74,6 +74,14 @@ class TkGuiBuilder:
         else:
             self.root.geometry("600x400")
 
+        # Center the window on screen
+        self.root.update_idletasks()
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
+
         # Configure window to be resizable
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
@@ -391,10 +399,13 @@ class TkGuiBuilder:
         widget.bind('<Enter>', show_tooltip)
 
     def show(self):
-        """Show the GUI window."""
+        """Show the GUI window and bring it to the front."""
         if self.root:
             self.root.deiconify()
             self.root.lift()
+            self.root.attributes('-topmost', True)  # Bring to front
+            self.root.attributes('-topmost', False)  # Remove always-on-top
+            self.root.focus_force()  # Force focus
 
     def hide(self):
         """Hide the GUI window."""
@@ -404,6 +415,8 @@ class TkGuiBuilder:
     def run(self):
         """Run the GUI application (start the main loop)."""
         if self.root:
+            # Ensure window is properly shown and focused before starting main loop
+            self.show()
             self.root.mainloop()
 
     def get_form_data(self) -> Dict[str, Any]:
