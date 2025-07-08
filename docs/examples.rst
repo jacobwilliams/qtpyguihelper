@@ -13,7 +13,7 @@ Here's a simple contact form example:
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
 
    config = {
        "window": {
@@ -60,7 +60,7 @@ Here's a simple contact form example:
        for key, value in data.items():
            print(f"  {key}: {value}")
 
-   gui = create_gui(config)
+   gui = GuiBuilder(config_dict=config)
    gui.set_submit_callback(handle_submit)
    gui.run()
 
@@ -69,7 +69,7 @@ Advanced Form with Validation
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
 
    config = {
        "window": {
@@ -143,11 +143,11 @@ Advanced Form with Validation
        if data.get('password') != data.get('confirm_password'):
            print("Error: Passwords do not match")
            return False
-       
+
        if len(data.get('password', '')) < 8:
            print("Error: Password must be at least 8 characters")
            return False
-           
+
        return True
 
    def handle_registration(data):
@@ -157,7 +157,7 @@ Advanced Form with Validation
        else:
            print("Registration failed. Please check your inputs.")
 
-   gui = create_gui(config)
+   gui = GuiBuilder(config_dict=config)
    gui.set_submit_callback(handle_registration)
    gui.run()
 
@@ -166,7 +166,7 @@ Tabbed Interface Example
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
 
    config = {
        "window": {
@@ -182,7 +182,7 @@ Tabbed Interface Example
                    {"name": "first_name", "label": "First Name", "type": "text", "required": True},
                    {"name": "last_name", "label": "Last Name", "type": "text", "required": True},
                    {"name": "employee_id", "label": "Employee ID", "type": "text", "required": True},
-                   {"name": "department", "label": "Department", "type": "dropdown", 
+                   {"name": "department", "label": "Department", "type": "dropdown",
                     "options": ["Engineering", "Sales", "Marketing", "HR", "Finance"]},
                    {"name": "hire_date", "label": "Hire Date", "type": "date", "required": True}
                ]
@@ -213,7 +213,8 @@ Tabbed Interface Example
        "cancel_button": True
    }
 
-   gui = create_gui(config)
+   gui = GuiBuilder(config_dict=config)
+   gui.run()
    gui.run()
 
 Custom Buttons Example
@@ -221,7 +222,7 @@ Custom Buttons Example
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
 
    config = {
        "window": {"title": "Data Entry Form", "width": 500, "height": 400},
@@ -268,7 +269,8 @@ Custom Buttons Example
        gui.save_data_to_file("draft.json")
        print("Draft saved!")
 
-   gui = create_gui(config)
+   gui = GuiBuilder(config_dict=config)
+   gui.run()
    gui.set_custom_button_callback('clear_form', clear_form)
    gui.set_custom_button_callback('load_template', load_template)
    gui.set_custom_button_callback('save_draft', save_draft)
@@ -279,18 +281,18 @@ Data Persistence Example
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
    import os
 
    config = {
        "window": {"title": "Settings Manager", "width": 450, "height": 350},
        "fields": [
-           {"name": "theme", "label": "Theme", "type": "dropdown", 
+           {"name": "theme", "label": "Theme", "type": "dropdown",
             "options": ["Light", "Dark", "Auto"], "default": "Auto"},
            {"name": "language", "label": "Language", "type": "dropdown",
             "options": ["English", "Spanish", "French", "German"]},
            {"name": "auto_save", "label": "Auto-save", "type": "checkbox", "default": True},
-           {"name": "backup_interval", "label": "Backup Interval (hours)", "type": "number", 
+           {"name": "backup_interval", "label": "Backup Interval (hours)", "type": "number",
             "min": 1, "max": 24, "default": 6}
        ],
        "custom_buttons": [
@@ -320,14 +322,15 @@ Data Persistence Example
    def reset_defaults(button_config, form_data):
        defaults = {
            "theme": "Auto",
-           "language": "English", 
+           "language": "English",
            "auto_save": True,
            "backup_interval": 6
        }
        gui.set_form_data(defaults)
        print("Settings reset to defaults!")
 
-   gui = create_gui(config)
+   gui = GuiBuilder(config_dict=config)
+   gui.run()
    gui.set_custom_button_callback('load_settings', load_settings)
    gui.set_custom_button_callback('save_settings', save_settings)
    gui.set_custom_button_callback('reset_defaults', reset_defaults)
@@ -343,7 +346,7 @@ Field Change Callbacks
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
 
    config = {
        "window": {"title": "Dynamic Form", "width": 400, "height": 300},
@@ -360,7 +363,7 @@ Field Change Callbacks
 
    def on_user_type_change(field_name, value):
        print(f"User type changed to: {value}")
-       
+
        # Enable/disable fields based on user type
        if value == "Student":
            gui.set_field_value("student_id", "")
@@ -374,7 +377,8 @@ Field Change Callbacks
            gui.set_field_value("admin_level", "")
            print("Showing administrator-specific fields")
 
-   gui = create_gui(config)
+   gui = GuiBuilder(config_dict=config)
+   gui.run()
    gui.add_field_change_callback('user_type', on_user_type_change)
    gui.run()
 
@@ -395,13 +399,13 @@ Using Specific Backends
 
    # Use tkinter specifically
    tk_gui = TkGuiBuilder(config_dict=config)
-   
-   # Use Qt specifically  
+
+   # Use Qt specifically
    qt_gui = QtGuiBuilder(config_dict=config)
-   
+
    # Use wxPython specifically
    wx_gui = WxGuiBuilder(config_dict=config)
-   
+
    # Use GTK specifically
    gtk_gui = GtkGuiBuilder(config_dict=config)
 
@@ -428,7 +432,7 @@ Create a JSON configuration file and load it:
            },
            {
                "name": "name",
-               "label": "Full Name", 
+               "label": "Full Name",
                "type": "text",
                "required": true
            }
@@ -439,10 +443,10 @@ Create a JSON configuration file and load it:
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
 
    # Load from JSON file
-   gui = create_gui(config_path="my_form.json")
+   gui = GuiBuilder.create_and_run(config_path="my_form.json")
    gui.run()
 
 For more examples, check the ``examples/`` directory in the QtPyGuiHelper repository.

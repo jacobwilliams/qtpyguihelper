@@ -46,7 +46,7 @@ The Qt backend provides the most feature-rich and polished GUI experience.
 .. code-block:: python
 
    from qtpyguihelper.qt import QtGuiBuilder
-   
+
    gui = QtGuiBuilder(config_path="form.json")
    gui.run()
 
@@ -82,7 +82,7 @@ The tkinter backend is included with Python and provides good cross-platform sup
 .. code-block:: python
 
    from qtpyguihelper.tk import TkGuiBuilder
-   
+
    gui = TkGuiBuilder(config_path="form.json")
    gui.run()
 
@@ -126,7 +126,7 @@ The wxPython backend provides native look and feel on all platforms.
 .. code-block:: python
 
    from qtpyguihelper.wx import WxGuiBuilder
-   
+
    gui = WxGuiBuilder(config_path="form.json")
    gui.run()
 
@@ -174,7 +174,7 @@ On macOS with Homebrew:
 .. code-block:: python
 
    from qtpyguihelper.gtk import GtkGuiBuilder
-   
+
    gui = GtkGuiBuilder(config_path="form.json")
    gui.run()
 
@@ -195,10 +195,10 @@ QtPyGuiHelper can automatically choose the best available backend:
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
-   
+   from qtpyguihelper import GuiBuilder
+
    # Automatically selects the best available backend
-   gui = create_gui(config, backend='auto')
+   gui = GuiBuilder.create_and_run(config_dict=config)
 
 The selection priority is:
 1. Qt (if PySide6 or PyQt6 is available)
@@ -214,10 +214,10 @@ You can explicitly choose a backend:
 .. code-block:: python
 
    # Specific backend selection
-   gui = create_gui(config, backend='qt')      # Qt backend
-   gui = create_gui(config, backend='tkinter') # tkinter backend
-   gui = create_gui(config, backend='wx')      # wxPython backend
-   gui = create_gui(config, backend='gtk')     # GTK backend
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='qt')      # Qt backend
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='tkinter') # tkinter backend
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='wx')      # wxPython backend
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='gtk')     # GTK backend
 
 Checking Available Backends
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -227,7 +227,7 @@ To see which backends are available on your system:
 .. code-block:: python
 
    from qtpyguihelper import get_available_backends
-   
+
    backends = get_available_backends()
    print("Available backends:", backends)
 

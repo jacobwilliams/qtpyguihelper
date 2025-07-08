@@ -956,7 +956,7 @@ open _build/html/index.html  # macOS
 
 ### 📚 **Documentation Content**
 - **Installation Guide**: Multiple backend setup options
-- **Quick Start**: Get up and running in minutes  
+- **Quick Start**: Get up and running in minutes
 - **Comprehensive Examples**: Real-world usage patterns
 - **API Reference**: Auto-generated from docstrings
 - **Backend Comparison**: Choose the right backend for your needs

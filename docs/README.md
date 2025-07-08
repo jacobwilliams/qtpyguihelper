@@ -90,8 +90,8 @@ Subsubsection
 ```rst
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
-   gui = create_gui(config)
+   from qtpyguihelper import GuiBuilder
+   gui = GuiBuilder.create_and_run(config_dict=config)
 ```
 
 #### Links

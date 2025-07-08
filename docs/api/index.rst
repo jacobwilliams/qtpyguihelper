@@ -23,7 +23,7 @@ Quick Reference
 Main Classes by Backend:
 
 * :class:`qtpyguihelper.qt.QtGuiBuilder` - Qt backend (PySide6/PyQt6)
-* :class:`qtpyguihelper.tk.TkGuiBuilder` - tkinter backend  
+* :class:`qtpyguihelper.tk.TkGuiBuilder` - tkinter backend
 * :class:`qtpyguihelper.wx.WxGuiBuilder` - wxPython backend
 * :class:`qtpyguihelper.gtk.GtkGuiBuilder` - GTK backend
 
@@ -31,7 +31,7 @@ Configuration Classes:
 
 * :doc:`config` - Configuration loading and validation
 * GuiConfig - Main configuration
-* FieldConfig - Field configuration  
+* FieldConfig - Field configuration
 * WindowConfig - Window configuration
 
 Utility Classes:

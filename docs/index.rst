@@ -15,7 +15,7 @@ QtPyGuiHelper Documentation
 Overview
 --------
 
-QtPyGuiHelper is a Python library for creating cross-platform GUIs from JSON configuration files. 
+QtPyGuiHelper is a Python library for creating cross-platform GUIs from JSON configuration files.
 It supports multiple GUI backends including Qt (PySide6/PyQt6), wxPython, tkinter, and GTK3/GTK4.
 
 Key Features
@@ -35,7 +35,7 @@ Quick Example
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
 
    config = {
        "window": {"title": "My App", "width": 400, "height": 300},
@@ -47,8 +47,7 @@ Quick Example
    }
 
    # Create and run the GUI
-   gui = create_gui(config, backend='auto')
-   gui.run()
+   gui = GuiBuilder.create_and_run(config_dict=config)
 
 Indices and tables
 ==================

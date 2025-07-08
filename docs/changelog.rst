@@ -13,14 +13,14 @@ Version 1.0.0 (2025-01-08)
 
 - Initial release of QtPyGuiHelper
 - Support for multiple GUI backends:
-  
+
   - Qt backend (PySide6/PyQt6) with qtpy abstraction
   - tkinter backend with dark mode support
   - wxPython backend with native widgets
   - GTK backend for Linux/macOS
 
 - Comprehensive widget support:
-  
+
   - Text input fields (single-line and multi-line)
   - Password fields with hidden input
   - Email and URL fields with validation
@@ -31,7 +31,7 @@ Version 1.0.0 (2025-01-08)
   - File selection dialogs
 
 - Advanced form features:
-  
+
   - JSON-based configuration system
   - Tabbed interface support
   - Required field validation
@@ -41,13 +41,13 @@ Version 1.0.0 (2025-01-08)
   - Form data persistence (save/load JSON)
 
 - Dark mode support:
-  
+
   - Automatic system theme detection
   - Proper text visibility in dark themes
   - Theme-aware widget styling
 
 - Utility modules:
-  
+
   - ValidationUtils for field validation
   - FileUtils for JSON data persistence
   - PlatformUtils for system detection
@@ -55,7 +55,7 @@ Version 1.0.0 (2025-01-08)
   - LayoutUtils for UI layout helpers
 
 - Configuration system:
-  
+
   - ConfigLoader for JSON configuration parsing
   - ConfigValidator for configuration validation
   - Comprehensive error handling

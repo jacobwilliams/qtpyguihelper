@@ -10,7 +10,7 @@ The simplest way to create a GUI is using a JSON configuration:
 
 .. code-block:: python
 
-   from qtpyguihelper import create_gui
+   from qtpyguihelper import GuiBuilder
 
    # Define your GUI structure
    config = {
@@ -43,8 +43,7 @@ The simplest way to create a GUI is using a JSON configuration:
    }
 
    # Create and run the GUI
-   gui = create_gui(config)
-   gui.run()
+   gui = GuiBuilder.create_and_run(config_dict=config)
 
 Choosing a Backend
 ------------------
@@ -54,13 +53,13 @@ You can specify which GUI backend to use:
 .. code-block:: python
 
    # Automatically choose the best available backend
-   gui = create_gui(config, backend='auto')
+   gui = GuiBuilder.create_and_run(config_dict=config)
 
    # Use specific backends
-   gui = create_gui(config, backend='qt')      # Qt (PySide6/PyQt6)
-   gui = create_gui(config, backend='tkinter') # tkinter
-   gui = create_gui(config, backend='wx')      # wxPython
-   gui = create_gui(config, backend='gtk')     # GTK
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='qt')      # Qt (PySide6/PyQt6)
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='tk')      # tkinter
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='wx')      # wxPython
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='gtk')     # GTK
 
 Loading Configuration from File
 -------------------------------
@@ -69,11 +68,10 @@ You can also load your configuration from a JSON file:
 
 .. code-block:: python
 
-   from qtpyguihelper import TkGuiBuilder  # or QtGuiBuilder, WxGuiBuilder, etc.
+   from qtpyguihelper import GuiBuilder
 
    # Load from file
-   gui = TkGuiBuilder(config_path="my_form.json")
-   gui.run()
+   gui = GuiBuilder.create_and_run(config_path="my_form.json")
 
 Example JSON Configuration File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -129,11 +127,11 @@ Add callbacks to handle form submission:
    def on_submit(data):
        print("Form submitted with data:", data)
        # Process the form data here
-       
+
    def on_cancel():
        print("Form cancelled")
-       
-   gui = create_gui(config)
+
+   gui = GuiBuilder(config_dict=config)
    gui.set_submit_callback(on_submit)
    gui.set_cancel_callback(on_cancel)
    gui.run()
