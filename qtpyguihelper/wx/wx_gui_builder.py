@@ -462,8 +462,12 @@ class WxGuiBuilder(wx.Frame):
         Load form data from a JSON file and populate the GUI.
         """
         try:
-            with open(data_file_path, 'r', encoding='utf-8') as file:
-                data = json.load(file)
+            data = FileUtils.load_data_from_json(data_file_path)
+
+            if data is None:
+                self._show_error(f"Failed to load data from file: {data_file_path}")
+                return False
+
             return self.load_data_from_dict(data)
         except Exception as e:
             self._show_error(f"Failed to load data from file: {str(e)}")
