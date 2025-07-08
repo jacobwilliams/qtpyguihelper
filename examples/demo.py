@@ -1054,6 +1054,61 @@ def demo_gtk_backend():
         print(f"✗ Error with GTK backend: {e}")
 
 
+def demo_complex_tabs_gtk():
+    """Demo a complex tabbed configuration interface using GTK backend."""
+    print("Starting Complex Tabbed Configuration Demo (GTK)...")
+
+    try:
+        # Force GTK backend
+        from qtpyguihelper import set_backend
+        set_backend('gtk')
+        print("✓ GTK backend selected")
+
+        from qtpyguihelper import GuiBuilder
+
+        # Create GUI from JSON file
+        config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
+        gui = GuiBuilder(config_path=config_path)
+
+        # Set callbacks
+        def on_save_config(form_data):
+            print("Configuration saved (GTK):")
+            for key, value in form_data.items():
+                print(f"  {key}: {value}")
+
+            # Save to file
+            output_path = os.path.join(os.path.dirname(__file__), "tabbed_config_output_gtk.json")
+            success = gui.save_data_to_file(output_path)
+            if success:
+                print(f"Configuration saved to {output_path}")
+
+            print("✓ Configuration has been saved successfully!")
+
+        gui.set_submit_callback(on_save_config)
+
+        print("✓ GTK tabbed GUI created and shown")
+        print("  - Window size: 800x600 pixels")
+        print("  - Multiple tabs available - switch between them")
+        print("  - Each tab should show all its fields properly")
+        print("  - Tabs should scroll if needed to show all content")
+        print("  - Submit to see the form data structure")
+        print("  - Should automatically use OS dark theme if enabled")
+        print("✓ Starting GTK application...")
+
+        # Show and run the GUI
+        gui.run()
+
+    except ImportError as e:
+        print(f"✗ GTK not available: {e}")
+        print("  Install GTK support: pip install pygobject")
+    except Exception as e:
+        print(f"✗ Error with GTK backend: {e}")
+        import traceback
+        traceback.print_exc()
+        print("  Note: If tabs appear too small, try the simpler GTK demo:")
+        print("  python examples/demo.py gtk")
+
+
 def demo_backend_comparison():
     """Demo Qt, wxPython, tkinter, and GTK backends side by side."""
     print("Starting Backend Comparison Demo...")
@@ -1174,6 +1229,60 @@ def demo_unified_interface():
         return GuiBuilder.create_and_run(config_dict=config)
 
 
+def demo_complex_tabs_tk():
+    """Demo a complex tabbed configuration interface using tkinter backend."""
+    print("Starting Complex Tabbed Configuration Demo (tkinter)...")
+
+    try:
+        # Force tkinter backend
+        from qtpyguihelper import set_backend
+        set_backend('tk')
+        print("✓ tkinter backend selected")
+
+        # Import tkinter
+        import tkinter as tk
+        from tkinter import messagebox
+
+        # Create GUI from JSON file
+        config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
+        gui = GuiBuilder(config_path=config_path)
+
+        # Set callbacks
+        def on_save_config(form_data):
+            print("Configuration saved (tkinter):")
+            for key, value in form_data.items():
+                print(f"  {key}: {value}")
+
+            # Save to file
+            output_path = os.path.join(os.path.dirname(__file__), "tabbed_config_output_tk.json")
+            success = gui.save_data_to_file(output_path)
+            if success:
+                print(f"Configuration saved to {output_path}")
+
+            # Show success message
+            messagebox.showinfo(
+                "Configuration Saved",
+                f"Configuration has been saved successfully!\nOutput: {output_path}"
+            )
+
+        gui.set_submit_callback(on_save_config)
+
+        print("✓ tkinter tabbed GUI created and shown")
+        print("  - Switch between tabs to verify all fields expand properly")
+        print("  - Submit to see the form data structure")
+        print("✓ GUI created successfully! Close the window to exit.")
+
+        # Show and run the GUI
+        gui.show()
+        gui.run()
+
+    except ImportError as e:
+        print(f"✗ tkinter not available: {e}")
+        print("  tkinter should be included with Python by default")
+    except Exception as e:
+        print(f"✗ Error with tkinter backend: {e}")
+
+
 def main():
     """Main function to run demos."""
     if len(sys.argv) > 1:
@@ -1188,6 +1297,8 @@ def main():
         print("  python demo.py tabs            - Tabbed interface demo (Qt)")
         print("  python demo.py complex_tabs    - Complex tabbed configuration demo (Qt)")
         print("  python demo.py complex_tabs_wx - Complex tabbed configuration demo (wxPython)")
+        print("  python demo.py complex_tabs_tk - Complex tabbed configuration demo (tkinter)")
+        print("  python demo.py complex_tabs_gtk - Complex tabbed configuration demo (GTK)")
         print("  python demo.py nested          - Nested field names demo (Qt)")
         print("  python demo.py float           - Float fields demo (Qt)")
         print("  python demo.py format          - Format strings demo (Qt)")
@@ -1226,6 +1337,10 @@ def main():
         demo_custom_buttons()
     elif demo_type == "complex_tabs_wx":
         demo_complex_tabs_wx()
+    elif demo_type == "complex_tabs_tk":
+        demo_complex_tabs_tk()
+    elif demo_type == "complex_tabs_gtk":
+        demo_complex_tabs_gtk()
     elif demo_type == "wx" or demo_type == "wxpython":
         demo_wxpython_backend()
     elif demo_type == "tk" or demo_type == "tkinter":
@@ -1238,7 +1353,7 @@ def main():
         demo_unified_interface()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, nested, float, format, custom_buttons, wx, wxpython, tk, tkinter, gtk, compare, backend_comparison, unified")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, complex_tabs_wx, complex_tabs_tk, complex_tabs_gtk, nested, float, format, custom_buttons, wx, wxpython, tk, tkinter, gtk, compare, backend_comparison, unified")
 
 
 if __name__ == "__main__":

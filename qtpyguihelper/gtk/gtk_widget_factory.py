@@ -71,6 +71,7 @@ def _gtk_version_compat():
             'scrolled_new': lambda: Gtk.ScrolledWindow(),
             'set_scrolled_policy': lambda sw, h, v: sw.set_policy(h, v),
             'container_add': lambda container, child: container.set_child(child),
+            'box_pack_start': lambda box, child, expand, fill, padding: box.append(child),
             'set_margin': lambda widget, margin: widget.set_margin_start(margin) or widget.set_margin_end(margin) or widget.set_margin_top(margin) or widget.set_margin_bottom(margin),
         }
     else:  # GTK3
@@ -88,6 +89,7 @@ def _gtk_version_compat():
             'scrolled_new': lambda: Gtk.ScrolledWindow(),
             'set_scrolled_policy': lambda sw, h, v: sw.set_policy(h, v),
             'container_add': lambda container, child: container.add(child),
+            'box_pack_start': lambda box, child, expand, fill, padding: box.pack_start(child, expand, fill, padding),
             'set_margin': lambda widget, margin: widget.set_margin_left(margin) or widget.set_margin_right(margin) or widget.set_margin_top(margin) or widget.set_margin_bottom(margin),
         }
 
@@ -232,9 +234,28 @@ class GtkWidgetFactory:
             buffer = text_view.get_buffer()
             buffer.set_text(str(field_config.default_value))
 
-        # Set minimum height if specified
+        # Set height - use field config height or reasonable default
         if hasattr(field_config, 'height') and field_config.height:
-            text_view.set_size_request(-1, field_config.height)
+            height = field_config.height
+        else:
+            height = 80  # Default height for textarea - same as other demos
+        
+        # Set a reasonable size for the textarea - be more restrictive
+        text_view.set_size_request(-1, height)
+        scrolled_window.set_size_request(-1, height + 20)  # Add a bit for scrollbar
+        
+        # Prevent the scrolled window from expanding too much
+        scrolled_window.set_hexpand(True)
+        scrolled_window.set_vexpand(False)
+        scrolled_window.set_valign(Gtk.Align.START)  # Align to top
+        
+        # Also set maximum height to prevent it from growing too large
+        try:
+            # GTK4 method
+            scrolled_window.set_max_content_height(height + 40)
+        except AttributeError:
+            # GTK3 - already handled by size_request
+            pass
 
         self._compat['container_add'](scrolled_window, text_view)
 
@@ -274,7 +295,7 @@ class GtkWidgetFactory:
                 radio_button.set_active(True)
 
             box._radio_buttons.append((radio_button, option))
-            box.pack_start(radio_button, False, False, 0)
+            self._compat['box_pack_start'](box, radio_button, False, False, 0)
 
         return box
 
@@ -374,8 +395,8 @@ class GtkWidgetFactory:
 
         button.connect("clicked", on_browse_clicked)
 
-        box.pack_start(entry, True, True, 0)
-        box.pack_start(button, False, False, 0)
+        self._compat['box_pack_start'](box, entry, True, True, 0)
+        self._compat['box_pack_start'](box, button, False, False, 0)
 
         # Store reference to entry for value retrieval
         box._entry = entry

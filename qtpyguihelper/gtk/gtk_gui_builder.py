@@ -115,6 +115,9 @@ class GtkGuiBuilder:
         if self.window is None:
             self.window = compat['window_new']()
 
+        # Detect and apply OS theme early
+        self._detect_os_theme()
+
         # Set window properties
         if self.config.window.title:
             self.window.set_title(self.config.window.title)
@@ -124,7 +127,11 @@ class GtkGuiBuilder:
         if self.config.window.width and self.config.window.height:
             self.window.set_default_size(self.config.window.width, self.config.window.height)
         else:
-            self.window.set_default_size(600, 400)
+            # Use larger default size for tabbed interfaces
+            if self.config.tabs:
+                self.window.set_default_size(800, 600)
+            else:
+                self.window.set_default_size(600, 400)
 
         # Center window on screen (GTK3 only)
         compat['set_window_position'](self.window)
@@ -167,7 +174,13 @@ class GtkGuiBuilder:
         # Add custom buttons
         self._add_custom_buttons()
 
-        # Add default buttons (Submit/Cancel)
+        # Add a flexible spacer to push buttons to bottom
+        spacer = Gtk.Box()
+        spacer.set_vexpand(True)  # This will expand to fill available space
+        compat = self._gtk_version_compat()
+        compat['box_pack_start'](self.main_container, spacer, True, True, 0)
+
+        # Add default buttons (Submit/Cancel) - these will stay at bottom
         self._add_default_buttons()
 
         # Set up field change monitoring
@@ -204,20 +217,45 @@ class GtkGuiBuilder:
 
         # Create notebook widget for tabs
         notebook = Gtk.Notebook()
-        notebook.set_border_width(10)
-        self.main_container.pack_start(notebook, True, True, 0)
+        compat = self._gtk_version_compat()
+        compat['set_border_width'](notebook, 10)
+        
+        # Don't let notebook expand to fill all space - only take what it needs
+        notebook.set_hexpand(True)  # Expand horizontally
+        notebook.set_vexpand(False)  # Don't expand vertically beyond content
+        notebook.set_valign(Gtk.Align.START)  # Align to top
+        
+        # Pack notebook without expanding vertically
+        compat['box_pack_start'](self.main_container, notebook, False, True, 0)
 
         for tab_config in self.config.tabs:
             # Create tab content
             tab_scrolled = Gtk.ScrolledWindow()
             tab_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+            tab_scrolled.set_hexpand(True)
+            tab_scrolled.set_vexpand(False)  # Don't expand vertically beyond content
+            
+            # Set a reasonable height that doesn't take up the whole window
+            tab_scrolled.set_size_request(-1, 300)  # Fixed height for consistent appearance
+            
+            # Allow scrolling within this height if content is larger
+            try:
+                # GTK4 method - set max content height to prevent over-expansion
+                tab_scrolled.set_max_content_height(300)
+                tab_scrolled.set_min_content_width(500)
+            except AttributeError:
+                # GTK3 fallback
+                pass
 
             tab_grid = Gtk.Grid()
             tab_grid.set_column_spacing(10)
             tab_grid.set_row_spacing(10)
-            tab_grid.set_border_width(10)
+            tab_grid.set_hexpand(True)
+            tab_grid.set_vexpand(False)  # Don't expand vertically - align to top
+            tab_grid.set_valign(Gtk.Align.START)  # Align content to top of container
+            compat['set_border_width'](tab_grid, 10)
 
-            tab_scrolled.add(tab_grid)
+            compat['container_add'](tab_scrolled, tab_grid)
 
             # Create tab label
             tab_label = Gtk.Label(label=tab_config.title)
@@ -235,13 +273,22 @@ class GtkGuiBuilder:
         """Add a field to the grid."""
         # Create label
         label = self.widget_factory.create_label(grid, field_config)
+        label.set_halign(Gtk.Align.START)
+        label.set_valign(Gtk.Align.START)
         grid.attach(label, 0, row, 1, 1)
 
         # Create widget
         widget = self.widget_factory.create_widget(grid, field_config)
         if widget:
-            grid.attach(widget, 1, row, 1, 1)
             widget.set_hexpand(True)
+            widget.set_halign(Gtk.Align.FILL)
+            
+            # For textarea widgets, don't expand vertically to avoid taking too much space
+            if isinstance(widget, Gtk.ScrolledWindow):
+                widget.set_vexpand(False)  # Don't expand vertically
+                widget.set_valign(Gtk.Align.START)  # Align to top
+            
+            grid.attach(widget, 1, row, 1, 1)
 
             # Add tooltip if specified
             if field_config.tooltip:
@@ -254,7 +301,8 @@ class GtkGuiBuilder:
 
         # Create frame for custom buttons
         button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
-        button_box.set_border_width(10)
+        compat = self._gtk_version_compat()
+        compat['set_border_width'](button_box, 10)
 
         for button_config in self.config.custom_buttons:
             button = Gtk.Button(label=button_config.label)
@@ -263,9 +311,9 @@ class GtkGuiBuilder:
             if hasattr(button_config, 'tooltip') and button_config.tooltip:
                 button.set_tooltip_text(button_config.tooltip)
 
-            button_box.pack_start(button, False, False, 0)
+            compat['box_pack_start'](button_box, button, False, False, 0)
 
-        self.main_container.pack_start(button_box, False, False, 0)
+        compat['box_pack_start'](self.main_container, button_box, False, False, 0)
 
     def _add_default_buttons(self):
         """Add default Submit and Cancel buttons."""
@@ -415,8 +463,10 @@ class GtkGuiBuilder:
         buffer = text_view.get_buffer()
         buffer.set_text(formatted_data)
 
-        scrolled.add(text_view)
-        dialog.get_content_area().add(scrolled)
+        # Get compatibility helpers
+        compat = self._gtk_version_compat()
+        compat['container_add'](scrolled, text_view)
+        compat['container_add'](dialog.get_content_area(), scrolled)
 
         # Get compatibility helpers
         compat = self._gtk_version_compat()
@@ -684,3 +734,331 @@ class GtkGuiBuilder:
     def backend(self) -> str:
         """Return the backend name with version info."""
         return f"gtk{GTK_MAJOR_VERSION}" if GTK_MAJOR_VERSION else "gtk"
+
+    def _detect_os_theme(self):
+        """Detect if the OS is using dark mode and configure GTK accordingly."""
+        try:
+            import platform
+
+            # Check environment variables first
+            if os.environ.get('GTK_THEME'):
+                return  # User has manually set GTK_THEME, respect it
+
+            dark_mode = False
+
+            # macOS dark mode detection
+            if platform.system() == 'Darwin':
+                try:
+                    import subprocess
+                    result = subprocess.run(['defaults', 'read', '-g', 'AppleInterfaceStyle'],
+                                          capture_output=True, text=True, timeout=2)
+                    dark_mode = result.stdout.strip() == 'Dark'
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+                    pass
+
+            # Linux/Unix dark mode detection
+            elif platform.system() in ['Linux', 'FreeBSD', 'OpenBSD']:
+                # Check GNOME/GTK settings
+                try:
+                    import subprocess
+                    # Try gsettings first (GNOME/GTK)
+                    result = subprocess.run(['gsettings', 'get', 'org.gnome.desktop.interface', 'gtk-theme'],
+                                          capture_output=True, text=True, timeout=2)
+                    theme_name = result.stdout.strip().strip("'\"").lower()
+                    dark_mode = 'dark' in theme_name or 'adwaita-dark' in theme_name
+
+                    if not dark_mode:
+                        # Try color-scheme setting (newer GNOME)
+                        result = subprocess.run(['gsettings', 'get', 'org.gnome.desktop.interface', 'color-scheme'],
+                                              capture_output=True, text=True, timeout=2)
+                        color_scheme = result.stdout.strip().strip("'\"").lower()
+                        dark_mode = 'dark' in color_scheme or 'prefer-dark' in color_scheme
+
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+                    # Fallback: check environment variables
+                    dark_mode = (os.environ.get('GTK_THEME', '').lower().find('dark') >= 0 or
+                               os.environ.get('QT_STYLE_OVERRIDE', '').lower().find('dark') >= 0)
+
+            # Windows dark mode detection
+            elif platform.system() == 'Windows':
+                try:
+                    import winreg
+                    registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+                    key = winreg.OpenKey(registry, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")
+                    value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+                    dark_mode = value == 0  # 0 = dark mode, 1 = light mode
+                    winreg.CloseKey(key)
+                except (ImportError, OSError, FileNotFoundError):
+                    pass
+
+            # Apply theme based on detection
+            if dark_mode:
+                self._apply_dark_theme()
+            else:
+                self._apply_light_theme()
+
+        except Exception as e:
+            print(f"Warning: Could not detect OS theme: {e}")
+            # Fallback to default theme
+            pass
+
+    def _apply_dark_theme(self):
+        """Apply dark theme to GTK application."""
+        try:
+            if GTK_MAJOR_VERSION == 4:
+                # GTK4: Use Adwaita-dark
+                settings = Gtk.Settings.get_default()
+                if settings:
+                    settings.set_property("gtk-application-prefer-dark-theme", True)
+                    settings.set_property("gtk-theme-name", "Adwaita-dark")
+            elif GTK_MAJOR_VERSION == 3:
+                # GTK3: More comprehensive dark theme setup
+                settings = Gtk.Settings.get_default()
+                if settings:
+                    # First try to enable dark variant of current theme
+                    settings.set_property("gtk-application-prefer-dark-theme", True)
+
+                    # Get current theme and try dark variants
+                    current_theme = settings.get_property("gtk-theme-name")
+
+                    # Try dark variants in order of preference
+                    dark_themes = [
+                        "Adwaita-dark",
+                        f"{current_theme}-dark" if current_theme else None,
+                        f"{current_theme}:dark" if current_theme else None,
+                        "Yaru-dark",
+                        "Arc-Dark",
+                        "Breeze-Dark",
+                        "Materia-dark",
+                        "Adwaita"  # Fallback with prefer-dark-theme=True
+                    ]
+
+                    theme_applied = False
+                    for theme in dark_themes:
+                        if theme:
+                            try:
+                                settings.set_property("gtk-theme-name", theme)
+                                theme_applied = True
+                                print(f"Applied GTK3 dark theme: {theme}")
+                                break
+                            except Exception as e:
+                                continue
+
+                    # If theme setting didn't work, try CSS styling approach
+                    if not theme_applied or current_theme == "Adwaita":
+                        self._apply_dark_css_styling()
+
+        except Exception as e:
+            print(f"Warning: Could not apply dark theme: {e}")
+
+    def _apply_dark_css_styling(self):
+        """Apply dark styling via CSS for GTK3 when theme switching doesn't work."""
+        try:
+            if GTK_MAJOR_VERSION == 3:
+                # Apply CSS styling for dark theme
+                css_provider = Gtk.CssProvider()
+                dark_css = """
+                * {
+                    background-color: #2d2d2d;
+                    color: #ffffff;
+                }
+
+                window {
+                    background-color: #2d2d2d;
+                    color: #ffffff;
+                }
+
+                entry {
+                    background-color: #404040;
+                    color: #ffffff;
+                    border: 1px solid #555555;
+                }
+
+                entry:focus {
+                    border-color: #0066cc;
+                }
+
+                button {
+                    background-color: #404040;
+                    color: #ffffff;
+                    border: 1px solid #555555;
+                    border-radius: 3px;
+                    padding: 6px 12px;
+                    min-height: 24px;
+                }
+
+                button:hover {
+                    background-color: #505050;
+                    border-color: #666666;
+                }
+
+                button:active {
+                    background-color: #353535;
+                    border-color: #444444;
+                }
+
+                button:focus {
+                    border-color: #0066cc;
+                    outline: none;
+                }
+
+                checkbutton {
+                    color: #ffffff;
+                }
+
+                checkbutton check {
+                    background-color: #404040;
+                    border: 1px solid #555555;
+                }
+
+                checkbutton check:checked {
+                    background-color: #0066cc;
+                    border-color: #0066cc;
+                }
+
+                radiobutton {
+                    color: #ffffff;
+                }
+
+                radiobutton radio {
+                    background-color: #404040;
+                    border: 1px solid #555555;
+                }
+
+                radiobutton radio:checked {
+                    background-color: #0066cc;
+                    border-color: #0066cc;
+                }
+
+                combobox {
+                    background-color: #404040;
+                    color: #ffffff;
+                    border: 1px solid #555555;
+                    border-radius: 3px;
+                    padding: 4px 8px;
+                }
+
+                combobox button {
+                    background-color: #404040;
+                    border: none;
+                    border-left: 1px solid #555555;
+                    color: #ffffff;
+                    padding: 4px 8px;
+                }
+
+                combobox button:hover {
+                    background-color: #505050;
+                }
+
+                combobox entry {
+                    background-color: #404040;
+                    color: #ffffff;
+                    border: none;
+                }
+
+                combobox arrow {
+                    color: #ffffff;
+                    min-height: 16px;
+                    min-width: 16px;
+                }
+
+                combobox popover {
+                    background-color: #404040;
+                    border: 1px solid #555555;
+                }
+
+                combobox popover listview {
+                    background-color: #404040;
+                    color: #ffffff;
+                }
+
+                combobox popover row {
+                    background-color: #404040;
+                    color: #ffffff;
+                    padding: 4px 8px;
+                }
+
+                combobox popover row:hover {
+                    background-color: #505050;
+                }
+
+                combobox popover row:selected {
+                    background-color: #0066cc;
+                }
+
+                textview {
+                    background-color: #404040;
+                    color: #ffffff;
+                }
+
+                textview text {
+                    background-color: #404040;
+                    color: #ffffff;
+                }
+
+                label {
+                    color: #ffffff;
+                }
+
+                scale {
+                    color: #ffffff;
+                }
+
+                scale trough {
+                    background-color: #404040;
+                    border: 1px solid #555555;
+                }
+
+                scale highlight {
+                    background-color: #0066cc;
+                }
+
+                scale slider {
+                    background-color: #606060;
+                    border: 1px solid #555555;
+                }
+
+                scrolledwindow {
+                    background-color: #2d2d2d;
+                }
+
+                scrollbar {
+                    background-color: #2d2d2d;
+                }
+
+                scrollbar slider {
+                    background-color: #505050;
+                    border-radius: 3px;
+                }
+
+                scrollbar slider:hover {
+                    background-color: #606060;
+                }
+                """
+
+                css_provider.load_from_data(dark_css.encode('utf-8'))
+
+                # Apply CSS to default screen
+                screen = Gdk.Screen.get_default()
+                style_context = Gtk.StyleContext()
+                style_context.add_provider_for_screen(
+                    screen,
+                    css_provider,
+                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
+                print("Applied custom dark CSS styling for GTK3")
+
+        except Exception as e:
+            print(f"Warning: Could not apply dark CSS styling: {e}")
+
+    def _apply_light_theme(self):
+        """Apply light theme to GTK application."""
+        try:
+            if GTK_MAJOR_VERSION >= 3:
+                settings = Gtk.Settings.get_default()
+                if settings:
+                    settings.set_property("gtk-application-prefer-dark-theme", False)
+                    settings.set_property("gtk-theme-name", "Adwaita")
+
+        except Exception as e:
+            print(f"Warning: Could not apply light theme: {e}")
