@@ -4,10 +4,9 @@ Main GUI builder class that creates GTK applications from JSON configuration.
 
 import json
 from typing import Dict, Any, Callable, Optional, List
-
-import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from ..utils import FileUtils, ValidationUtils, PlatformUtils
 
 try:
     import gi
@@ -338,7 +337,14 @@ class GtkGuiBuilder:
             submit_text = self.config.submit_label or "Submit"
             submit_button = compat['button_new'](submit_text)
             submit_button.connect("clicked", lambda btn: self._handle_submit())
-            submit_button.get_style_context().add_class("suggested-action")
+
+            # Apply suggested-action style using the appropriate GTK version method
+            if GTK_MAJOR_VERSION == 4:
+                submit_button.add_css_class("suggested-action")
+            else:
+                # GTK3 - use the older method but suppress deprecation warnings
+                submit_button.get_style_context().add_class("suggested-action")
+
             compat['box_pack_start'](button_box, submit_button, False, False, 0)
 
         compat['box_pack_start'](self.main_container, button_box, False, False, 0)
@@ -410,7 +416,8 @@ class GtkGuiBuilder:
         if not self.config:
             return True
 
-        missing_fields = []
+        # Collect all required field names and current form data
+        required_field_names = []
         all_fields = []
 
         # Collect all fields from tabs or main form
@@ -420,17 +427,26 @@ class GtkGuiBuilder:
         else:
             all_fields = self.config.fields or []
 
-        # Check required fields
+        # Get required field names and current values
         for field_config in all_fields:
             if field_config.required:
-                value = self.widget_factory.get_widget_value(field_config.name)
-                if value is None or (isinstance(value, str) and not value.strip()):
-                    missing_fields.append(field_config.label or field_config.name)
+                required_field_names.append(field_config.name)
 
-        if missing_fields:
+        # Get current form data and validate using utility
+        form_data = self.get_form_data()
+        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
+
+        if missing_field_names:
+            # Convert field names back to labels for user-friendly display
+            missing_labels = []
+            for field_name in missing_field_names:
+                field_config = next((f for f in all_fields if f.name == field_name), None)
+                label = field_config.label if field_config else field_name
+                missing_labels.append(label)
+
             self._show_error(
                 "Required Fields Missing",
-                f"Please fill in the following required fields:\n\n" + "\n".join(f"• {field}" for field in missing_fields)
+                f"Please fill in the following required fields:\n\n" + "\n".join(f"• {label}" for label in missing_labels)
             )
             return False
 
@@ -558,9 +574,6 @@ class GtkGuiBuilder:
     def show(self):
         """Show the GUI window and bring it to the front (cross-platform)."""
         if self.window:
-            import platform
-            system = platform.system()
-
             # Get compatibility helpers
             compat = self._gtk_version_compat()
 
@@ -571,7 +584,7 @@ class GtkGuiBuilder:
             self.window.present()
 
             # Platform-specific window focusing
-            if system == 'Darwin':  # macOS
+            if PlatformUtils.is_macos():  # macOS
                 try:
                     # macOS-specific activation
                     self.window.set_urgency_hint(True)
@@ -598,7 +611,7 @@ class GtkGuiBuilder:
                 except Exception:
                     pass  # Fall back to basic present() if anything fails
 
-            elif system == 'Windows':  # Windows
+            elif PlatformUtils.is_windows():  # Windows
                 try:
                     # Windows-specific activation
                     self.window.set_urgency_hint(True)
@@ -615,7 +628,7 @@ class GtkGuiBuilder:
                 except Exception:
                     pass  # Fall back to basic present() if anything fails
 
-            else:  # Linux and other Unix systems
+            elif PlatformUtils.is_linux():  # Linux and other Unix systems
                 try:
                     # Linux-specific activation
                     self.window.set_urgency_hint(True)
@@ -666,16 +679,12 @@ class GtkGuiBuilder:
         """
         try:
             data = self.get_form_data()
+            success = FileUtils.save_data_to_json(data, data_file_path, include_empty)
 
-            if not include_empty:
-                # Filter out empty/None values
-                data = {k: v for k, v in data.items()
-                       if v is not None and (not isinstance(v, str) or v.strip())}
+            if not success:
+                self._show_error("Save Error", f"Failed to save data to file: {data_file_path}")
 
-            with open(data_file_path, 'w', encoding='utf-8') as file:
-                json.dump(data, file, indent=2, ensure_ascii=False)
-
-            return True
+            return success
 
         except Exception as e:
             self._show_error("Save Error", f"Failed to save data to file: {str(e)}")
@@ -692,8 +701,11 @@ class GtkGuiBuilder:
             bool: True if successful, False otherwise
         """
         try:
-            with open(data_file_path, 'r', encoding='utf-8') as file:
-                data = json.load(file)
+            data = FileUtils.load_data_from_json(data_file_path)
+
+            if data is None:
+                self._show_error("Load Error", f"Failed to load data from file: {data_file_path}")
+                return False
 
             self.set_form_data(data)
             return True
@@ -865,7 +877,7 @@ class GtkGuiBuilder:
             dark_mode = False
 
             # macOS dark mode detection
-            if platform.system() == 'Darwin':
+            if PlatformUtils.is_macos():
                 try:
                     import subprocess
                     result = subprocess.run(['defaults', 'read', '-g', 'AppleInterfaceStyle'],
@@ -875,7 +887,7 @@ class GtkGuiBuilder:
                     pass
 
             # Linux/Unix dark mode detection
-            elif platform.system() in ['Linux', 'FreeBSD', 'OpenBSD']:
+            elif PlatformUtils.is_linux():
                 # Check GNOME/GTK settings
                 try:
                     import subprocess
@@ -898,7 +910,7 @@ class GtkGuiBuilder:
                                os.environ.get('QT_STYLE_OVERRIDE', '').lower().find('dark') >= 0)
 
             # Windows dark mode detection
-            elif platform.system() == 'Windows':
+            elif PlatformUtils.is_windows():
                 try:
                     import winreg
                     registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)

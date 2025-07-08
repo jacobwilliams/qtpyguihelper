@@ -5,12 +5,9 @@ Supports Qt (via qtpy), wxPython, and tkinter backends.
 
 import os
 import sys
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
-
-class BackendError(Exception):
-    """Exception raised when backend operations fail."""
-    pass
+from .exceptions import BackendError
 
 
 class BackendManager:
@@ -76,7 +73,7 @@ class BackendManager:
             self._backend_available[backend] = False
             return False
 
-    def get_available_backends(self) -> list:
+    def get_available_backends(self) -> List[str]:
         """Get list of available backends."""
         available = []
         for backend in self.SUPPORTED_BACKENDS:
@@ -195,7 +192,7 @@ def set_backend(backend: str) -> bool:
     return _backend_manager.set_backend(backend)
 
 
-def get_available_backends() -> list:
+def get_available_backends() -> List[str]:
     """Get list of available GUI backends."""
     return _backend_manager.get_available_backends()
 

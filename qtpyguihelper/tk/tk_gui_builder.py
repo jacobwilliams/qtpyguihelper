@@ -7,11 +7,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from qtpyguihelper.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from qtpyguihelper.utils import FileUtils, ValidationUtils
 from qtpyguihelper.tk.tk_widget_factory import TkWidgetFactory
 
 
@@ -315,7 +312,8 @@ class TkGuiBuilder:
         if not self.config:
             return True
 
-        missing_fields = []
+        # Collect all required field names and current form data
+        required_field_names = []
         all_fields = []
 
         # Collect all fields from tabs or main form
@@ -325,17 +323,26 @@ class TkGuiBuilder:
         else:
             all_fields = self.config.fields or []
 
-        # Check required fields
+        # Get required field names
         for field_config in all_fields:
             if field_config.required:
-                value = self.widget_factory.get_widget_value(field_config.name)
-                if value is None or (isinstance(value, str) and not value.strip()):
-                    missing_fields.append(field_config.label or field_config.name)
+                required_field_names.append(field_config.name)
 
-        if missing_fields:
+        # Get current form data and validate using utility
+        form_data = self.get_form_data()
+        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
+
+        if missing_field_names:
+            # Convert field names back to labels for user-friendly display
+            missing_labels = []
+            for field_name in missing_field_names:
+                field_config = next((f for f in all_fields if f.name == field_name), None)
+                label = field_config.label if field_config else field_name
+                missing_labels.append(label)
+
             messagebox.showerror(
                 "Required Fields Missing",
-                f"Please fill in the following required fields:\n\n" + "\n".join(f"• {field}" for field in missing_fields)
+                f"Please fill in the following required fields:\n\n" + "\n".join(f"• {label}" for label in missing_labels)
             )
             return False
 

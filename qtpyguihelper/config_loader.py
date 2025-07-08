@@ -9,7 +9,6 @@ from dataclasses import dataclass
 
 
 @dataclass
-@dataclass
 class FieldConfig:
     """Configuration for a single form field."""
     name: str
@@ -103,6 +102,25 @@ class ConfigLoader:
         """Load configuration from a dictionary."""
         self._validate_config(config_data)
 
+        # Create a temporary GuiConfig to validate with ConfigValidator
+        try:
+            temp_config = self._create_gui_config_from_dict(config_data)
+
+            # Import ConfigValidator here to avoid circular imports
+            from .config_validator import ConfigValidator
+
+            # Validate using the comprehensive validator
+            ConfigValidator.validate_and_raise(temp_config)
+
+            return temp_config
+
+        except Exception as e:
+            # If ConfigValidator fails, fall back to basic validation
+            print(f"Warning: Advanced validation failed: {e}")
+            return self._create_gui_config_from_dict(config_data)
+
+    def _create_gui_config_from_dict(self, config_data: Dict[str, Any]) -> GuiConfig:
+        """Create GuiConfig object from dictionary (without validation)."""
         # Parse window configuration
         window_data = config_data.get("window", {})
         window_config = WindowConfig(
@@ -178,7 +196,7 @@ class ConfigLoader:
 
         # Create complete configuration
         use_tabs = len(tabs) > 0 or config_data.get("use_tabs", False)
-        self.config = GuiConfig(
+        config = GuiConfig(
             window=window_config,
             fields=fields,
             tabs=tabs if tabs else None,
@@ -191,7 +209,8 @@ class ConfigLoader:
             custom_buttons=custom_buttons if custom_buttons else None
         )
 
-        return self.config
+        self.config = config
+        return config
 
     def _validate_config(self, config_data: Dict[str, Any]) -> None:
         """Validate the configuration data."""

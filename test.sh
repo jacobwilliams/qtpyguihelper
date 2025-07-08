@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Run all the tests.
+#
+
 # Exit immediately if any command fails
 set -e
 # Optionally show commands as they execute

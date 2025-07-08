@@ -8,6 +8,7 @@ import wx
 import wx.lib.scrolledpanel as scrolled
 
 from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from ..utils import FileUtils, ValidationUtils
 from .wx_widget_factory import WxWidgetFactory, get_nested_value
 
 
@@ -41,7 +42,7 @@ class WxGuiBuilder(wx.Frame):
         elif config_dict:
             self.load_config_from_dict(config_dict)
 
-    def load_config_from_file(self, config_path: str):
+    def load_config_from_file(self, config_path: str) -> None:
         """Load configuration from a JSON file and build the GUI."""
         try:
             self.config = self.config_loader.load_from_file(config_path)
@@ -49,7 +50,7 @@ class WxGuiBuilder(wx.Frame):
         except Exception as e:
             self._show_error(f"Failed to load configuration: {str(e)}")
 
-    def load_config_from_dict(self, config_dict: Dict[str, Any]):
+    def load_config_from_dict(self, config_dict: Dict[str, Any]) -> None:
         """Load configuration from a dictionary and build the GUI."""
         try:
             self.config = self.config_loader.load_from_dict(config_dict)
@@ -365,18 +366,25 @@ class WxGuiBuilder(wx.Frame):
         if not self.config:
             return True
 
-        missing_fields = []
-
+        # Get required field names
+        required_field_names = []
         for field_config in self.config.fields:
             if field_config.required:
-                value = self.widget_factory.get_widget_value(field_config.name)
+                required_field_names.append(field_config.name)
 
-                # Check if value is empty/None
-                if value is None or (isinstance(value, str) and not value.strip()):
-                    missing_fields.append(field_config.label)
+        # Get current form data and validate using utility
+        form_data = self.get_form_data()
+        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
 
-        if missing_fields:
-            fields_text = "\n• ".join(missing_fields)
+        if missing_field_names:
+            # Convert field names back to labels for user-friendly display
+            missing_labels = []
+            for field_name in missing_field_names:
+                field_config = next((f for f in self.config.fields if f.name == field_name), None)
+                label = field_config.label if field_config else field_name
+                missing_labels.append(label)
+
+            fields_text = "\n• ".join(missing_labels)
             self._show_error(f"Please fill in the following required fields:\n• {fields_text}")
             return False
 
@@ -506,15 +514,12 @@ class WxGuiBuilder(wx.Frame):
         """
         try:
             data = self.get_form_data()
+            success = FileUtils.save_data_to_json(data, data_file_path, include_empty)
 
-            if not include_empty:
-                data = {k: v for k, v in data.items()
-                       if v is not None and (not isinstance(v, str) or v.strip())}
+            if not success:
+                self._show_error(f"Failed to save data to file: {data_file_path}")
 
-            with open(data_file_path, 'w', encoding='utf-8') as file:
-                json.dump(data, file, indent=2, ensure_ascii=False)
-
-            return True
+            return success
 
         except Exception as e:
             self._show_error(f"Failed to save data to file: {str(e)}")

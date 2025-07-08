@@ -4,6 +4,7 @@ Compatible with both PySide6 and PyQt6 via qtpy.
 """
 
 import json
+import sys
 from typing import Dict, Any, Callable, Optional, List
 from qtpy.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -13,7 +14,8 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
-from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from ..config_loader import ConfigLoader, GuiConfig
+from ..utils import FileUtils, ValidationUtils
 from .widget_factory import WidgetFactory, get_nested_value
 
 
@@ -49,7 +51,7 @@ class GuiBuilder(QMainWindow):
         elif config_dict:
             self.load_config_from_dict(config_dict)
 
-    def load_config_from_file(self, config_path: str):
+    def load_config_from_file(self, config_path: str) -> None:
         """Load configuration from a JSON file and build the GUI."""
         try:
             self.config = self.config_loader.load_from_file(config_path)
@@ -57,7 +59,7 @@ class GuiBuilder(QMainWindow):
         except Exception as e:
             self._show_error(f"Failed to load configuration: {str(e)}")
 
-    def load_config_from_dict(self, config_dict: Dict[str, Any]):
+    def load_config_from_dict(self, config_dict: Dict[str, Any]) -> None:
         """Load configuration from a dictionary and build the GUI."""
         try:
             self.config = self.config_loader.load_from_dict(config_dict)
@@ -380,18 +382,25 @@ class GuiBuilder(QMainWindow):
         if not self.config:
             return True
 
-        missing_fields = []
-
+        # Get required field names
+        required_field_names = []
         for field_config in self.config.fields:
             if field_config.required:
-                value = self.widget_factory.get_widget_value(field_config.name)
+                required_field_names.append(field_config.name)
 
-                # Check if value is empty/None
-                if value is None or (isinstance(value, str) and not value.strip()):
-                    missing_fields.append(field_config.label)
+        # Get current form data and validate using utility
+        form_data = self.get_form_data()
+        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
 
-        if missing_fields:
-            fields_text = "\n• ".join(missing_fields)
+        if missing_field_names:
+            # Convert field names back to labels for user-friendly display
+            missing_labels = []
+            for field_name in missing_field_names:
+                field_config = next((f for f in self.config.fields if f.name == field_name), None)
+                label = field_config.label if field_config else field_name
+                missing_labels.append(label)
+
+            fields_text = "\n• ".join(missing_labels)
             self._show_error(f"Please fill in the following required fields:\n• {fields_text}")
             return False
 
@@ -414,7 +423,7 @@ class GuiBuilder(QMainWindow):
         for field_name, value in data.items():
             self.widget_factory.set_widget_value(field_name, value)
 
-    def clear_form(self):
+    def clear_form(self) -> None:
         """Clear all form fields."""
         self.widget_factory.clear_all_widgets()
 
@@ -426,15 +435,15 @@ class GuiBuilder(QMainWindow):
         """Set the value of a specific field."""
         return self.widget_factory.set_widget_value(field_name, value)
 
-    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]):
+    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
         """Set a callback function to be called when the form is submitted."""
         self.submit_callback = callback
 
-    def set_cancel_callback(self, callback: Callable[[], None]):
+    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
         """Set a callback function to be called when the form is cancelled."""
         self.cancel_callback = callback
 
-    def set_custom_button_callback(self, button_name: str, callback: Callable[[Dict[str, Any]], None]):
+    def set_custom_button_callback(self, button_name: str, callback: Callable[[Dict[str, Any]], None]) -> None:
         """
         Set a callback function to be called when a custom button is clicked.
 
@@ -444,7 +453,7 @@ class GuiBuilder(QMainWindow):
         """
         self.custom_button_callbacks[button_name] = callback
 
-    def remove_custom_button_callback(self, button_name: str):
+    def remove_custom_button_callback(self, button_name: str) -> None:
         """Remove a custom button callback."""
         if button_name in self.custom_button_callbacks:
             del self.custom_button_callbacks[button_name]
@@ -455,12 +464,12 @@ class GuiBuilder(QMainWindow):
             return [button.name for button in self.config.custom_buttons]
         return []
 
-    def enable_field(self, field_name: str, enabled: bool = True):
+    def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""
         if field_name in self.widget_factory.widgets:
             self.widget_factory.widgets[field_name].setEnabled(enabled)
 
-    def show_field(self, field_name: str, visible: bool = True):
+    def show_field(self, field_name: str, visible: bool = True) -> None:
         """Show or hide a specific field."""
         if field_name in self.widget_factory.widgets:
             self.widget_factory.widgets[field_name].setVisible(visible)
@@ -552,16 +561,12 @@ class GuiBuilder(QMainWindow):
         """
         try:
             data = self.get_form_data()
+            success = FileUtils.save_data_to_json(data, data_file_path, include_empty)
 
-            if not include_empty:
-                # Filter out empty/None values
-                data = {k: v for k, v in data.items()
-                       if v is not None and (not isinstance(v, str) or v.strip())}
+            if not success:
+                self._show_error(f"Failed to save data to file: {data_file_path}")
 
-            with open(data_file_path, 'w', encoding='utf-8') as file:
-                json.dump(data, file, indent=2, ensure_ascii=False)
-
-            return True
+            return success
 
         except Exception as e:
             self._show_error(f"Failed to save data to file: {str(e)}")

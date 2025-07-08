@@ -50,7 +50,11 @@ def _lazy_import_gtk():
 from .config_loader import ConfigLoader, CustomButtonConfig
 from .backend import (
     get_backend, set_backend, get_available_backends,
-    get_backend_info, is_backend_available, BackendError
+    get_backend_info, is_backend_available
+)
+from .exceptions import (
+    BackendError, ConfigurationError, WidgetError,
+    ValidationError, FileOperationError, UnsupportedOperationError
 )
 from typing import Dict, Any, Optional, Union
 
@@ -60,8 +64,30 @@ class GuiBuilder:
     Unified GUI builder that automatically selects the appropriate backend.
 
     This class provides a consistent interface that works with Qt, wxPython,
-    and tkinter backends, automatically selecting the available backend or using
+    tkinter, and GTK backends, automatically selecting the available backend or using
     the one specified via set_backend().
+
+    Attributes:
+        backend (str): The currently active backend name
+        builder: The underlying backend-specific builder instance
+
+    Example:
+        Basic usage with automatic backend detection:
+
+        >>> from qtpyguihelper import GuiBuilder
+        >>> gui = GuiBuilder('config.json')
+        >>> gui.show()
+
+        Force a specific backend:
+
+        >>> gui = GuiBuilder('config.json', backend='gtk')
+        >>> gui.run()
+
+        Use with configuration dictionary:
+
+        >>> config = {"window": {"title": "My App"}, "fields": [...]}
+        >>> gui = GuiBuilder(config_dict=config)
+        >>> data = gui.get_form_data()
     """
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, backend: Optional[str] = None):
@@ -141,11 +167,34 @@ class GuiBuilder:
         self._builder.clear_form()
 
     def get_field_value(self, field_name: str) -> Any:
-        """Get the value of a specific field."""
+        """
+        Get the value of a specific field.
+
+        Args:
+            field_name: Name of the field to get the value from
+
+        Returns:
+            The current value of the field, or None if field doesn't exist
+
+        Raises:
+            WidgetError: If the field doesn't exist or can't be accessed
+        """
         return self._builder.get_field_value(field_name)
 
     def set_field_value(self, field_name: str, value: Any) -> bool:
-        """Set the value of a specific field."""
+        """
+        Set the value of a specific field.
+
+        Args:
+            field_name: Name of the field to set
+            value: Value to set for the field
+
+        Returns:
+            True if the value was set successfully, False otherwise
+
+        Raises:
+            WidgetError: If the field doesn't exist or value is invalid
+        """
         return self._builder.set_field_value(field_name, value)
 
     def set_submit_callback(self, callback):
@@ -250,7 +299,10 @@ __all__ = [
     "GuiBuilder", "QtGuiBuilder", "WxGuiBuilder", "TkGuiBuilder", "GtkGuiBuilder",
     "ConfigLoader", "WidgetFactory", "WxWidgetFactory", "TkWidgetFactory", "GtkWidgetFactory", "CustomButtonConfig",
     "get_backend", "set_backend", "get_available_backends",
-    "get_backend_info", "is_backend_available", "BackendError"
+    "get_backend_info", "is_backend_available",
+    "BackendError", "ConfigurationError", "WidgetError", "ValidationError",
+    "FileOperationError", "UnsupportedOperationError",
+    "ConfigValidator"
 ]
 
 # Make backend-specific classes available for direct import
@@ -280,5 +332,8 @@ def __getattr__(name):
     elif name == 'GtkWidgetFactory':
         _, GtkWidgetFactory = _lazy_import_gtk()
         return GtkWidgetFactory
+    elif name == 'ConfigValidator':
+        from .config_validator import ConfigValidator
+        return ConfigValidator
     else:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
