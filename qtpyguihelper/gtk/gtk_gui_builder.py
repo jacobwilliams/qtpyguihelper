@@ -219,12 +219,12 @@ class GtkGuiBuilder:
         notebook = Gtk.Notebook()
         compat = self._gtk_version_compat()
         compat['set_border_width'](notebook, 10)
-        
+
         # Don't let notebook expand to fill all space - only take what it needs
         notebook.set_hexpand(True)  # Expand horizontally
         notebook.set_vexpand(False)  # Don't expand vertically beyond content
         notebook.set_valign(Gtk.Align.START)  # Align to top
-        
+
         # Pack notebook without expanding vertically
         compat['box_pack_start'](self.main_container, notebook, False, True, 0)
 
@@ -234,10 +234,10 @@ class GtkGuiBuilder:
             tab_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             tab_scrolled.set_hexpand(True)
             tab_scrolled.set_vexpand(False)  # Don't expand vertically beyond content
-            
+
             # Set a reasonable height that doesn't take up the whole window
             tab_scrolled.set_size_request(-1, 300)  # Fixed height for consistent appearance
-            
+
             # Allow scrolling within this height if content is larger
             try:
                 # GTK4 method - set max content height to prevent over-expansion
@@ -282,12 +282,12 @@ class GtkGuiBuilder:
         if widget:
             widget.set_hexpand(True)
             widget.set_halign(Gtk.Align.FILL)
-            
+
             # For textarea widgets, don't expand vertically to avoid taking too much space
             if isinstance(widget, Gtk.ScrolledWindow):
                 widget.set_vexpand(False)  # Don't expand vertically
                 widget.set_valign(Gtk.Align.START)  # Align to top
-            
+
             grid.attach(widget, 1, row, 1, 1)
 
             # Add tooltip if specified

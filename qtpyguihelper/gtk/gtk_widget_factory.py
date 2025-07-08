@@ -239,16 +239,16 @@ class GtkWidgetFactory:
             height = field_config.height
         else:
             height = 80  # Default height for textarea - same as other demos
-        
+
         # Set a reasonable size for the textarea - be more restrictive
         text_view.set_size_request(-1, height)
         scrolled_window.set_size_request(-1, height + 20)  # Add a bit for scrollbar
-        
+
         # Prevent the scrolled window from expanding too much
         scrolled_window.set_hexpand(True)
         scrolled_window.set_vexpand(False)
         scrolled_window.set_valign(Gtk.Align.START)  # Align to top
-        
+
         # Also set maximum height to prevent it from growing too large
         try:
             # GTK4 method
