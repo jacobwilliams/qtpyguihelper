@@ -76,3 +76,4 @@ ENV/
 .idea/
 
 /*_output.json
+/docs/_build

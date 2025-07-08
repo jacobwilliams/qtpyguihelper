@@ -82,7 +82,7 @@ cd ..
 ### Other installation options:
 
 ```bash
-git clone https://github.com/yourusername/qtpyguihelper.git
+git clone https://github.com/jacobwilliams/qtpyguihelper.git
 cd qtpyguihelper
 pip install -e .        # Install with tkinter Backend (No Extra Dependencies)
 
@@ -918,4 +918,53 @@ Data files with metadata include additional information:
 4. GTK is fourth priority
 5. Use `GUI_BACKEND` environment variable to force selection
 6. Use `set_backend()` function for programmatic control
+
+## Documentation
+
+QtPyGuiHelper includes comprehensive documentation built with Sphinx:
+
+### 📖 **Online Documentation**
+- **Full Documentation**: [Coming Soon - GitHub Pages]
+- **API Reference**: Complete API documentation with examples
+- **User Guide**: Installation, quick start, and tutorials
+- **Backend Guide**: Detailed comparison and features for each backend
+
+### 🏗️ **Building Documentation Locally**
+
+Install documentation dependencies:
+```bash
+pip install qtpyguihelper[docs]
+```
+
+Build and view documentation:
+```bash
+# Quick build and open
+./docs.sh build && ./docs.sh open
+
+# Or step by step
+cd docs
+make html
+open _build/html/index.html  # macOS
+# or navigate to file://path/to/docs/_build/html/index.html
+```
+
+**Development with Live Reload**:
+```bash
+./docs.sh serve
+# Opens http://127.0.0.1:8000 with auto-reload on changes
+```
+
+### 📚 **Documentation Content**
+- **Installation Guide**: Multiple backend setup options
+- **Quick Start**: Get up and running in minutes  
+- **Comprehensive Examples**: Real-world usage patterns
+- **API Reference**: Auto-generated from docstrings
+- **Backend Comparison**: Choose the right backend for your needs
+- **Advanced Topics**: Custom widgets, validation, theming
+
+### 🛠️ **Documentation Tools**
+- **docs.sh**: Convenient build script with multiple commands
+- **GitHub Actions**: Automated documentation deployment
+- **Sphinx**: Professional documentation generation
+- **Read the Docs Theme**: Clean, responsive design
 

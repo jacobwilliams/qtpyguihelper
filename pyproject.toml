@@ -87,17 +87,18 @@ test = [
 docs = [
     "sphinx>=4.0.0",
     "sphinx-rtd-theme>=1.0.0",
+    "sphinx-autobuild>=2021.3.14",
 ]
 
 [project.scripts]
 qtpyguihelper-demo = "examples.demo:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/qtpyguihelper"
-Documentation = "https://github.com/yourusername/qtpyguihelper/blob/main/README.md"
-Repository = "https://github.com/yourusername/qtpyguihelper"
-Issues = "https://github.com/yourusername/qtpyguihelper/issues"
-Changelog = "https://github.com/yourusername/qtpyguihelper/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/jacobwilliams/qtpyguihelper"
+Documentation = "https://github.com/jacobwilliams/qtpyguihelper/blob/main/README.md"
+Repository = "https://github.com/jacobwilliams/qtpyguihelper"
+Issues = "https://github.com/jacobwilliams/qtpyguihelper/issues"
+Changelog = "https://github.com/jacobwilliams/qtpyguihelper/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
 package-dir = {"" = "."}
