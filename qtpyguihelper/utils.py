@@ -124,6 +124,71 @@ class PlatformUtils:
         """Check if running on Linux."""
         return platform.system() == 'Linux'
 
+    @staticmethod
+    def is_dark_mode() -> bool:
+        """
+        Detect if the system is using dark mode.
+
+        Returns:
+            True if dark mode is detected, False otherwise
+        """
+        try:
+            import os
+            import subprocess
+
+            if PlatformUtils.is_macos():
+                # macOS dark mode detection
+                try:
+                    result = subprocess.run(
+                        ['defaults', 'read', '-g', 'AppleInterfaceStyle'],
+                        capture_output=True, text=True, timeout=2
+                    )
+                    return result.stdout.strip() == 'Dark'
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+                    return False
+
+            elif PlatformUtils.is_windows():
+                # Windows dark mode detection
+                try:
+                    import winreg
+                    registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+                    key = winreg.OpenKey(registry, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")
+                    value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+                    return value == 0  # 0 = dark mode, 1 = light mode
+                except (ImportError, OSError, FileNotFoundError):
+                    return False
+
+            elif PlatformUtils.is_linux():
+                # Linux dark mode detection
+                try:
+                    # Try gsettings first (GNOME/GTK)
+                    result = subprocess.run(
+                        ['gsettings', 'get', 'org.gnome.desktop.interface', 'gtk-theme'],
+                        capture_output=True, text=True, timeout=2
+                    )
+                    theme_name = result.stdout.strip().strip("'\"").lower()
+                    if 'dark' in theme_name:
+                        return True
+
+                    # Try color-scheme setting (newer GNOME)
+                    result = subprocess.run(
+                        ['gsettings', 'get', 'org.gnome.desktop.interface', 'color-scheme'],
+                        capture_output=True, text=True, timeout=2
+                    )
+                    color_scheme = result.stdout.strip().strip("'\"").lower()
+                    return 'dark' in color_scheme or 'prefer-dark' in color_scheme
+
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+                    # Fallback: check environment variables
+                    return (os.environ.get('GTK_THEME', '').lower().find('dark') >= 0 or
+                           os.environ.get('QT_STYLE_OVERRIDE', '').lower().find('dark') >= 0)
+
+            # Default to light mode if detection fails
+            return False
+
+        except Exception:
+            return False
+
 
 class FormatUtils:
     """Utilities for formatting values."""

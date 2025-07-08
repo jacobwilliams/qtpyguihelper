@@ -153,6 +153,11 @@ class TkWidgetFactory:
         self.widgets: Dict[str, tk.Widget] = {}
         self.radio_groups: Dict[str, RadioButtonGroup] = {}
         self.change_callbacks: Dict[str, List[Callable]] = {}
+        self.theme_colors: Optional[Dict[str, str]] = None
+
+    def set_theme_colors(self, theme_colors: Dict[str, str]):
+        """Set theme colors for widgets."""
+        self.theme_colors = theme_colors
 
     def create_widget(self, parent: tk.Widget, field_config: FieldConfig) -> tk.Widget:
         """Create a widget based on the field configuration."""
@@ -215,6 +220,14 @@ class TkWidgetFactory:
         """Create a text input field."""
         entry = tk.Entry(parent)
 
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
+
         if field_config.default_value:
             entry.insert(0, str(field_config.default_value))
 
@@ -228,6 +241,14 @@ class TkWidgetFactory:
     def _create_number_field(self, parent: tk.Widget, field_config: FieldConfig) -> tk.Entry:
         """Create a number input field."""
         entry = tk.Entry(parent)
+
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
 
         # Validation for numbers
         vcmd = (parent.register(self._validate_number), '%P')
@@ -263,6 +284,14 @@ class TkWidgetFactory:
         """Create a float input field."""
         entry = tk.Entry(parent)
 
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
+
         # Validation for floats
         vcmd = (parent.register(self._validate_float), '%P')
         entry.config(validate='key', validatecommand=vcmd)
@@ -277,6 +306,14 @@ class TkWidgetFactory:
         """Create an email input field."""
         entry = tk.Entry(parent)
 
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
+
         if field_config.default_value:
             entry.insert(0, str(field_config.default_value))
 
@@ -289,6 +326,14 @@ class TkWidgetFactory:
     def _create_password_field(self, parent: tk.Widget, field_config: FieldConfig) -> tk.Entry:
         """Create a password input field."""
         entry = tk.Entry(parent, show="*")
+
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
 
         if field_config.placeholder:
             self._add_placeholder(entry, field_config.placeholder)
@@ -303,6 +348,14 @@ class TkWidgetFactory:
             height = max(1, field_config.height // 20)  # Approximate conversion
 
         text_widget = tk.Text(parent, height=height, wrap=tk.WORD)
+
+        # Apply theme colors if available
+        if self.theme_colors:
+            text_widget.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
 
         if field_config.default_value:
             text_widget.insert("1.0", str(field_config.default_value))
@@ -392,6 +445,14 @@ class TkWidgetFactory:
         """Create a date input field."""
         entry = tk.Entry(parent)
 
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
+
         # Add format hint
         entry.insert(0, "YYYY-MM-DD")
         self._add_placeholder(entry, "YYYY-MM-DD")
@@ -410,6 +471,14 @@ class TkWidgetFactory:
         """Create a time input field."""
         entry = tk.Entry(parent)
 
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
+
         # Add format hint
         self._add_placeholder(entry, "HH:MM:SS")
 
@@ -423,6 +492,14 @@ class TkWidgetFactory:
     def _create_datetime_field(self, parent: tk.Widget, field_config: FieldConfig) -> tk.Entry:
         """Create a datetime input field."""
         entry = tk.Entry(parent)
+
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
 
         # Add format hint
         self._add_placeholder(entry, "YYYY-MM-DD HH:MM:SS")
@@ -475,6 +552,15 @@ class TkWidgetFactory:
         frame = tk.Frame(parent)
 
         entry = tk.Entry(frame)
+
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
+
         entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
         def browse_file():
@@ -510,6 +596,14 @@ class TkWidgetFactory:
     def _create_url_field(self, parent: tk.Widget, field_config: FieldConfig) -> tk.Entry:
         """Create a URL input field."""
         entry = tk.Entry(parent)
+
+        # Apply theme colors if available
+        if self.theme_colors:
+            entry.configure(
+                bg=self.theme_colors['entry_bg'],
+                fg=self.theme_colors['entry_fg'],
+                insertbackground=self.theme_colors['entry_fg']  # Cursor color
+            )
 
         if field_config.default_value:
             entry.insert(0, str(field_config.default_value))
@@ -585,17 +679,26 @@ class TkWidgetFactory:
     def _add_placeholder(self, entry: tk.Entry, placeholder: str):
         """Add placeholder text to an entry widget."""
         entry.insert(0, placeholder)
-        entry.config(fg='grey')
+
+        # Use theme-aware colors for placeholder
+        placeholder_color = 'grey'
+        normal_color = 'black'
+
+        if self.theme_colors:
+            placeholder_color = '#999999' if self.theme_colors['entry_fg'] == '#ffffff' else '#666666'
+            normal_color = self.theme_colors['entry_fg']
+
+        entry.config(fg=placeholder_color)
 
         def on_focus_in(event):
             if entry.get() == placeholder:
                 entry.delete(0, tk.END)
-                entry.config(fg='black')
+                entry.config(fg=normal_color)
 
         def on_focus_out(event):
             if not entry.get():
                 entry.insert(0, placeholder)
-                entry.config(fg='grey')
+                entry.config(fg=placeholder_color)
 
         entry.bind('<FocusIn>', on_focus_in)
         entry.bind('<FocusOut>', on_focus_out)

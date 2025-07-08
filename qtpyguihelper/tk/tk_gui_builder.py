@@ -8,7 +8,7 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
 from qtpyguihelper.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from qtpyguihelper.utils import FileUtils, ValidationUtils
+from qtpyguihelper.utils import FileUtils, ValidationUtils, PlatformUtils
 from qtpyguihelper.tk.tk_widget_factory import TkWidgetFactory
 
 
@@ -57,6 +57,13 @@ class TkGuiBuilder:
         # Create root window if it doesn't exist
         if self.root is None:
             self.root = tk.Tk()
+
+        # Detect and apply theme before setting up UI
+        self._detect_and_apply_theme()
+
+        # Pass theme colors to widget factory after theme detection
+        if hasattr(self, '_theme_colors') and self._theme_colors:
+            self.widget_factory.set_theme_colors(self._theme_colors)
 
         # Set window properties
         if self.config.window.title:
@@ -116,6 +123,9 @@ class TkGuiBuilder:
             canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
         canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
+        # Apply theme
+        self._detect_and_apply_theme()
 
     def _add_buttons(self):
         """Add all buttons (custom and default) in a single frame for proper alignment."""
@@ -402,6 +412,146 @@ class TkGuiBuilder:
 
         widget.bind('<Enter>', show_tooltip)
 
+    def _apply_dark_theme(self):
+        """Apply dark theme colors to tkinter widgets."""
+        try:
+            # Dark theme colors
+            bg_color = '#2d2d2d'
+            fg_color = '#ffffff'
+            entry_bg = '#404040'
+            entry_fg = '#ffffff'
+            button_bg = '#404040'
+            button_fg = '#ffffff'
+
+            # Configure root window
+            if self.root:
+                self.root.configure(bg=bg_color)
+
+            # Configure ttk styles for dark theme
+            style = ttk.Style()
+
+            # Configure various ttk widget styles
+            style.configure('TFrame', background=bg_color)
+            style.configure('TLabel', background=bg_color, foreground=fg_color)
+            style.configure('TButton', background=button_bg, foreground=button_fg)
+            style.configure('TNotebook', background=bg_color)
+            style.configure('TNotebook.Tab', background=button_bg, foreground=button_fg)
+
+            # Configure Entry widgets (these need special handling)
+            style.configure('TEntry',
+                          fieldbackground=entry_bg,
+                          foreground=entry_fg,
+                          bordercolor='#555555',
+                          lightcolor='#555555',
+                          darkcolor='#555555')
+
+            # Configure Combobox
+            style.configure('TCombobox',
+                          fieldbackground=entry_bg,
+                          foreground=entry_fg,
+                          background=button_bg,
+                          bordercolor='#555555')
+
+            # Configure Scrollbar
+            style.configure('TScrollbar',
+                          background=button_bg,
+                          bordercolor='#555555',
+                          arrowcolor=fg_color,
+                          troughcolor=bg_color)
+
+            # Store theme colors for widget creation
+            self._theme_colors = {
+                'bg': bg_color,
+                'fg': fg_color,
+                'entry_bg': entry_bg,
+                'entry_fg': entry_fg,
+                'button_bg': button_bg,
+                'button_fg': button_fg
+            }
+
+        except Exception as e:
+            print(f"Warning: Could not apply dark theme to tkinter: {e}")
+            self._theme_colors = None
+
+    def _apply_light_theme(self):
+        """Apply light theme colors to tkinter widgets."""
+        try:
+            # Light theme colors (tkinter defaults)
+            bg_color = '#f0f0f0'
+            fg_color = '#000000'
+            entry_bg = '#ffffff'
+            entry_fg = '#000000'
+            button_bg = '#e1e1e1'
+            button_fg = '#000000'
+
+            # Configure root window
+            if self.root:
+                self.root.configure(bg=bg_color)
+
+            # Configure ttk styles for light theme
+            style = ttk.Style()
+
+            style.configure('TFrame', background=bg_color)
+            style.configure('TLabel', background=bg_color, foreground=fg_color)
+            style.configure('TButton', background=button_bg, foreground=button_fg)
+            style.configure('TNotebook', background=bg_color)
+            style.configure('TNotebook.Tab', background=button_bg, foreground=button_fg)
+
+            style.configure('TEntry',
+                          fieldbackground=entry_bg,
+                          foreground=entry_fg,
+                          bordercolor='#d4d4d4',
+                          lightcolor='#d4d4d4',
+                          darkcolor='#d4d4d4')
+
+            style.configure('TCombobox',
+                          fieldbackground=entry_bg,
+                          foreground=entry_fg,
+                          background=button_bg,
+                          bordercolor='#d4d4d4')
+
+            style.configure('TScrollbar',
+                          background=button_bg,
+                          bordercolor='#d4d4d4',
+                          arrowcolor=fg_color,
+                          troughcolor=bg_color)
+
+            # Store theme colors for widget creation
+            self._theme_colors = {
+                'bg': bg_color,
+                'fg': fg_color,
+                'entry_bg': entry_bg,
+                'entry_fg': entry_fg,
+                'button_bg': button_bg,
+                'button_fg': button_fg
+            }
+
+        except Exception as e:
+            print(f"Warning: Could not apply light theme to tkinter: {e}")
+            self._theme_colors = None
+
+    def _detect_and_apply_theme(self):
+        """Detect system theme and apply appropriate colors."""
+        try:
+            if PlatformUtils.is_dark_mode():
+                self._apply_dark_theme()
+            else:
+                self._apply_light_theme()
+        except Exception as e:
+            print(f"Warning: Could not detect system theme: {e}")
+            self._apply_light_theme()  # Fallback to light theme
+
+    def run(self):
+        """Run the GUI application (start the main loop)."""
+        # Ensure UI is set up before running
+        if self.root is None:
+            self._setup_ui()
+
+        if self.root:
+            # Ensure window is properly shown and focused before starting main loop
+            self.show()
+            self.root.mainloop()
+
     def show(self):
         """Show the GUI window and bring it to the front."""
         # Ensure UI is set up before showing
@@ -419,17 +569,6 @@ class TkGuiBuilder:
         """Hide the GUI window."""
         if self.root:
             self.root.withdraw()
-
-    def run(self):
-        """Run the GUI application (start the main loop)."""
-        # Ensure UI is set up before running
-        if self.root is None:
-            self._setup_ui()
-
-        if self.root:
-            # Ensure window is properly shown and focused before starting main loop
-            self.show()
-            self.root.mainloop()
 
     def get_form_data(self) -> Dict[str, Any]:
         """Get all form data as a dictionary."""
