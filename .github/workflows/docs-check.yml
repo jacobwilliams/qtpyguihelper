@@ -1,0 +1,73 @@
+name: Documentation Check
+
+on:
+  push:
+    paths:
+    - 'docs/**'
+    - 'qtpyguihelper/**/*.py'
+    - 'pyproject.toml'
+    - '.github/workflows/docs-check.yml'
+  pull_request:
+    paths:
+    - 'docs/**'
+    - 'qtpyguihelper/**/*.py'
+    - 'pyproject.toml'
+    - '.github/workflows/docs-check.yml'
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.11]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[docs]
+
+    - name: Check documentation can be built
+      run: |
+        cd docs
+        sphinx-build -W -b html . _build/html
+
+    - name: Check for broken links (if sphinx-linkcheck available)
+      run: |
+        cd docs
+        sphinx-build -b linkcheck . _build/linkcheck || echo "Link check completed with warnings"
+
+    - name: Validate reStructuredText files
+      run: |
+        python -c "
+        import os
+        import docutils.core
+
+        failed = False
+        for root, dirs, files in os.walk('docs'):
+            for file in files:
+                if file.endswith('.rst'):
+                    filepath = os.path.join(root, file)
+                    print(f'Checking {filepath}')
+                    try:
+                        with open(filepath, 'r') as f:
+                            content = f.read()
+                        docutils.core.publish_doctree(content)
+                        print(f'✓ {filepath} is valid')
+                    except Exception as e:
+                        print(f'✗ {filepath} has errors: {e}')
+                        failed = True
+
+        if failed:
+            exit(1)
+        else:
+            print('All reStructuredText files are valid!')
+        "
