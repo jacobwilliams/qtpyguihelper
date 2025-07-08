@@ -220,32 +220,30 @@ class GtkGuiBuilder:
         compat = self._gtk_version_compat()
         compat['set_border_width'](notebook, 10)
 
-        # Don't let notebook expand to fill all space - only take what it needs
+        # Allow notebook to expand with window
         notebook.set_hexpand(True)  # Expand horizontally
-        notebook.set_vexpand(False)  # Don't expand vertically beyond content
-        notebook.set_valign(Gtk.Align.START)  # Align to top
+        notebook.set_vexpand(True)  # Expand vertically to fill available space
+        notebook.set_valign(Gtk.Align.FILL)  # Fill available vertical space
 
-        # Pack notebook without expanding vertically
-        compat['box_pack_start'](self.main_container, notebook, False, True, 0)
+        # Pack notebook with expansion
+        compat['box_pack_start'](self.main_container, notebook, True, True, 0)
 
         for tab_config in self.config.tabs:
             # Create tab content
             tab_scrolled = Gtk.ScrolledWindow()
             tab_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             tab_scrolled.set_hexpand(True)
-            tab_scrolled.set_vexpand(False)  # Don't expand vertically beyond content
+            tab_scrolled.set_vexpand(True)  # Allow vertical expansion to fill available space
 
-            # Set a reasonable height that doesn't take up the whole window
-            tab_scrolled.set_size_request(-1, 300)  # Fixed height for consistent appearance
-
-            # Allow scrolling within this height if content is larger
+            # Set reasonable minimum size and allow expansion
             try:
-                # GTK4 method - set max content height to prevent over-expansion
-                tab_scrolled.set_max_content_height(300)
-                tab_scrolled.set_min_content_width(500)
+                # GTK4 method - set minimum content size but allow expansion
+                tab_scrolled.set_min_content_height(300)  # Reasonable minimum height
+                tab_scrolled.set_min_content_width(500)   # Minimum width
+                # Don't set max_content_height to allow expansion with window size
             except AttributeError:
-                # GTK3 fallback
-                pass
+                # GTK3 fallback - set minimum size only
+                tab_scrolled.set_size_request(500, 300)
 
             tab_grid = Gtk.Grid()
             tab_grid.set_column_spacing(10)
@@ -440,65 +438,116 @@ class GtkGuiBuilder:
 
     def _show_form_data(self, data: Dict[str, Any]):
         """Show form data in a dialog (default submit behavior)."""
-        # Create a dialog to display the data
-        dialog = Gtk.Dialog(
-            title="Form Data",
-            parent=self.window,
-            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT
-        )
-        dialog.add_button("Close", Gtk.ResponseType.CLOSE)
-        dialog.set_default_size(500, 400)
+        try:
+            # Create a dialog to display the data
+            if GTK_MAJOR_VERSION == 4:
+                # GTK4 approach
+                dialog = Gtk.Dialog()
+                dialog.set_transient_for(self.window)
+                dialog.set_modal(True)
+                dialog.set_title("Form Data")
+                dialog.add_button("Close", Gtk.ResponseType.CLOSE)
+            else:
+                # GTK3 approach
+                dialog = Gtk.Dialog(
+                    title="Form Data",
+                    parent=self.window,
+                    flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT
+                )
+                dialog.add_button("Close", Gtk.ResponseType.CLOSE)
 
-        # Create scrolled window for content
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+            dialog.set_default_size(500, 400)
 
-        # Create text view
-        text_view = Gtk.TextView()
-        text_view.set_editable(False)
-        text_view.set_cursor_visible(False)
+            # Create scrolled window for content
+            scrolled = Gtk.ScrolledWindow()
+            scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
-        # Format and display the data
-        formatted_data = json.dumps(data, indent=2, default=str)
-        buffer = text_view.get_buffer()
-        buffer.set_text(formatted_data)
+            # Create text view
+            text_view = Gtk.TextView()
+            text_view.set_editable(False)
+            text_view.set_cursor_visible(False)
 
-        # Get compatibility helpers
-        compat = self._gtk_version_compat()
-        compat['container_add'](scrolled, text_view)
-        compat['container_add'](dialog.get_content_area(), scrolled)
+            # Format and display the data
+            formatted_data = json.dumps(data, indent=2, default=str)
+            buffer = text_view.get_buffer()
+            buffer.set_text(formatted_data)
 
-        # Get compatibility helpers
-        compat = self._gtk_version_compat()
-        compat['show_all'](dialog)
-        dialog.run()
-        dialog.destroy()
+            # Get compatibility helpers
+            compat = self._gtk_version_compat()
+            compat['container_add'](scrolled, text_view)
+            compat['container_add'](dialog.get_content_area(), scrolled)
+
+            # Show dialog
+            compat['show_all'](dialog)
+            dialog.run()
+            dialog.destroy()
+
+        except Exception as e:
+            # Fallback: print to console if dialog creation fails
+            print("Form Data:")
+            print(json.dumps(data, indent=2, default=str))
 
     def _show_error(self, title: str, message: str):
         """Show an error dialog."""
-        dialog = Gtk.MessageDialog(
-            parent=self.window,
-            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-            type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            message_format=message
-        )
-        dialog.set_title(title)
-        dialog.run()
-        dialog.destroy()
+        try:
+            if GTK_MAJOR_VERSION == 4:
+                # GTK4 approach
+                dialog = Gtk.MessageDialog(
+                    transient_for=self.window,
+                    modal=True,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=message
+                )
+            else:
+                # GTK3 approach
+                dialog = Gtk.MessageDialog(
+                    parent=self.window,
+                    flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                    type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    message_format=message
+                )
+
+            if title:
+                dialog.set_title(title)
+            dialog.run()
+            dialog.destroy()
+        except Exception as e:
+            # Fallback: print to console if dialog creation fails
+            print(f"Error: {title}: {message}")
+            print(f"Dialog creation failed: {e}")
 
     def _show_info(self, title: str, message: str):
         """Show an info dialog."""
-        dialog = Gtk.MessageDialog(
-            parent=self.window,
-            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-            type=Gtk.MessageType.INFO,
-            buttons=Gtk.ButtonsType.OK,
-            message_format=message
-        )
-        dialog.set_title(title)
-        dialog.run()
-        dialog.destroy()
+        try:
+            if GTK_MAJOR_VERSION == 4:
+                # GTK4 approach
+                dialog = Gtk.MessageDialog(
+                    transient_for=self.window,
+                    modal=True,
+                    message_type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=message
+                )
+            else:
+                # GTK3 approach
+                dialog = Gtk.MessageDialog(
+                    parent=self.window,
+                    flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                    type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK,
+                    message_format=message
+                )
+
+            if title:
+                dialog.set_title(title)
+            dialog.run()
+            dialog.destroy()
+        except Exception as e:
+            # Fallback: print to console if dialog creation fails
+            print(f"Info: {title}: {message}")
+            print(f"Dialog creation failed: {e}")
 
     def _on_window_close(self, widget, event):
         """Handle window close event."""
@@ -604,6 +653,73 @@ class GtkGuiBuilder:
         """Get all form data as a dictionary."""
         return self.widget_factory.get_all_values()
 
+    def save_data_to_file(self, data_file_path: str, include_empty: bool = True) -> bool:
+        """
+        Save current form data to a JSON file.
+
+        Args:
+            data_file_path: Path where to save the JSON file
+            include_empty: Whether to include fields with empty/None values
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            data = self.get_form_data()
+
+            if not include_empty:
+                # Filter out empty/None values
+                data = {k: v for k, v in data.items()
+                       if v is not None and (not isinstance(v, str) or v.strip())}
+
+            with open(data_file_path, 'w', encoding='utf-8') as file:
+                json.dump(data, file, indent=2, ensure_ascii=False)
+
+            return True
+
+        except Exception as e:
+            self._show_error("Save Error", f"Failed to save data to file: {str(e)}")
+            return False
+
+    def load_data_from_file(self, data_file_path: str) -> bool:
+        """
+        Load form data from a JSON file and populate the GUI.
+
+        Args:
+            data_file_path: Path to the JSON file to load
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            with open(data_file_path, 'r', encoding='utf-8') as file:
+                data = json.load(file)
+
+            self.set_form_data(data)
+            return True
+
+        except Exception as e:
+            self._show_error("Load Error", f"Failed to load data from file: {str(e)}")
+            return False
+
+    def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
+        """
+        Load form data from a dictionary and populate the GUI.
+
+        Args:
+            data: Dictionary containing the form data
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            self.set_form_data(data)
+            return True
+
+        except Exception as e:
+            self._show_error("Load Error", f"Failed to load data from dictionary: {str(e)}")
+            return False
+
     def set_form_data(self, data: Dict[str, Any]):
         """Set form data from a dictionary."""
         self.widget_factory.set_all_values(data)
@@ -659,6 +775,8 @@ class GtkGuiBuilder:
         builder = cls(config_path, config_dict)
         builder.run()
         return builder
+
+    # ...existing code...
 
     def close(self):
         """Close the GUI application."""
