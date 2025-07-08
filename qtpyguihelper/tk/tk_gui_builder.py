@@ -155,19 +155,9 @@ class TkGuiBuilder:
 
                 button.pack(side="left", padx=(0, 5))
 
-        # Add default buttons on the right
+        # Add default buttons on the right (order matters for pack side="right")
         if has_default_buttons:
-            # Cancel button
-            if self.config.cancel_button:
-                cancel_text = self.config.cancel_label or "Cancel"
-                cancel_button = tk.Button(
-                    button_frame,
-                    text=cancel_text,
-                    command=self._handle_cancel
-                )
-                cancel_button.pack(side="right", padx=(5, 0))
-
-            # Submit button
+            # Submit button (packed first to appear on the far right)
             if self.config.submit_button:
                 submit_text = self.config.submit_label or "Submit"
                 submit_button = tk.Button(
@@ -176,6 +166,16 @@ class TkGuiBuilder:
                     command=self._handle_submit
                 )
                 submit_button.pack(side="right")
+
+            # Cancel button (packed second to appear to the left of Submit)
+            if self.config.cancel_button:
+                cancel_text = self.config.cancel_label or "Cancel"
+                cancel_button = tk.Button(
+                    button_frame,
+                    text=cancel_text,
+                    command=self._handle_cancel
+                )
+                cancel_button.pack(side="right", padx=(5, 0))
 
     def _build_form_interface(self):
         """Build a simple form interface."""

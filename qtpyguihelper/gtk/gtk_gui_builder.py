@@ -328,20 +328,20 @@ class GtkGuiBuilder:
         compat['set_border_width'](button_box, 10)
         button_box.set_halign(Gtk.Align.END)
 
-        # Submit button
+        # Cancel button (added first to match Qt backend order)
+        if self.config.cancel_button:
+            cancel_text = self.config.cancel_label or "Cancel"
+            cancel_button = compat['button_new'](cancel_text)
+            cancel_button.connect("clicked", lambda btn: self._handle_cancel())
+            compat['box_pack_start'](button_box, cancel_button, False, False, 0)
+
+        # Submit button (added second to match Qt backend order)
         if self.config.submit_button:
             submit_text = self.config.submit_label or "Submit"
             submit_button = compat['button_new'](submit_text)
             submit_button.connect("clicked", lambda btn: self._handle_submit())
             submit_button.get_style_context().add_class("suggested-action")
             compat['box_pack_start'](button_box, submit_button, False, False, 0)
-
-        # Cancel button
-        if self.config.cancel_button:
-            cancel_text = self.config.cancel_label or "Cancel"
-            cancel_button = compat['button_new'](cancel_text)
-            cancel_button.connect("clicked", lambda btn: self._handle_cancel())
-            compat['box_pack_start'](button_box, cancel_button, False, False, 0)
 
         compat['box_pack_start'](self.main_container, button_box, False, False, 0)
 
