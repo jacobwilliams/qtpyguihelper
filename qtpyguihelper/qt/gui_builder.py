@@ -9,7 +9,7 @@ from typing import Dict, Any, Callable, Optional, List
 from qtpy.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QFormLayout, QGridLayout, QPushButton, QScrollArea, QMessageBox,
-    QTabWidget
+    QTabWidget, QLayout
 )
 from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
@@ -67,7 +67,7 @@ class GuiBuilder(QMainWindow):
         except Exception as e:
             self._show_error(f"Failed to load configuration: {str(e)}")
 
-    def _build_gui(self):
+    def _build_gui(self) -> None:
         """Build the GUI based on the loaded configuration."""
         if not self.config:
             return
@@ -132,7 +132,7 @@ class GuiBuilder(QMainWindow):
         # Connect field change signals
         self._connect_field_signals()
 
-    def _create_form_layout(self, parent_widget: QWidget):
+    def _create_form_layout(self, parent_widget: QWidget) -> QLayout:
         """Create the appropriate layout based on configuration."""
         if self.config.layout == "vertical":
             return QVBoxLayout(parent_widget)
@@ -152,7 +152,7 @@ class GuiBuilder(QMainWindow):
             # Default to vertical
             return QVBoxLayout(parent_widget)
 
-    def _add_fields_to_layout(self, layout, fields=None, layout_type=None):
+    def _add_fields_to_layout(self, layout: QLayout, fields: list | None = None, layout_type: str | None = None) -> None:
         """Add form fields to the layout."""
         if fields is None:
             fields = self.config.fields
@@ -195,7 +195,7 @@ class GuiBuilder(QMainWindow):
                     if layout_type == "vertical" and i < len(fields) - 1:
                         layout.addSpacing(10)
 
-    def _create_tab_page(self, tab_config) -> QWidget:
+    def _create_tab_page(self, tab_config: GuiConfig) -> QWidget:
         """Create a tab page with its content."""
         # Create scroll area for the tab
         scroll_area = QScrollArea()
@@ -255,7 +255,7 @@ class GuiBuilder(QMainWindow):
                         print(f"Warning: Could not load button icon '{button_config.icon}': {e}")  # Ignore icon loading errors
 
                 # Connect to custom callback handler
-                def make_button_handler(button_name):
+                def make_button_handler(button_name: str) -> Callable:
                     return lambda checked: self._on_custom_button_clicked(button_name)
 
                 custom_btn.clicked.connect(make_button_handler(button_config.name))
@@ -276,9 +276,10 @@ class GuiBuilder(QMainWindow):
 
         return button_layout
 
-    def _connect_field_signals(self):
+    def _connect_field_signals(self) -> None:
         """Connect field change signals to emit fieldChanged signal."""
-        def create_signal_handler(field_name, signal_type, widget=None):
+
+        def create_signal_handler(field_name: str, signal_type: str, widget: QWidget = None) -> Callable:
             """Create a proper signal handler for a specific field and signal type."""
             if signal_type == 'text':
                 return lambda text: self.fieldChanged.emit(field_name, text)
@@ -335,7 +336,7 @@ class GuiBuilder(QMainWindow):
                 print(f"Warning: Could not connect signal for field {field_name}: {e}")
                 # Continue with other widgets even if one fails
 
-    def _on_submit(self):
+    def _on_submit(self) -> None:
         """Handle submit button click."""
         # Validate required fields
         if not self._validate_required_fields():
@@ -354,7 +355,7 @@ class GuiBuilder(QMainWindow):
         # Emit signal
         self.formSubmitted.emit(form_data)
 
-    def _on_cancel(self):
+    def _on_cancel(self) -> None:
         """Handle cancel button click."""
         # Call custom callback if set
         if self.cancel_callback:
@@ -366,7 +367,7 @@ class GuiBuilder(QMainWindow):
         # Emit signal
         self.formCancelled.emit()
 
-    def _on_custom_button_clicked(self, button_name: str):
+    def _on_custom_button_clicked(self, button_name: str) -> None:
         """Handle custom button click."""
         # Call custom callback if registered
         if button_name in self.custom_button_callbacks:
@@ -406,7 +407,7 @@ class GuiBuilder(QMainWindow):
 
         return True
 
-    def _show_error(self, message: str):
+    def _show_error(self, message: str) -> None:
         """Show an error message dialog."""
         msg_box = QMessageBox(self)
         msg_box.setIcon(QMessageBox.Critical)
@@ -418,7 +419,7 @@ class GuiBuilder(QMainWindow):
         """Get all form data as a dictionary."""
         return self.widget_factory.get_all_values()
 
-    def set_form_data(self, data: Dict[str, Any]):
+    def set_form_data(self, data: Dict[str, Any]) -> None:
         """Set form data from a dictionary."""
         for field_name, value in data.items():
             self.widget_factory.set_widget_value(field_name, value)

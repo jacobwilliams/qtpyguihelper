@@ -90,19 +90,19 @@ class GtkGuiBuilder:
         elif config_dict:
             self.load_config_from_dict(config_dict)
 
-    def load_config_from_file(self, config_path: str):
+    def load_config_from_file(self, config_path: str) -> None:
         """Load configuration from a JSON file."""
         self.config = self.config_loader.load_from_file(config_path)
         if self.config:
             self._setup_ui()
 
-    def load_config_from_dict(self, config_dict: Dict[str, Any]):
+    def load_config_from_dict(self, config_dict: Dict[str, Any]) -> None:
         """Load configuration from a dictionary."""
         self.config = self.config_loader.load_from_dict(config_dict)
         if self.config:
             self._setup_ui()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
         """Set up the user interface based on the loaded configuration."""
         if not self.config:
             return
@@ -188,7 +188,7 @@ class GtkGuiBuilder:
         # Add scrolled window to main window
         compat['container_add'](self.window, scrolled_window)
 
-    def _build_form_interface(self):
+    def _build_form_interface(self) -> None:
         """Build a simple form interface."""
         if not self.config or not self.config.fields:
             return
@@ -209,7 +209,7 @@ class GtkGuiBuilder:
             self._add_field_to_grid(form_grid, field_config, row)
             row += 1
 
-    def _build_tabbed_interface(self):
+    def _build_tabbed_interface(self) -> None:
         """Build a tabbed interface."""
         if not self.config or not self.config.tabs:
             return
@@ -266,7 +266,7 @@ class GtkGuiBuilder:
                 self._add_field_to_grid(tab_grid, field_config, row)
                 row += 1
 
-    def _add_field_to_grid(self, grid: Gtk.Grid, field_config: FieldConfig, row: int):
+    def _add_field_to_grid(self, grid: Gtk.Grid, field_config: FieldConfig, row: int) -> None:
         """Add a field to the grid."""
         # Create label
         label = self.widget_factory.create_label(grid, field_config)
@@ -291,7 +291,7 @@ class GtkGuiBuilder:
             if field_config.tooltip:
                 widget.set_tooltip_text(field_config.tooltip)
 
-    def _add_custom_buttons(self):
+    def _add_custom_buttons(self) -> None:
         """Add custom buttons defined in the configuration."""
         if not self.config or not self.config.custom_buttons:
             return
@@ -312,7 +312,7 @@ class GtkGuiBuilder:
 
         compat['box_pack_start'](self.main_container, button_box, False, False, 0)
 
-    def _add_default_buttons(self):
+    def _add_default_buttons(self) -> None:
         """Add default Submit and Cancel buttons."""
         if not self.config:
             return
@@ -349,9 +349,10 @@ class GtkGuiBuilder:
 
         compat['box_pack_start'](self.main_container, button_box, False, False, 0)
 
-    def _setup_field_change_monitoring(self):
+    def _setup_field_change_monitoring(self) -> None:
         """Set up field change monitoring."""
-        def on_field_change(field_name: str, value: Any):
+
+        def on_field_change(field_name: str, value: Any) -> None:
             if field_name in self.field_change_callbacks:
                 for callback in self.field_change_callbacks[field_name]:
                     try:
@@ -363,7 +364,7 @@ class GtkGuiBuilder:
         for field_name in self.widget_factory.widgets.keys():
             self.widget_factory.add_change_callback(field_name, on_field_change)
 
-    def _handle_submit(self):
+    def _handle_submit(self) -> None:
         """Handle submit button click."""
         try:
             # Validate required fields
@@ -386,7 +387,7 @@ class GtkGuiBuilder:
         except Exception as e:
             self._show_error("Error", f"Error submitting form: {str(e)}")
 
-    def _handle_cancel(self):
+    def _handle_cancel(self) -> None:
         """Handle cancel button click."""
         if self.cancel_callback:
             try:
@@ -399,7 +400,7 @@ class GtkGuiBuilder:
                 compat = self._gtk_version_compat()
                 compat['main_quit']()
 
-    def _handle_custom_button_click(self, button_config: CustomButtonConfig):
+    def _handle_custom_button_click(self, button_config: CustomButtonConfig) -> None:
         """Handle custom button click."""
         if button_config.name in self.custom_button_callbacks:
             try:
@@ -452,7 +453,7 @@ class GtkGuiBuilder:
 
         return True
 
-    def _show_form_data(self, data: Dict[str, Any]):
+    def _show_form_data(self, data: Dict[str, Any]) -> None:
         """Show form data in a dialog (default submit behavior)."""
         try:
             # Create a dialog to display the data
@@ -503,7 +504,7 @@ class GtkGuiBuilder:
             print("Form Data:")
             print(json.dumps(data, indent=2, default=str))
 
-    def _show_error(self, title: str, message: str):
+    def _show_error(self, title: str, message: str) -> None:
         """Show an error dialog."""
         try:
             if GTK_MAJOR_VERSION == 4:
@@ -534,7 +535,7 @@ class GtkGuiBuilder:
             print(f"Error: {title}: {message}")
             print(f"Dialog creation failed: {e}")
 
-    def _show_info(self, title: str, message: str):
+    def _show_info(self, title: str, message: str) -> None:
         """Show an info dialog."""
         try:
             if GTK_MAJOR_VERSION == 4:
@@ -565,13 +566,13 @@ class GtkGuiBuilder:
             print(f"Info: {title}: {message}")
             print(f"Dialog creation failed: {e}")
 
-    def _on_window_close(self, widget, event):
+    def _on_window_close(self, widget: Gtk.Widget, event: Gdk.Event) -> bool:
         """Handle window close event."""
         compat = self._gtk_version_compat()
         compat['main_quit']()
         return False
 
-    def show(self):
+    def show(self) -> None:
         """Show the GUI window and bring it to the front (cross-platform)."""
         if self.window:
             # Get compatibility helpers
@@ -601,7 +602,7 @@ class GtkGuiBuilder:
                         pass  # AppleScript not available or failed
 
                     # Reset keep_above after a short delay
-                    def reset_macos_hints():
+                    def reset_macos_hints() -> bool:
                         if self.window:
                             self.window.set_keep_above(False)
                             self.window.set_urgency_hint(False)
@@ -619,7 +620,7 @@ class GtkGuiBuilder:
                     self.window.grab_focus()
 
                     # Reset urgency hint after a delay
-                    def reset_windows_hints():
+                    def reset_windows_hints() -> bool:
                         if self.window:
                             self.window.set_urgency_hint(False)
                         return False
@@ -641,7 +642,7 @@ class GtkGuiBuilder:
                         pass  # Some WMs don't support this
 
                     # Reset urgency hint after a delay
-                    def reset_linux_hints():
+                    def reset_linux_hints() -> bool:
                         if self.window:
                             self.window.set_urgency_hint(False)
                         return False
@@ -650,12 +651,12 @@ class GtkGuiBuilder:
                 except Exception:
                     pass  # Fall back to basic present() if anything fails
 
-    def hide(self):
+    def hide(self) -> None:
         """Hide the GUI window."""
         if self.window:
             self.window.hide()
 
-    def run(self):
+    def run(self) -> None:
         """Run the GUI application (start the main loop)."""
         if self.window:
             self.show()
@@ -732,11 +733,11 @@ class GtkGuiBuilder:
             self._show_error("Load Error", f"Failed to load data from dictionary: {str(e)}")
             return False
 
-    def set_form_data(self, data: Dict[str, Any]):
+    def set_form_data(self, data: Dict[str, Any]) -> None:
         """Set form data from a dictionary."""
         self.widget_factory.set_all_values(data)
 
-    def clear_form(self):
+    def clear_form(self) -> None:
         """Clear all form fields."""
         self.widget_factory.clear_widgets()
 
@@ -748,19 +749,19 @@ class GtkGuiBuilder:
         """Set the value of a specific field."""
         return self.widget_factory.set_widget_value(field_name, value)
 
-    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]):
+    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
         """Set a callback function to be called when the form is submitted."""
         self.submit_callback = callback
 
-    def set_cancel_callback(self, callback: Callable[[], None]):
+    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
         """Set a callback function to be called when the form is cancelled."""
         self.cancel_callback = callback
 
-    def set_custom_button_callback(self, action_id: str, callback: Callable[[CustomButtonConfig, Dict[str, Any]], None]):
+    def set_custom_button_callback(self, action_id: str, callback: Callable[[CustomButtonConfig, Dict[str, Any]], None]) -> None:
         """Set a callback function for a custom button."""
         self.custom_button_callbacks[action_id] = callback
 
-    def add_field_change_callback(self, field_name: str, callback: Callable[[str, Any], None]):
+    def add_field_change_callback(self, field_name: str, callback: Callable[[str, Any], None]) -> None:
         """Add a callback function to be called when a field value changes."""
         if field_name not in self.field_change_callbacks:
             self.field_change_callbacks[field_name] = []
@@ -790,7 +791,7 @@ class GtkGuiBuilder:
 
     # ...existing code...
 
-    def close(self):
+    def close(self) -> None:
         """Close the GUI application."""
         if self.window:
             compat = self._gtk_version_compat()
@@ -798,7 +799,7 @@ class GtkGuiBuilder:
             self.window.destroy()
             self.window = None
 
-    def __del__(self):
+    def __del__(self) -> None:
         """Cleanup when the object is destroyed."""
         if hasattr(self, 'window') and self.window:
             try:
@@ -806,18 +807,18 @@ class GtkGuiBuilder:
             except Exception:
                 pass  # Window might already be destroyed
 
-    def _run_gtk4_loop(self):
+    def _run_gtk4_loop(self) -> None:
         """Run GTK4 main loop using GLib.MainLoop."""
         if not hasattr(self, '_main_loop'):
             self._main_loop = GLib.MainLoop()
         self._main_loop.run()
 
-    def _quit_gtk4_loop(self):
+    def _quit_gtk4_loop(self) -> None:
         """Quit GTK4 main loop."""
         if hasattr(self, '_main_loop') and self._main_loop.is_running():
             self._main_loop.quit()
 
-    def _gtk_version_compat(self):
+    def _gtk_version_compat(self) -> Dict[str, Any]:
         """Return compatibility helpers for different GTK versions."""
         if GTK_MAJOR_VERSION == 4:
             return {
@@ -865,7 +866,7 @@ class GtkGuiBuilder:
         """Return the backend name with version info."""
         return f"gtk{GTK_MAJOR_VERSION}" if GTK_MAJOR_VERSION else "gtk"
 
-    def _detect_os_theme(self):
+    def _detect_os_theme(self) -> None:
         """Detect if the OS is using dark mode and configure GTK accordingly."""
         try:
             import platform
@@ -881,7 +882,7 @@ class GtkGuiBuilder:
                 try:
                     import subprocess
                     result = subprocess.run(['defaults', 'read', '-g', 'AppleInterfaceStyle'],
-                                          capture_output=True, text=True, timeout=2)
+                                            capture_output=True, text=True, timeout=2)
                     dark_mode = result.stdout.strip() == 'Dark'
                 except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
                     pass
@@ -893,7 +894,7 @@ class GtkGuiBuilder:
                     import subprocess
                     # Try gsettings first (GNOME/GTK)
                     result = subprocess.run(['gsettings', 'get', 'org.gnome.desktop.interface', 'gtk-theme'],
-                                          capture_output=True, text=True, timeout=2)
+                                            capture_output=True, text=True, timeout=2)
                     theme_name = result.stdout.strip().strip("'\"").lower()
                     dark_mode = 'dark' in theme_name or 'adwaita-dark' in theme_name
 
@@ -932,7 +933,7 @@ class GtkGuiBuilder:
             # Fallback to default theme
             pass
 
-    def _apply_dark_theme(self):
+    def _apply_dark_theme(self) -> None:
         """Apply dark theme to GTK application."""
         try:
             if GTK_MAJOR_VERSION == 4:
@@ -981,7 +982,7 @@ class GtkGuiBuilder:
         except Exception as e:
             print(f"Warning: Could not apply dark theme: {e}")
 
-    def _apply_dark_css_styling(self):
+    def _apply_dark_css_styling(self) -> None:
         """Apply dark styling via CSS for GTK3 when theme switching doesn't work."""
         try:
             if GTK_MAJOR_VERSION == 3:
@@ -1181,7 +1182,7 @@ class GtkGuiBuilder:
         except Exception as e:
             print(f"Warning: Could not apply dark CSS styling: {e}")
 
-    def _apply_light_theme(self):
+    def _apply_light_theme(self) -> None:
         """Apply light theme to GTK application."""
         try:
             if GTK_MAJOR_VERSION >= 3:

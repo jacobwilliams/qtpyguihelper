@@ -12,12 +12,12 @@ from qtpy.QtWidgets import (
     QGridLayout, QFrame, QGroupBox, QSizePolicy
 )
 from qtpy.QtCore import Qt, QDate, QTime, QDateTime, Signal
-from qtpy.QtGui import QColor, QPixmap, QIcon
+from qtpy.QtGui import QColor, QPixmap, QIcon, QDoubleValidator
 
 from ..config_loader import FieldConfig
 
 
-def set_nested_value(data: Dict[str, Any], key_path: str, value: Any):
+def set_nested_value(data: Dict[str, Any], key_path: str, value: Any) -> None:
     """
     Set a value in a nested dictionary using dot notation.
 
@@ -102,7 +102,7 @@ class CustomColorButton(QPushButton):
         self.clicked.connect(self._choose_color)
         self._update_button_style()
 
-    def _choose_color(self):
+    def _choose_color(self) -> None:
         """Open color dialog and update button."""
         color = QColorDialog.getColor(self.current_color, self, "Choose Color")
         if color.isValid():
@@ -110,7 +110,7 @@ class CustomColorButton(QPushButton):
             self._update_button_style()
             self.colorChanged.emit(color)
 
-    def _update_button_style(self):
+    def _update_button_style(self) -> None:
         """Update button appearance to show current color."""
         rgb = self.current_color.rgb()
         self.setStyleSheet(f"""
@@ -129,7 +129,7 @@ class CustomColorButton(QPushButton):
         """Get the current selected color."""
         return self.current_color
 
-    def set_color(self, color: QColor):
+    def set_color(self, color: QColor) -> None:
         """Set the current color."""
         self.current_color = color
         self._update_button_style()
@@ -147,7 +147,7 @@ class CustomFileButton(QPushButton):
         self.setText("Choose File...")
         self.clicked.connect(self._choose_file)
 
-    def _choose_file(self):
+    def _choose_file(self) -> None:
         """Open file dialog and update button."""
         if self.file_mode == "save":
             file_path, _ = QFileDialog.getSaveFileName(self, "Save File")
@@ -165,7 +165,7 @@ class CustomFileButton(QPushButton):
         """Get the selected file path."""
         return self.selected_file
 
-    def set_file_path(self, path: str):
+    def set_file_path(self, path: str) -> None:
         """Set the file path."""
         self.selected_file = path
         if path:
@@ -183,7 +183,7 @@ class WidgetFactory:
         self.labels: Dict[str, QLabel] = {}
         self.radio_groups: Dict[str, QButtonGroup] = {}
 
-    def _set_expanding_size_policy(self, widget: QWidget):
+    def _set_expanding_size_policy(self, widget: QWidget) -> None:
         """Set size policy to make widget expand horizontally to fill available space."""
         size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         widget.setSizePolicy(size_policy)
@@ -319,7 +319,7 @@ class WidgetFactory:
 
         return widget
 
-    def _create_float_field(self, field_config: FieldConfig):
+    def _create_float_field(self, field_config: FieldConfig) -> QWidget:
         """Create a float input field with optional format enforcement."""
 
         # Check if we need scientific notation or special formatting
@@ -381,7 +381,6 @@ class WidgetFactory:
 
     def _create_scientific_float_field(self, field_config: FieldConfig) -> QLineEdit:
         """Create a float input field using QLineEdit for scientific notation and special formatting."""
-        from qtpy.QtGui import QDoubleValidator
 
         widget = QLineEdit()
 
@@ -722,11 +721,9 @@ class WidgetFactory:
                 values[field_name] = field_value
         return values
 
-    def clear_all_widgets(self):
+    def clear_all_widgets(self) -> None:
         """Clear all widget values."""
-        for field_name in self.widgets.keys():
-            widget = self.widgets[field_name]
-
+        for field_name, widget in self.widgets.items():
             if isinstance(widget, QLineEdit):
                 widget.clear()
             elif isinstance(widget, QTextEdit):
