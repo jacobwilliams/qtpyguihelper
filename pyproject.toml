@@ -110,7 +110,7 @@ include = ["qtpyguihelper*", "examples*"]
 exclude = ["tests*", "docs*"]
 
 [tool.setuptools.package-data]
-qtpyguihelper = ["*.py"]
+qtpyguihelper = ["*.py", "schema/*.json"]
 examples = ["*.json", "*.py", "*.md"]
 
 # Black configuration
