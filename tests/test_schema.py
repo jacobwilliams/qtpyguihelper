@@ -41,10 +41,10 @@ for json_file in json_files:
             config = json.load(f)
 
         validate(instance=config, schema=schema)
-        print(f"✓ {filename}")
+        print(f"✅ {filename}")
         valid_count += 1
     except ValidationError as e:
-        print(f"✗ {filename}")
+        print(f"❌ {filename}")
         print(f"  Error: {e.message}")
         if e.json_path:
             print(f"  Path: {e.json_path}")

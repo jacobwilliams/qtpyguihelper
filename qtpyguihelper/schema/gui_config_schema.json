@@ -4,10 +4,12 @@
   "title": "GUI Configuration Schema",
   "description": "Schema for validating GUI configuration files for qtpyguihelper",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "window": {
       "type": "object",
       "description": "Configuration for the main window",
+      "additionalProperties": false,
       "properties": {
         "title": {
           "type": "string",
@@ -112,6 +114,7 @@
       "type": "object",
       "description": "Configuration for a single form field",
       "required": ["name", "type", "label"],
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -258,6 +261,7 @@
       "type": "object",
       "description": "Configuration for a single tab",
       "required": ["name", "title", "fields"],
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -306,6 +310,7 @@
       "type": "object",
       "description": "Configuration for a custom button",
       "required": ["name", "label"],
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
