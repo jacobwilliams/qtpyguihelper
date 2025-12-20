@@ -7,6 +7,13 @@ import os
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 
+# Optional JSON Schema validation
+try:
+    from jsonschema import validate, ValidationError as JsonSchemaValidationError
+    HAS_JSONSCHEMA = True
+except ImportError:
+    HAS_JSONSCHEMA = False
+
 
 @dataclass
 class FieldConfig:
@@ -87,6 +94,21 @@ class ConfigLoader:
 
     def __init__(self):
         self.config: Optional[GuiConfig] = None
+        self._schema_cache: Optional[Dict[str, Any]] = None
+
+    def _load_schema(self) -> Dict[str, Any]:
+        """Load the JSON schema from the package."""
+        if self._schema_cache is not None:
+            return self._schema_cache
+
+        # Get the directory where this module is located
+        module_dir = os.path.dirname(os.path.abspath(__file__))
+        schema_path = os.path.join(module_dir, 'schema', 'gui_config_schema.json')
+
+        with open(schema_path, 'r', encoding='utf-8') as f:
+            self._schema_cache = json.load(f)
+
+        return self._schema_cache
 
     def load_from_file(self, config_path: str) -> GuiConfig:
         """Load configuration from a JSON file."""
@@ -214,6 +236,20 @@ class ConfigLoader:
 
     def _validate_config(self, config_data: Dict[str, Any]) -> None:
         """Validate the configuration data."""
+
+        # Validate against JSON schema if jsonschema is available
+        if HAS_JSONSCHEMA:
+            try:
+                schema = self._load_schema()
+                validate(instance=config_data, schema=schema)
+            except JsonSchemaValidationError as e:
+                raise ValueError(f"Schema validation failed: {e.message}") from e
+            except Exception as e:
+                # If schema loading or validation fails, continue with manual validation
+                pass
+
+        # Manual validation (note: there's some additional logic here that that JSON Schema can't easily express.
+
         # Initialize field names set for later validation
         field_names = set()
 
