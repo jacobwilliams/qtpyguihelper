@@ -122,24 +122,17 @@ class ConfigLoader:
 
     def load_from_dict(self, config_data: Dict[str, Any]) -> GuiConfig:
         """Load configuration from a dictionary."""
+        # Validate structure with JSON schema
         self._validate_config(config_data)
 
-        # Create a temporary GuiConfig to validate with ConfigValidator
-        try:
-            temp_config = self._create_gui_config_from_dict(config_data)
+        # Parse into GuiConfig object
+        config = self._create_gui_config_from_dict(config_data)
 
-            # Import ConfigValidator here to avoid circular imports
-            from .config_validator import ConfigValidator
+        # Validate semantics with ConfigValidator
+        from .config_validator import ConfigValidator
+        ConfigValidator.validate_and_raise(config)
 
-            # Validate using the comprehensive validator
-            ConfigValidator.validate_and_raise(temp_config)
-
-            return temp_config
-
-        except Exception as e:
-            # If ConfigValidator fails, fall back to basic validation
-            print(f"Warning: Advanced validation failed: {e}")
-            return self._create_gui_config_from_dict(config_data)
+        return config
 
     def _create_gui_config_from_dict(self, config_data: Dict[str, Any]) -> GuiConfig:
         """Create GuiConfig object from dictionary (without validation)."""
@@ -235,8 +228,7 @@ class ConfigLoader:
         return config
 
     def _validate_config(self, config_data: Dict[str, Any]) -> None:
-        """Validate the configuration data."""
-
+        """Validate the configuration data using JSON schema."""
         # Validate against JSON schema if jsonschema is available
         if HAS_JSONSCHEMA:
             try:
@@ -244,147 +236,6 @@ class ConfigLoader:
                 validate(instance=config_data, schema=schema)
             except JsonSchemaValidationError as e:
                 raise ValueError(f"Schema validation failed: {e.message}") from e
-            except Exception as e:
-                # If schema loading or validation fails, continue with manual validation
-                pass
-
-        # Manual validation (note: there's some additional logic here that that JSON Schema can't easily express.
-
-        # Initialize field names set for later validation
-        field_names = set()
-
-        # First, collect all field names from the main fields list if it exists
-        if "fields" in config_data and isinstance(config_data["fields"], list):
-            fields = config_data["fields"]
-
-            # Validate each field and collect names
-            for i, field in enumerate(fields):
-                if not isinstance(field, dict):
-                    raise ValueError(f"Field {i} must be a dictionary")
-
-                # Check required field keys
-                required_keys = ["name", "type", "label"]
-                for key in required_keys:
-                    if key not in field:
-                        raise ValueError(f"Field {i} missing required key: {key}")
-
-                # Check field name uniqueness
-                field_name = field["name"]
-                if field_name in field_names:
-                    raise ValueError(f"Duplicate field name: {field_name}")
-                field_names.add(field_name)
-
-                # Validate field type
-                field_type = field["type"]
-                if field_type not in self.SUPPORTED_FIELD_TYPES:
-                    raise ValueError(f"Unsupported field type: {field_type}")
-
-                # Validate options for select/radio/combo fields
-                if field_type in ["select", "radio", "combo"]:
-                    if "options" not in field or not field["options"]:
-                        # For combo fields, also check for "choices" as an alternative
-                        if field_type == "combo" and "choices" in field and field["choices"]:
-                            pass  # choices is acceptable for combo fields
-                        else:
-                            raise ValueError(f"Field {field_name} of type {field_type} must have 'options' or 'choices'")
-
-                # Validate numeric constraints
-                if field_type in ["number", "range"]:
-                    min_val = field.get("min_value")
-                    max_val = field.get("max_value")
-                    if min_val is not None and max_val is not None and min_val > max_val:
-                        raise ValueError(f"Field {field_name}: min_value cannot be greater than max_value")
-
-        # Check if using tabs
-        use_tabs = config_data.get("use_tabs", False)
-        has_tabs = "tabs" in config_data and config_data["tabs"]
-
-        if use_tabs or has_tabs:
-            # When using tabs or tabs are present, validate them
-            if "tabs" not in config_data:
-                raise ValueError("Configuration with use_tabs=True must contain 'tabs' key")
-
-            tabs = config_data["tabs"]
-            if not isinstance(tabs, list) or len(tabs) == 0:
-                raise ValueError("'tabs' must be a non-empty list when use_tabs=True")
-
-            # Track tab names to check for duplicates
-            tab_names = set()
-
-            # Validate each tab and its fields
-            for i, tab in enumerate(tabs):
-                if not isinstance(tab, dict):
-                    raise ValueError(f"Tab {i} must be a dictionary")
-
-                required_tab_keys = ["name", "title", "fields"]
-                for key in required_tab_keys:
-                    if key not in tab:
-                        raise ValueError(f"Tab {i} missing required key: {key}")
-
-                # Check for duplicate tab names
-                tab_name = tab["name"]
-                if tab_name in tab_names:
-                    raise ValueError(f"Duplicate tab name: {tab_name}")
-                tab_names.add(tab_name)
-
-                # Validate fields within this tab
-                tab_fields = tab["fields"]
-                if not isinstance(tab_fields, list):
-                    raise ValueError(f"Tab {i} 'fields' must be a list")
-
-                # Check if we have a main fields list (field references) or inline field definitions
-                has_main_fields = "fields" in config_data and isinstance(config_data["fields"], list)
-
-                for j, field in enumerate(tab_fields):
-                    if has_main_fields:
-                        # Fields should be strings referencing the main fields list
-                        if not isinstance(field, str):
-                            raise ValueError(f"Tab {i}, field {j} must be a string (field name) when main fields list exists")
-                        # Check that the referenced field actually exists
-                        if field not in field_names:
-                            raise ValueError(f"Tab '{tab['name']}' references unknown field '{field}'")
-                    else:
-                        # Fields should be dictionaries (inline field definitions)
-                        if not isinstance(field, dict):
-                            raise ValueError(f"Tab {i}, field {j} must be a dictionary")
-
-                        # Check required field keys
-                        required_keys = ["name", "type", "label"]
-                        for key in required_keys:
-                            if key not in field:
-                                raise ValueError(f"Tab {i}, field {j} missing required key: {key}")
-        else:
-            # Traditional layout - fields at root level
-            if "fields" not in config_data:
-                raise ValueError("Configuration must contain 'fields' key")
-
-        # Validate layout
-        layout = config_data.get("layout", "vertical")
-        if layout not in self.SUPPORTED_LAYOUTS:
-            raise ValueError(f"Unsupported layout: {layout}")
-
-        # Validate custom buttons if present
-        custom_buttons_data = config_data.get("custom_buttons", [])
-        if custom_buttons_data:
-            if not isinstance(custom_buttons_data, list):
-                raise ValueError("'custom_buttons' must be a list")
-
-            button_names = set()
-            for i, button in enumerate(custom_buttons_data):
-                if not isinstance(button, dict):
-                    raise ValueError(f"Custom button {i} must be a dictionary")
-
-                # Check required button keys
-                required_button_keys = ["name", "label"]
-                for key in required_button_keys:
-                    if key not in button:
-                        raise ValueError(f"Custom button {i} missing required key: {key}")
-
-                # Check button name uniqueness
-                button_name = button["name"]
-                if button_name in button_names:
-                    raise ValueError(f"Duplicate custom button name: {button_name}")
-                button_names.add(button_name)
 
     def get_field_by_name(self, name: str) -> Optional[FieldConfig]:
         """Get a field configuration by name."""

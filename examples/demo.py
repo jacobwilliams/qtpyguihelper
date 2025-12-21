@@ -1143,7 +1143,7 @@ def demo_backend_comparison():
         print("Invalid choice. Available options: qt, wx, tk, gtk, all")
 
 
-def demo_unified_interface():
+def demo_unified_interface() -> None:
     """Demo the unified GuiBuilder interface that auto-selects backend."""
     print("Starting Unified Interface Demo...")
 

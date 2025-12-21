@@ -23,25 +23,25 @@ Usage:
 # Don't import GUI backends immediately - use lazy loading instead
 # This prevents conflicts between different GUI frameworks
 
-def _lazy_import_qt():
+def _lazy_import_qt() -> tuple:
     """Lazy import Qt backend."""
     from .qt.gui_builder import GuiBuilder as QtGuiBuilder
     from .qt.widget_factory import WidgetFactory
     return QtGuiBuilder, WidgetFactory
 
-def _lazy_import_wx():
+def _lazy_import_wx() -> tuple:
     """Lazy import wxPython backend."""
     from .wx.wx_gui_builder import WxGuiBuilder
     from .wx.wx_widget_factory import WxWidgetFactory
     return WxGuiBuilder, WxWidgetFactory
 
-def _lazy_import_tk():
+def _lazy_import_tk() -> tuple:
     """Lazy import tkinter backend."""
     from .tk.tk_gui_builder import TkGuiBuilder
     from .tk.tk_widget_factory import TkWidgetFactory
     return TkGuiBuilder, TkWidgetFactory
 
-def _lazy_import_gtk():
+def _lazy_import_gtk() -> tuple:
     """Lazy import GTK backend."""
     from .gtk.gtk_gui_builder import GtkGuiBuilder
     from .gtk.gtk_widget_factory import GtkWidgetFactory
@@ -53,8 +53,7 @@ from .backend import (
     get_backend_info, is_backend_available
 )
 from .exceptions import (
-    BackendError, ConfigurationError, WidgetError,
-    ValidationError, FileOperationError, UnsupportedOperationError
+    BackendError, ConfigurationError
 )
 from typing import Dict, Any, Optional, Union
 
@@ -140,14 +139,14 @@ class GuiBuilder:
         """Get the underlying builder instance."""
         return self._builder
 
-    def show(self):
+    def show(self) -> None:
         """Show the GUI window."""
         if hasattr(self._builder, 'show'):
             self._builder.show()
         elif hasattr(self._builder, 'Show'):
             self._builder.Show()
 
-    def hide(self):
+    def hide(self) -> None:
         """Hide the GUI window."""
         if hasattr(self._builder, 'hide'):
             self._builder.hide()
@@ -158,11 +157,11 @@ class GuiBuilder:
         """Get all form data as a dictionary."""
         return self._builder.get_form_data()
 
-    def set_form_data(self, data: Dict[str, Any]):
+    def set_form_data(self, data: Dict[str, Any]) -> None:
         """Set form data from a dictionary."""
         self._builder.set_form_data(data)
 
-    def clear_form(self):
+    def clear_form(self) -> None:
         """Clear all form fields."""
         self._builder.clear_form()
 
@@ -175,9 +174,6 @@ class GuiBuilder:
 
         Returns:
             The current value of the field, or None if field doesn't exist
-
-        Raises:
-            WidgetError: If the field doesn't exist or can't be accessed
         """
         return self._builder.get_field_value(field_name)
 
@@ -191,37 +187,34 @@ class GuiBuilder:
 
         Returns:
             True if the value was set successfully, False otherwise
-
-        Raises:
-            WidgetError: If the field doesn't exist or value is invalid
         """
         return self._builder.set_field_value(field_name, value)
 
-    def set_submit_callback(self, callback):
+    def set_submit_callback(self, callback) -> None:
         """Set a callback function to be called when the form is submitted."""
         self._builder.set_submit_callback(callback)
 
-    def set_cancel_callback(self, callback):
+    def set_cancel_callback(self, callback) -> None:
         """Set a callback function to be called when the form is cancelled."""
         self._builder.set_cancel_callback(callback)
 
-    def set_custom_button_callback(self, button_name: str, callback):
+    def set_custom_button_callback(self, button_name: str, callback) -> None:
         """Set a callback function to be called when a custom button is clicked."""
         self._builder.set_custom_button_callback(button_name, callback)
 
-    def remove_custom_button_callback(self, button_name: str):
+    def remove_custom_button_callback(self, button_name: str) -> None:
         """Remove a custom button callback."""
         self._builder.remove_custom_button_callback(button_name)
 
-    def get_custom_button_names(self):
+    def get_custom_button_names(self) -> list[str]:
         """Get a list of all custom button names from the configuration."""
         return self._builder.get_custom_button_names()
 
-    def enable_field(self, field_name: str, enabled: bool = True):
+    def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""
         self._builder.enable_field(field_name, enabled)
 
-    def show_field(self, field_name: str, visible: bool = True):
+    def show_field(self, field_name: str, visible: bool = True) -> None:
         """Show or hide a specific field."""
         self._builder.show_field(field_name, visible)
 
@@ -237,7 +230,7 @@ class GuiBuilder:
         """Save current form data to a JSON file."""
         return self._builder.save_data_to_file(data_file_path, include_empty)
 
-    def run(self):
+    def run(self) -> None:
         """Run the GUI application (start the main loop)."""
         if hasattr(self._builder, 'run'):
             self._builder.run()
@@ -247,7 +240,7 @@ class GuiBuilder:
             if hasattr(self._builder, 'mainloop'):
                 self._builder.mainloop()
 
-    def close(self):
+    def close(self) -> None:
         """Close the GUI application."""
         if hasattr(self._builder, 'close'):
             self._builder.close()
@@ -255,7 +248,7 @@ class GuiBuilder:
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,
                       config_dict: Optional[Dict[str, Any]] = None,
-                      backend: Optional[str] = None):
+                      backend: Optional[str] = None) -> 'GuiBuilder':
         """
         Create and run a GUI application with automatic backend detection.
 
@@ -300,13 +293,12 @@ __all__ = [
     "ConfigLoader", "WidgetFactory", "WxWidgetFactory", "TkWidgetFactory", "GtkWidgetFactory", "CustomButtonConfig",
     "get_backend", "set_backend", "get_available_backends",
     "get_backend_info", "is_backend_available",
-    "BackendError", "ConfigurationError", "WidgetError", "ValidationError",
-    "FileOperationError", "UnsupportedOperationError",
+    "BackendError", "ConfigurationError",
     "ConfigValidator"
 ]
 
 # Make backend-specific classes available for direct import
-def __getattr__(name):
+def __getattr__(name: str) -> Any:
     """Lazy import backend classes when accessed directly."""
     if name == 'QtGuiBuilder':
         QtGuiBuilder, _ = _lazy_import_qt()
