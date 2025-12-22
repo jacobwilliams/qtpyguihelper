@@ -20,8 +20,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -110,7 +108,7 @@ include = ["qtpyguihelper*", "examples*"]
 exclude = ["tests*", "docs*"]
 
 [tool.setuptools.package-data]
-qtpyguihelper = ["*.py"]
+qtpyguihelper = ["*.py", "schema/*.json"]
 examples = ["*.json", "*.py", "*.md"]
 
 # Black configuration

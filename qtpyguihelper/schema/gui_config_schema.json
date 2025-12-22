@@ -1,0 +1,345 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/yourusername/qtpyguihelper/schemas/gui-config.json",
+  "title": "GUI Configuration Schema",
+  "description": "Schema for validating GUI configuration files for qtpyguihelper",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "window": {
+      "type": "object",
+      "description": "Configuration for the main window",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Window title",
+          "default": "GUI Application"
+        },
+        "width": {
+          "type": "integer",
+          "description": "Window width in pixels",
+          "minimum": 1,
+          "default": 800
+        },
+        "height": {
+          "type": "integer",
+          "description": "Window height in pixels",
+          "minimum": 1,
+          "default": 600
+        },
+        "resizable": {
+          "type": "boolean",
+          "description": "Whether the window can be resized",
+          "default": true
+        },
+        "icon": {
+          "type": "string",
+          "description": "Path to window icon file"
+        }
+      }
+    },
+    "fields": {
+      "type": "array",
+      "description": "List of form fields",
+      "items": {
+        "$ref": "#/$defs/field"
+      },
+      "minItems": 0
+    },
+    "tabs": {
+      "type": "array",
+      "description": "List of tabs for tabbed interface",
+      "items": {
+        "$ref": "#/$defs/tab"
+      },
+      "minItems": 1
+    },
+    "layout": {
+      "type": "string",
+      "description": "Layout style for fields",
+      "enum": ["vertical", "horizontal", "grid", "form"],
+      "default": "vertical"
+    },
+    "submit_button": {
+      "type": "boolean",
+      "description": "Whether to show submit button",
+      "default": true
+    },
+    "submit_label": {
+      "type": "string",
+      "description": "Label for submit button",
+      "default": "Submit"
+    },
+    "cancel_button": {
+      "type": "boolean",
+      "description": "Whether to show cancel button",
+      "default": true
+    },
+    "cancel_label": {
+      "type": "string",
+      "description": "Label for cancel button",
+      "default": "Cancel"
+    },
+    "use_tabs": {
+      "type": "boolean",
+      "description": "Whether to use tabbed interface",
+      "default": false
+    },
+    "custom_buttons": {
+      "type": "array",
+      "description": "List of custom buttons",
+      "items": {
+        "$ref": "#/$defs/customButton"
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "description": "Configuration with fields at root level",
+      "required": ["fields"]
+    },
+    {
+      "description": "Configuration with tabs",
+      "required": ["tabs"],
+      "properties": {
+        "use_tabs": {
+          "const": true
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "field": {
+      "type": "object",
+      "description": "Configuration for a single form field",
+      "required": ["name", "type", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique field identifier",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "description": "Field type",
+          "enum": [
+            "text",
+            "number",
+            "int",
+            "float",
+            "email",
+            "password",
+            "textarea",
+            "checkbox",
+            "check",
+            "radio",
+            "select",
+            "combo",
+            "date",
+            "time",
+            "datetime",
+            "file",
+            "color",
+            "range",
+            "spin",
+            "url"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "description": "Display label for the field",
+          "minLength": 1
+        },
+        "default_value": {
+          "description": "Default value for the field"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the field is required",
+          "default": false
+        },
+        "min_value": {
+          "type": "number",
+          "description": "Minimum value for numeric fields"
+        },
+        "max_value": {
+          "type": "number",
+          "description": "Maximum value for numeric fields"
+        },
+        "options": {
+          "type": "array",
+          "description": "Options for select, radio, or combo fields",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "choices": {
+          "type": "array",
+          "description": "Alternative to options for combo/select fields",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text for input fields"
+        },
+        "tooltip": {
+          "type": "string",
+          "description": "Tooltip text for the field"
+        },
+        "width": {
+          "type": "integer",
+          "description": "Field width in pixels",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "description": "Field height in pixels",
+          "minimum": 1
+        },
+        "format_string": {
+          "type": "string",
+          "description": "Python format string for float fields (e.g., '.2f', ',.2f', '.2e', '.1%')",
+          "pattern": "^,?\\.?[0-9]*[eEfFgGn%]$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": ["select", "radio"]
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": ["options"]
+              },
+              {
+                "required": ["choices"]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "combo"
+              }
+            }
+          },
+          "then": {
+            "description": "Combo fields should have options or choices (optional)"
+          }
+        },
+        {
+          "if": {
+            "required": ["min_value", "max_value"]
+          },
+          "then": {
+            "properties": {
+              "min_value": {
+                "type": "number"
+              },
+              "max_value": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "tab": {
+      "type": "object",
+      "description": "Configuration for a single tab",
+      "required": ["name", "title", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique tab identifier",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "description": "Display title for the tab",
+          "minLength": 1
+        },
+        "fields": {
+          "type": "array",
+          "description": "List of fields in this tab (either field names or inline field objects)",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Reference to a field name in the main fields list"
+              },
+              {
+                "$ref": "#/$defs/field"
+              }
+            ]
+          },
+          "minItems": 1
+        },
+        "layout": {
+          "type": "string",
+          "description": "Layout style for fields in this tab",
+          "enum": ["vertical", "horizontal", "grid", "form"],
+          "default": "vertical"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the tab is enabled",
+          "default": true
+        },
+        "tooltip": {
+          "type": "string",
+          "description": "Tooltip text for the tab"
+        }
+      }
+    },
+    "customButton": {
+      "type": "object",
+      "description": "Configuration for a custom button",
+      "required": ["name", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique button identifier",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "description": "Display label for the button",
+          "minLength": 1
+        },
+        "tooltip": {
+          "type": "string",
+          "description": "Tooltip text for the button"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the button is enabled",
+          "default": true
+        },
+        "icon": {
+          "type": "string",
+          "description": "Path to button icon file"
+        },
+        "style": {
+          "type": "string",
+          "description": "CSS style string for the button"
+        }
+      }
+    }
+  }
+}

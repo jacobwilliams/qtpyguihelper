@@ -9,6 +9,9 @@ set -e
 # Optionally show commands as they execute
 # set -x
 
+# validate JSON schema
+python tests/test_schema.py
+
 python -m pytest tests/test_backend_comprehensive.py -v
 python -m pytest tests/test_backend_integration.py -v
 python -m pytest tests/test_comprehensive.py -v
