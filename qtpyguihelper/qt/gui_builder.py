@@ -3,6 +3,8 @@ Main GUI builder class that creates Qt applications from JSON configuration.
 Compatible with both PySide6 and PyQt6 via qtpy.
 """
 
+from __future__ import annotations
+
 import json
 import sys
 from typing import Dict, Any, Callable, Optional, List
