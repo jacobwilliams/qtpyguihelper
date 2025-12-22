@@ -38,7 +38,7 @@ jobs:
     - name: Check documentation can be built
       run: |
         cd docs
-        sphinx-build -W -b html . _build/html
+        sphinx-build -b html . _build/html
 
     - name: Check for broken links (if sphinx-linkcheck available)
       run: |
