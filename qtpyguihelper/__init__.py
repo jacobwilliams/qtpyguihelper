@@ -10,14 +10,23 @@ Backend Support:
 - tkinter backend (built into Python)
 
 Usage:
-    # Using the unified interface (auto-detects backend)
+    # Simplest approach - using the unified interface
     from qtpyguihelper import GuiBuilder
-    app = GuiBuilder.create_and_run('config.json')
+    GuiBuilder.create_and_run('config.json')
 
     # Explicit backend selection
     from qtpyguihelper import set_backend, GuiBuilder
-    set_backend('tk')  # or 'qt' or 'wx'
-    app = GuiBuilder.create_and_run('config.json')
+    set_backend('tk')  # or 'qt' or 'wx' or 'gtk'
+    GuiBuilder.create_and_run('config.json')
+
+    # Advanced: Manual application lifecycle (Qt example)
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication
+    import sys
+    app = QApplication(sys.argv)
+    gui = GuiBuilder('config.json')
+    gui.show()
+    app.exec()
 """
 
 from typing import Callable, Any, Dict, Optional
@@ -73,22 +82,39 @@ class GuiBuilder:
         builder: The underlying backend-specific builder instance
 
     Example:
-        Basic usage with automatic backend detection:
+        Simplest usage - create and run immediately:
 
         >>> from qtpyguihelper import GuiBuilder
-        >>> gui = GuiBuilder('config.json')
-        >>> gui.show()
+        >>> GuiBuilder.create_and_run('config.json')
 
         Force a specific backend:
 
-        >>> gui = GuiBuilder('config.json', backend='gtk')
+        >>> from qtpyguihelper import set_backend, GuiBuilder
+        >>> set_backend('tk')
+        >>> GuiBuilder.create_and_run('config.json')
+
+        For Qt backend, create QApplication first:
+
+        >>> from qtpyguihelper import GuiBuilder
+        >>> from qtpy.QtWidgets import QApplication
+        >>> import sys
+        >>> app = QApplication(sys.argv)
+        >>> gui = GuiBuilder('config.json')
+        >>> gui.show()
+        >>> app.exec()
+
+        For tkinter backend:
+
+        >>> from qtpyguihelper import set_backend, GuiBuilder
+        >>> set_backend('tk')
+        >>> gui = GuiBuilder('config.json')
+        >>> gui.show()
         >>> gui.run()
 
         Use with configuration dictionary:
 
         >>> config = {"window": {"title": "My App"}, "fields": [...]}
-        >>> gui = GuiBuilder(config_dict=config)
-        >>> data = gui.get_form_data()
+        >>> GuiBuilder.create_and_run(config_dict=config)
     """
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, backend: Optional[str] = None):

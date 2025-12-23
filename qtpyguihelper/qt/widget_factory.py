@@ -537,18 +537,39 @@ class WidgetFactory:
 
         return widget
 
-    def _create_range_field(self, field_config: FieldConfig) -> QSlider:
-        """Create a range (slider) field."""
-        widget = QSlider(Qt.Horizontal)
+    def _create_range_field(self, field_config: FieldConfig) -> QWidget:
+        """Create a range (slider) field with value display."""
+        # Create container widget to hold slider and value label
+        container = QWidget()
+        layout = QHBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        # Create the slider
+        slider = QSlider(Qt.Horizontal)
 
         if field_config.min_value is not None:
-            widget.setMinimum(int(field_config.min_value))
+            slider.setMinimum(int(field_config.min_value))
         if field_config.max_value is not None:
-            widget.setMaximum(int(field_config.max_value))
+            slider.setMaximum(int(field_config.max_value))
         if field_config.default_value is not None:
-            widget.setValue(int(field_config.default_value))
+            slider.setValue(int(field_config.default_value))
 
-        return widget
+        # Create value label
+        value_label = QLabel(str(slider.value()))
+        value_label.setMinimumWidth(50)
+        value_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+
+        # Update label when slider value changes
+        slider.valueChanged.connect(lambda v: value_label.setText(str(v)))
+
+        # Add slider and label to layout
+        layout.addWidget(slider, 1)  # Slider takes most space
+        layout.addWidget(value_label, 0)  # Label has fixed width
+
+        # Store the slider as the main widget for value retrieval
+        container.setProperty("slider_widget", slider)
+
+        return container
 
     def _create_file_field(self, field_config: FieldConfig) -> CustomFileButton:
         """Create a file selection field."""
@@ -629,6 +650,10 @@ class WidgetFactory:
             return widget.dateTime().toString(Qt.ISODate)
         elif isinstance(widget, QSlider):
             return widget.value()
+        elif isinstance(widget, QWidget) and widget.property("slider_widget"):
+            # Handle slider container widget
+            slider = widget.property("slider_widget")
+            return slider.value()
         elif isinstance(widget, CustomFileButton):
             return widget.get_file_path()
         elif isinstance(widget, CustomColorButton):
@@ -690,6 +715,10 @@ class WidgetFactory:
                     widget.setDateTime(datetime)
             elif isinstance(widget, QSlider):
                 widget.setValue(int(value))
+            elif isinstance(widget, QWidget) and widget.property("slider_widget"):
+                # Handle slider container widget
+                slider = widget.property("slider_widget")
+                slider.setValue(int(value))
             elif isinstance(widget, CustomFileButton):
                 widget.set_file_path(str(value))
             elif isinstance(widget, CustomColorButton):
@@ -738,6 +767,10 @@ class WidgetFactory:
                 widget.setDateTime(QDateTime.currentDateTime())
             elif isinstance(widget, QSlider):
                 widget.setValue(widget.minimum())
+            elif isinstance(widget, QWidget) and widget.property("slider_widget"):
+                # Handle slider container widget
+                slider = widget.property("slider_widget")
+                slider.setValue(slider.minimum())
             elif isinstance(widget, CustomFileButton):
                 widget.set_file_path("")
             elif isinstance(widget, CustomColorButton):
