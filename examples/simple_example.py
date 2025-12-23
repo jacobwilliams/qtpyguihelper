@@ -13,7 +13,7 @@ try:
     from qtpyguihelper import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
-    def on_form_submit(form_data):
+    def on_form_submit(form_data: dict) -> None:
         """Handle form submission."""
         print("Form submitted with data:")
         for key, value in form_data.items():
@@ -26,7 +26,7 @@ try:
         msg.setText(f"Hello {form_data.get('name', 'User')}!\nForm submitted successfully.")
         msg.exec()
 
-    def main():
+    def main() -> None:
         """Create and run a simple form."""
         # Simple configuration
         config = {

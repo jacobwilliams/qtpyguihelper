@@ -7,7 +7,7 @@ This demonstrates the flexibility of using qtpy for Qt binding compatibility.
 import os
 import sys
 
-def demo_pyside6():
+def demo_pyside6() -> None:
     """Demo using PySide6 backend."""
     print("Setting Qt backend to PySide6...")
     os.environ['QT_API'] = 'pyside6'
@@ -35,7 +35,7 @@ def demo_pyside6():
     app.exec()
 
 
-def demo_pyqt6():
+def demo_pyqt6() -> None:
     """Demo using PyQt6 backend."""
     print("Setting Qt backend to PyQt6...")
     os.environ['QT_API'] = 'pyqt6'
@@ -66,7 +66,7 @@ def demo_pyqt6():
     except ImportError as e:
         print(f"PyQt6 not available: {e}")
 
-def show_current_backend():
+def show_current_backend() -> None:
     """Show which Qt backend is currently being used."""
     try:
         import qtpy
@@ -100,7 +100,7 @@ def show_current_backend():
         print("qtpy not available")
 
 
-def main():
+def main() -> None:
     """Main function to demonstrate Qt backend selection."""
     if len(sys.argv) > 1:
         backend = sys.argv[1].lower()
