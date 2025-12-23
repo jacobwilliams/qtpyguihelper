@@ -11,12 +11,14 @@ from pathlib import Path
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper import GuiBuilder
-from qtpy.QtWidgets import QApplication, QMessageBox
+# NOTE: Do NOT import Qt widgets at module level!
+# They interfere with tkinter on macOS. Import them inside Qt-specific functions only.
 
 
-def on_registration_submit(form_data):
+def on_registration_submit(form_data: dict) -> None:
     """Callback function for registration form submission."""
+    from qtpy.QtWidgets import QMessageBox
+
     print("Registration form submitted with data:")
     for key, value in form_data.items():
         print(f"  {key}: {value}")
@@ -29,20 +31,23 @@ def on_registration_submit(form_data):
     msg.exec()
 
 
-def on_settings_submit(form_data):
+def on_settings_submit(form_data: dict) -> None:
     """Callback function for settings form submission."""
     print("Settings saved:")
     for key, value in form_data.items():
         print(f"  {key}: {value}")
 
 
-def on_cancel():
+def on_cancel() -> None:
     """Callback function for form cancellation."""
     print("Form cancelled by user")
 
 
-def demo_user_registration():
+def demo_user_registration() -> None:
     """Demo the user registration form."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication
+
     print("Starting User Registration Demo...")
 
     # Create the application
@@ -63,8 +68,11 @@ def demo_user_registration():
     app.exec()
 
 
-def demo_settings_form():
+def demo_settings_form() -> None:
     """Demo the settings form."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication
+
     print("Starting Settings Form Demo...")
 
     # Create the application
@@ -84,8 +92,11 @@ def demo_settings_form():
     app.exec()
 
 
-def demo_project_form():
+def demo_project_form() -> None:
     """Demo the project form."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication
+
     print("Starting Project Form Demo...")
 
     # Create the application
@@ -105,7 +116,7 @@ def demo_project_form():
     app.exec()
 
 
-def demo_programmatic_config():
+def demo_programmatic_config() -> None:
     """Demo creating a GUI from a programmatic configuration."""
     print("Starting Programmatic Configuration Demo...")
 
@@ -157,13 +168,15 @@ def demo_programmatic_config():
     }
 
     # Create the application
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication
     app = QApplication(sys.argv)
 
     # Create GUI from dictionary
     gui = GuiBuilder(config_dict=config)
 
     # Set callbacks
-    def on_contact_submit(form_data):
+    def on_contact_submit(form_data: dict) -> None:
         print("Contact form submitted:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")
@@ -189,8 +202,11 @@ def demo_programmatic_config():
     app.exec()
 
 
-def demo_data_persistence():
+def demo_data_persistence() -> None:
     """Demo data loading and saving functionality."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication, QMessageBox
+
     print("Starting Data Persistence Demo...")
 
     # Create the application
@@ -210,7 +226,7 @@ def demo_data_persistence():
             print("Failed to load existing data")
 
     # Set up save functionality
-    def on_submit_and_save(form_data):
+    def on_submit_and_save(form_data: dict) -> None:
         print("Project data submitted:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")
@@ -243,8 +259,11 @@ def demo_data_persistence():
     app.exec()
 
 
-def demo_tabbed_interface():
+def demo_tabbed_interface() -> None:
     """Demo the tabbed interface functionality."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication, QMessageBox
+
     print("Starting Tabbed Interface Demo...")
 
     # Create the application
@@ -255,7 +274,7 @@ def demo_tabbed_interface():
     gui = GuiBuilder(config_path=config_path)
 
     # Set callbacks
-    def on_submit_tabs(form_data):
+    def on_submit_tabs(form_data: dict) -> None:
         print("Tabbed form submitted:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")
@@ -276,8 +295,11 @@ def demo_tabbed_interface():
     app.exec()
 
 
-def demo_complex_tabs():
+def demo_complex_tabs() -> None:
     """Demo a complex tabbed configuration interface."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication, QMessageBox
+
     print("Starting Complex Tabbed Configuration Demo...")
 
     # Create the application
@@ -288,7 +310,7 @@ def demo_complex_tabs():
     gui = GuiBuilder(config_path=config_path)
 
     # Set callbacks
-    def on_save_config(form_data):
+    def on_save_config(form_data: dict) -> None:
         print("Configuration saved:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")
@@ -315,8 +337,11 @@ def demo_complex_tabs():
     app.exec()
 
 
-def demo_nested_fields():
+def demo_nested_fields() -> None:
     """Demo nested field names with dot notation."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication, QMessageBox
+
     print("Starting Nested Fields Demo...")
 
     # Create the application
@@ -336,10 +361,10 @@ def demo_nested_fields():
             print("Failed to load existing nested data")
 
     # Set callbacks
-    def on_save_nested_config(form_data):
+    def on_save_nested_config(form_data: dict) -> None:
         print("Nested configuration saved:")
         # Print the nested structure
-        def print_nested(data, indent=0):
+        def print_nested(data: dict, indent: int = 0) -> None:
             for key, value in data.items():
                 if isinstance(value, dict):
                     print("  " * indent + f"{key}:")
@@ -371,8 +396,11 @@ def demo_nested_fields():
     app.exec()
 
 
-def demo_float_fields():
+def demo_float_fields() -> None:
     """Demo float fields with various format specifications."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication, QMessageBox
+
     print("Starting Float Fields Demo...")
 
     # Create the application
@@ -427,7 +455,7 @@ def demo_float_fields():
         "cancel_button": True
     }
 
-    def handle_submit(form_data):
+    def handle_submit(form_data: dict) -> None:
         """Handle form submission and show the values with their formats."""
         result_text = "Float Field Values:\n" + "="*30 + "\n"
 
@@ -453,8 +481,11 @@ def demo_float_fields():
     app.exec()
 
 
-def demo_format_strings():
+def demo_format_strings() -> None:
     """Demo various format string specifications including scientific notation."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication, QMessageBox
+
     print("Starting Format Strings Demo...")
 
     # Create the application
@@ -464,7 +495,7 @@ def demo_format_strings():
     config_path = os.path.join(os.path.dirname(__file__), "format_strings.json")
     gui = GuiBuilder(config_path=config_path)
 
-    def handle_submit(form_data):
+    def handle_submit(form_data: dict) -> None:
         """Handle form submission and show formatted values."""
         result_text = "Format String Examples:\n" + "="*50 + "\n"
 
@@ -509,8 +540,11 @@ def demo_format_strings():
     app.exec()
 
 
-def demo_custom_buttons():
+def demo_custom_buttons() -> None:
     """Demo custom buttons with callbacks."""
+    from qtpyguihelper import GuiBuilder
+    from qtpy.QtWidgets import QApplication, QMessageBox
+
     print("Starting Custom Buttons Demo...")
 
     app = QApplication(sys.argv)
@@ -519,7 +553,7 @@ def demo_custom_buttons():
     config_path = os.path.join(os.path.dirname(__file__), "custom_buttons.json")
     gui = GuiBuilder(config_path=config_path)
 
-    def validate_data_callback(form_data):
+    def validate_data_callback(form_data: dict) -> None:
         """Validate form data."""
         issues = []
 
@@ -547,7 +581,7 @@ def demo_custom_buttons():
         else:
             QMessageBox.information(None, "Validation Passed", "All form data is valid!")
 
-    def clear_all_callback(form_data):
+    def clear_all_callback(form_data: dict) -> None:
         """Clear all form fields."""
         reply = QMessageBox.question(
             None,
@@ -561,7 +595,7 @@ def demo_custom_buttons():
             gui.clear_form()
             QMessageBox.information(None, "Form Cleared", "All form fields have been cleared.")
 
-    def preview_callback(form_data):
+    def preview_callback(form_data: dict) -> None:
         """Preview form data."""
         preview_text = "Form Data Preview:\n\n"
 
@@ -574,7 +608,7 @@ def demo_custom_buttons():
 
         QMessageBox.information(None, "Form Data Preview", preview_text)
 
-    def export_json_callback(form_data):
+    def export_json_callback(form_data: dict) -> None:
         """Export form data as JSON."""
         try:
             from qtpy.QtWidgets import QFileDialog
@@ -592,7 +626,7 @@ def demo_custom_buttons():
         except Exception as e:
             QMessageBox.critical(None, "Export Failed", f"Failed to export data:\n{str(e)}")
 
-    def on_submit_custom_buttons(form_data):
+    def on_submit_custom_buttons(form_data : dict) -> None:
         """Handle form submission."""
         print("Form submitted with data:")
         for key, value in form_data.items():
@@ -600,7 +634,7 @@ def demo_custom_buttons():
 
         QMessageBox.information(None, "Form Submitted", "Form data has been submitted successfully!")
 
-    def on_cancel_custom_buttons():
+    def on_cancel_custom_buttons() -> None:
         """Handle form cancellation."""
         print("Form cancelled")
         QMessageBox.information(None, "Cancelled", "Form submission was cancelled.")
@@ -625,26 +659,26 @@ def demo_custom_buttons():
     return app.exec()
 
 
-def demo_complex_tabs_wx():
-        # Force wxPython backend
-        from qtpyguihelper import set_backend
-        set_backend('wx')
-        print("✓ wxPython backend selected")
-        from qtpyguihelper import GuiBuilder
-        import wx
+def demo_complex_tabs_wx() -> None:
+    # Force wxPython backend
+    from qtpyguihelper import set_backend
+    set_backend('wx')
+    print("✓ wxPython backend selected")
+    from qtpyguihelper import GuiBuilder
+    import wx
 
-        app = wx.App()
+    app = wx.App()
 
-        config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
-        gui = GuiBuilder(config_path=config_path)
+    config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
+    gui = GuiBuilder(config_path=config_path)
 
-        # Show the GUI
-        gui.show()
+    # Show the GUI
+    gui.show()
 
-        # Run the application
-        app.MainLoop()
+    # Run the application
+    app.MainLoop()
 
-def demo_wxpython_backend():
+def demo_wxpython_backend() -> None:
     """Demo the wxPython backend with a working GUI."""
     print("Starting wxPython Backend Demo...")
 
@@ -761,22 +795,22 @@ def demo_wxpython_backend():
         gui_builder = GuiBuilder(config_dict=config)
 
         # Set up callbacks
-        def on_submit(form_data):
+        def on_submit(form_data: dict) -> None:
             print("wxPython form submitted:")
             for key, value in form_data.items():
                 print(f"  {key}: {value}")
             wx.MessageBox("Form submitted successfully!", "Success", wx.OK | wx.ICON_INFORMATION)
 
-        def on_cancel():
+        def on_cancel() -> None:
             print("wxPython form cancelled")
             wx.MessageBox("Form cancelled by user", "Cancelled", wx.OK | wx.ICON_INFORMATION)
 
-        def clear_form(_form_data):
+        def clear_form(_form_data: dict) -> None:
             gui_builder.clear_form()
             print("Form cleared")
             wx.MessageBox("Form cleared successfully!", "Cleared", wx.OK | wx.ICON_INFORMATION)
 
-        def load_demo_data(_form_data):
+        def load_demo_data(_form_data: dict) -> None:
             demo_data = {
                 "name": "Jane Smith",
                 "age": 28,
@@ -813,12 +847,12 @@ def demo_wxpython_backend():
         print(f"✗ Error with wxPython backend: {e}")
 
 
-def demo_tkinter_backend():
+def demo_tkinter_backend() -> None:
     """Demo the tkinter backend with a working GUI."""
     print("Starting tkinter Backend Demo...")
 
     try:
-        # Force tkinter backend
+        # Force tkinter backend FIRST, before any GUI imports
         from qtpyguihelper import set_backend
         set_backend('tk')
         print("✓ tkinter backend selected")
@@ -826,6 +860,9 @@ def demo_tkinter_backend():
         # Import tkinter
         import tkinter as tk
         from tkinter import messagebox
+
+        # NOW import GuiBuilder after backend is set
+        from qtpyguihelper import GuiBuilder
 
         # Create configuration
         config = {
@@ -919,28 +956,26 @@ def demo_tkinter_backend():
             ]
         }
 
-        # Create GUI builder with tkinter backend
-        from qtpyguihelper import set_backend, GuiBuilder
-        set_backend('tk')
+        # Create GUI builder (backend already set above)
         gui_builder = GuiBuilder(config_dict=config)
 
         # Set up callbacks
-        def on_submit(form_data):
+        def on_submit(form_data: dict) -> None:
             print("tkinter form submitted:")
             for key, value in form_data.items():
                 print(f"  {key}: {value}")
             messagebox.showinfo("Success", "Form submitted successfully!")
 
-        def on_cancel():
+        def on_cancel() -> None:
             print("tkinter form cancelled")
             messagebox.showinfo("Cancelled", "Form cancelled by user")
 
-        def clear_form(button_config, form_data):
+        def clear_form(button_config: dict, form_data: dict) -> None:
             gui_builder.clear_form()
             print("Form cleared")
             messagebox.showinfo("Cleared", "Form cleared successfully!")
 
-        def load_demo_data(button_config, form_data):
+        def load_demo_data(button_config: dict, form_data: dict) -> None:
             demo_data = {
                 "name": "Alice Johnson",
                 "age": 32,
@@ -1038,7 +1073,7 @@ def demo_gtk_backend() -> None:
             ]
         }
 
-        def on_gtk_submit(form_data) -> None:
+        def on_gtk_submit(form_data: dict) -> None:
             """Handle GTK form submission."""
             print("GTK Form submitted with data:")
             for key, value in form_data.items():
@@ -1060,7 +1095,7 @@ def demo_gtk_backend() -> None:
         print(f"✗ Error with GTK backend: {e}")
 
 
-def demo_complex_tabs_gtk():
+def demo_complex_tabs_gtk() -> None:
     """Demo a complex tabbed configuration interface using GTK backend."""
     print("Starting Complex Tabbed Configuration Demo (GTK)...")
 
@@ -1077,7 +1112,7 @@ def demo_complex_tabs_gtk():
         gui = GuiBuilder(config_path=config_path)
 
         # Set callbacks
-        def on_save_config(form_data):
+        def on_save_config(form_data: dict) -> None:
             print("Configuration saved (GTK):")
             for key, value in form_data.items():
                 print(f"  {key}: {value}")
@@ -1115,13 +1150,13 @@ def demo_complex_tabs_gtk():
         print("  python examples/demo.py gtk")
 
 
-def demo_backend_comparison():
+def demo_backend_comparison() -> None:
     """Demo Qt, wxPython, tkinter, and GTK backends side by side."""
     print("Starting Backend Comparison Demo...")
 
-    from qtpyguihelper import get_available_backends, get_backend_info
-
-    print(f"Available backends: {get_available_backends()}")
+    # Don't import from qtpyguihelper here - it may trigger Qt imports!
+    # Just show what backends are typically available
+    print("Available backends: ['qt', 'wx', 'tk', 'gtk']")
 
     backend_choice = input("Choose backend (qt/wx/tk/gtk/all): ").lower()
 
@@ -1201,7 +1236,7 @@ def demo_unified_interface() -> None:
         "cancel_button": True
     }
 
-    def on_submit_unified(form_data):
+    def on_submit_unified(form_data: dict) -> None:
         print(f"Unified interface form submitted via {info['backend']} backend:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")
@@ -1209,6 +1244,7 @@ def demo_unified_interface() -> None:
     # Create the appropriate application based on backend
     if info['backend'] == 'qt':
         # Qt backend needs QApplication
+        from qtpy.QtWidgets import QApplication
         app = QApplication(sys.argv)
         gui = GuiBuilder(config_dict=config)
         gui.set_submit_callback(on_submit_unified)
@@ -1235,7 +1271,7 @@ def demo_unified_interface() -> None:
         return GuiBuilder.create_and_run(config_dict=config)
 
 
-def demo_complex_tabs_tk():
+def demo_complex_tabs_tk() -> None:
     """Demo a complex tabbed configuration interface using tkinter backend."""
     print("Starting Complex Tabbed Configuration Demo (tkinter)...")
 
@@ -1249,12 +1285,15 @@ def demo_complex_tabs_tk():
         import tkinter as tk
         from tkinter import messagebox
 
+        # NOW import GuiBuilder after backend is set
+        from qtpyguihelper import GuiBuilder
+
         # Create GUI from JSON file
         config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
         gui = GuiBuilder(config_path=config_path)
 
         # Set callbacks
-        def on_save_config(form_data):
+        def on_save_config(form_data: dict) -> None:
             print("Configuration saved (tkinter):")
             for key, value in form_data.items():
                 print(f"  {key}: {value}")
@@ -1289,7 +1328,7 @@ def demo_complex_tabs_tk():
         print(f"✗ Error with tkinter backend: {e}")
 
 
-def main():
+def main() -> None:
     """Main function to run demos."""
     if len(sys.argv) > 1:
         demo_type = sys.argv[1].lower()
