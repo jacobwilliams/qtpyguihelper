@@ -5,17 +5,11 @@ Widget factory for creating tkinter widgets based on field configurations.
 import tkinter as tk
 from tkinter import ttk, filedialog, colorchooser, messagebox
 from typing import Any, Dict, Optional, List, Callable
-import datetime
-import re
-
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from qtpyguihelper.config_loader import FieldConfig
 
 
-def set_nested_value(data: Dict[str, Any], key_path: str, value: Any):
+def set_nested_value(data: Dict[str, Any], key_path: str, value: Any) -> None:
     """
     Set a value in a nested dictionary using dot notation.
 
@@ -122,9 +116,9 @@ class RadioButtonGroup:
     def __init__(self, parent: tk.Widget) -> None:
         self.parent = parent
         self.var = tk.StringVar()
-        self.buttons = []
+        self.buttons: List[tk.Radiobutton] = []
 
-    def add_button(self, text: str, value: str, **kwargs) -> tk.Radiobutton:
+    def add_button(self, text: str, value: str, **kwargs: Any) -> tk.Radiobutton:
         """Add a radio button to the group."""
         button = tk.Radiobutton(
             self.parent,

@@ -3,11 +3,7 @@ Widget factory for creating GTK widgets from field configurations.
 """
 
 from typing import Dict, Any, Optional, List, Callable
-import datetime
-
 import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from qtpyguihelper.config_loader import FieldConfig
 
