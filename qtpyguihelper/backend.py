@@ -16,7 +16,7 @@ class BackendManager:
     SUPPORTED_BACKENDS = ['qt', 'wx', 'tk', 'gtk']
     DEFAULT_BACKEND = 'qt'
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._current_backend: Optional[str] = None
         self._backend_available: Dict[str, Optional[bool]] = {}
 

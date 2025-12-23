@@ -11,7 +11,7 @@ import os
 # Allow user to force a specific GTK version via environment variable
 FORCE_GTK_VERSION = os.environ.get('QTPYGUIHELPER_GTK_VERSION')
 
-def _detect_gtk_version():
+def _detect_gtk_version() -> tuple[str, object]:
     """Detect available GTK version and return version info."""
     try:
         import gi
@@ -61,7 +61,7 @@ try:
 except ImportError as e:
     # GTK not available
     class _GTKNotAvailable:
-        def __init__(self, *args, **kwargs):
+        def __init__(self, *args, **kwargs) -> None:
             raise ImportError(f"GTK not available: {e}")
 
     GtkWidgetFactory = _GTKNotAvailable

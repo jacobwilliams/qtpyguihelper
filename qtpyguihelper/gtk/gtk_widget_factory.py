@@ -54,7 +54,7 @@ except (ImportError, ValueError) as e:
         class ColorButton: pass
 
 
-def _gtk_version_compat():
+def _gtk_version_compat() -> Dict[str, Any]:
     """Return compatibility helpers for different GTK versions."""
     if GTK_MAJOR_VERSION == 4:
         return {
@@ -97,7 +97,7 @@ def _gtk_version_compat():
 class GtkWidgetFactory:
     """Factory for creating GTK widgets from field configurations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the widget factory."""
         if not GTK_AVAILABLE:
             raise ImportError("GTK backend is not available. Please install PyGObject and GTK development files.")
@@ -375,7 +375,7 @@ class GtkWidgetFactory:
 
         button = Gtk.Button(label="Browse...")
 
-        def on_browse_clicked(widget):
+        def on_browse_clicked(widget: Gtk.Button) -> None:
             dialog = Gtk.FileChooserDialog(
                 title="Select File",
                 parent=None,
@@ -422,9 +422,10 @@ class GtkWidgetFactory:
 
         return color_button
 
-    def _setup_change_callback(self, field_name: str, widget: Gtk.Widget):
+    def _setup_change_callback(self, field_name: str, widget: Gtk.Widget) -> None:
         """Set up change callback for a widget."""
-        def on_change(*args):
+
+        def on_change(*args) -> None:
             if field_name in self.change_callbacks:
                 value = self.get_widget_value(field_name)
                 for callback in self.change_callbacks[field_name]:
@@ -581,12 +582,12 @@ class GtkWidgetFactory:
                 values[field_name] = value
         return values
 
-    def set_all_values(self, values: Dict[str, Any]):
+    def set_all_values(self, values: Dict[str, Any]) -> None:
         """Set values for all widgets from a dictionary."""
         for field_name, value in values.items():
             self.set_widget_value(field_name, value)
 
-    def clear_widgets(self):
+    def clear_widgets(self) -> None:
         """Clear all widget values."""
         for field_name in self.widgets.keys():
             field_config = self.field_configs.get(field_name)
@@ -595,7 +596,7 @@ class GtkWidgetFactory:
             else:
                 self.set_widget_value(field_name, "")
 
-    def add_change_callback(self, field_name: str, callback: Callable[[str, Any], None]):
+    def add_change_callback(self, field_name: str, callback: Callable[[str, Any], None]) -> None:
         """Add a change callback for a field."""
         if field_name not in self.change_callbacks:
             self.change_callbacks[field_name] = []

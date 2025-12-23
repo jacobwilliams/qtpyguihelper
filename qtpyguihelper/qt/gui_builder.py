@@ -29,7 +29,7 @@ class GuiBuilder(QMainWindow):
     formCancelled = Signal()      # Emitted when form is cancelled
     fieldChanged = Signal(str, object)  # Emitted when a field value changes
 
-    def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None):
+    def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize the GUI builder.
 

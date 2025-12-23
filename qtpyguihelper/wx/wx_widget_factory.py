@@ -11,7 +11,7 @@ from datetime import datetime, date, time
 from ..config_loader import FieldConfig
 
 
-def set_nested_value(data: Dict[str, Any], key_path: str, value: Any):
+def set_nested_value(data: Dict[str, Any], key_path: str, value: Any) -> None:
     """
     Set a value in a nested dictionary using dot notation.
     """
@@ -49,13 +49,13 @@ def get_nested_value(data: Dict[str, Any], key_path: str, default: Any = None) -
 class WxCustomColorButton(wx.Button):
     """Custom button widget for color selection in wxPython."""
 
-    def __init__(self, parent, initial_color=wx.Colour(255, 255, 255)):
+    def __init__(self, parent: wx.Window, initial_color: wx.Colour = wx.Colour(255, 255, 255)) -> None:
         super().__init__(parent, label="Choose Color")
         self.current_color = initial_color
         self.Bind(wx.EVT_BUTTON, self._on_choose_color)
         self._update_button_appearance()
 
-    def _on_choose_color(self, event):
+    def _on_choose_color(self, event: wx.Event) -> None:
         """Open color dialog and update button."""
         dialog = wx.ColourDialog(self)
         dialog.GetColourData().SetColour(self.current_color)
@@ -66,7 +66,7 @@ class WxCustomColorButton(wx.Button):
 
         dialog.Destroy()
 
-    def _update_button_appearance(self):
+    def _update_button_appearance(self) -> None:
         """Update button appearance to show current color."""
         self.SetBackgroundColour(self.current_color)
         # Set text color based on background brightness
@@ -79,7 +79,7 @@ class WxCustomColorButton(wx.Button):
         """Get the current selected color."""
         return self.current_color
 
-    def set_color(self, color: wx.Colour):
+    def set_color(self, color: wx.Colour) -> None:
         """Set the current color."""
         self.current_color = color
         self._update_button_appearance()
@@ -88,13 +88,13 @@ class WxCustomColorButton(wx.Button):
 class WxCustomFileButton(wx.Button):
     """Custom button widget for file selection in wxPython."""
 
-    def __init__(self, parent, file_mode="open"):
+    def __init__(self, parent: wx.Window, file_mode: str = "open") -> None:
         super().__init__(parent, label="Choose File...")
         self.file_mode = file_mode
         self.selected_file = ""
         self.Bind(wx.EVT_BUTTON, self._on_choose_file)
 
-    def _on_choose_file(self, event):
+    def _on_choose_file(self, event: wx.Event) -> None:
         """Open file dialog and update button."""
         if self.file_mode == "save":
             dialog = wx.FileDialog(self, "Save File", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
@@ -112,7 +112,7 @@ class WxCustomFileButton(wx.Button):
         """Get the selected file path."""
         return self.selected_file
 
-    def set_file_path(self, path: str):
+    def set_file_path(self, path: str) -> None:
         """Set the file path."""
         self.selected_file = path
         if path:
@@ -126,7 +126,7 @@ class WxCustomFileButton(wx.Button):
 class WxWidgetFactory:
     """Factory class for creating wxPython widgets from field configurations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.widgets: Dict[str, wx.Window] = {}
         self.labels: Dict[str, wx.StaticText] = {}
 
@@ -630,7 +630,7 @@ class WxWidgetFactory:
                 values[field_name] = field_value
         return values
 
-    def clear_all_widgets(self):
+    def clear_all_widgets(self) -> None:
         """Clear all widget values."""
         for field_name in self.widgets.keys():
             widget = self.widgets[field_name]

@@ -15,7 +15,7 @@ from .wx_widget_factory import WxWidgetFactory, get_nested_value
 class WxGuiBuilder(wx.Frame):
     """wxPython GUI builder class that creates applications from JSON configuration."""
 
-    def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, parent=None):
+    def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, parent: Optional[wx.Window] = None) -> None:
         """
         Initialize the wxPython GUI builder.
 
@@ -58,7 +58,7 @@ class WxGuiBuilder(wx.Frame):
         except Exception as e:
             self._show_error(f"Failed to load configuration: {str(e)}")
 
-    def _build_gui(self):
+    def _build_gui(self) -> None:
         """Build the GUI based on the loaded configuration."""
         if not self.config:
             return
@@ -115,7 +115,7 @@ class WxGuiBuilder(wx.Frame):
         # Connect field change events
         self._connect_field_events()
 
-    def _create_form_sizer(self):
+    def _create_form_sizer(self) -> wx.Sizer:
         """Create the appropriate sizer based on configuration."""
         if self.config.layout == "vertical":
             return wx.BoxSizer(wx.VERTICAL)
@@ -134,7 +134,7 @@ class WxGuiBuilder(wx.Frame):
         else:
             return wx.BoxSizer(wx.VERTICAL)
 
-    def _add_fields_to_sizer(self, parent: wx.Window, sizer, fields=None, layout_type=None):
+    def _add_fields_to_sizer(self, parent: wx.Window, sizer: wx.Sizer, fields: Optional[List[FieldConfig]] = None, layout_type: Optional[str] = None) -> None:
         """Add form fields to the sizer."""
         if fields is None:
             fields = self.config.fields

@@ -197,7 +197,7 @@ class ConfigLoader:
 
     SUPPORTED_LAYOUTS = {"vertical", "horizontal", "grid", "form"}
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize a new ConfigLoader instance.
 
         Creates a new loader with empty config and schema cache.

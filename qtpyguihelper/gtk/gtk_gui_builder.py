@@ -62,7 +62,7 @@ if GTK_AVAILABLE:
 class GtkGuiBuilder:
     """Main GUI builder class that creates GTK applications from JSON configuration."""
 
-    def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, submit_callback: Optional[Callable] = None, cancel_callback: Optional[Callable] = None):
+    def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, submit_callback: Optional[Callable] = None, cancel_callback: Optional[Callable] = None) -> None:
         """
         Initialize the GUI builder.
 
@@ -170,17 +170,14 @@ class GtkGuiBuilder:
         else:
             self._build_form_interface()
 
-        # Add custom buttons
-        self._add_custom_buttons()
-
         # Add a flexible spacer to push buttons to bottom
         spacer = Gtk.Box()
         spacer.set_vexpand(True)  # This will expand to fill available space
         compat = self._gtk_version_compat()
         compat['box_pack_start'](self.main_container, spacer, True, True, 0)
 
-        # Add default buttons (Submit/Cancel) - these will stay at bottom
-        self._add_default_buttons()
+        # Add all buttons (custom + submit/cancel) on the same line
+        self._add_all_buttons()
 
         # Set up field change monitoring
         self._setup_field_change_monitoring()
@@ -291,48 +288,42 @@ class GtkGuiBuilder:
             if field_config.tooltip:
                 widget.set_tooltip_text(field_config.tooltip)
 
-    def _add_custom_buttons(self) -> None:
-        """Add custom buttons defined in the configuration."""
-        if not self.config or not self.config.custom_buttons:
-            return
-
-        # Create frame for custom buttons
-        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
-        compat = self._gtk_version_compat()
-        compat['set_border_width'](button_box, 10)
-
-        for button_config in self.config.custom_buttons:
-            button = Gtk.Button(label=button_config.label)
-            button.connect("clicked", lambda btn, cfg=button_config: self._handle_custom_button_click(cfg))
-
-            if hasattr(button_config, 'tooltip') and button_config.tooltip:
-                button.set_tooltip_text(button_config.tooltip)
-
-            compat['box_pack_start'](button_box, button, False, False, 0)
-
-        compat['box_pack_start'](self.main_container, button_box, False, False, 0)
-
-    def _add_default_buttons(self) -> None:
-        """Add default Submit and Cancel buttons."""
+    def _add_all_buttons(self) -> None:
+        """Add all buttons (custom + submit/cancel) on the same line."""
         if not self.config:
             return
 
         # Get compatibility helpers
         compat = self._gtk_version_compat()
 
-        # Create frame for default buttons
+        # Create button box for all buttons
         button_box = compat['box_new'](compat['orientation_horizontal'], 5)
         compat['set_border_width'](button_box, 10)
-        button_box.set_halign(Gtk.Align.END)
 
-        # Cancel button (added first to match Qt backend order)
+        # Add custom buttons first (on the left)
+        if self.config.custom_buttons:
+            for button_config in self.config.custom_buttons:
+                button = Gtk.Button(label=button_config.label)
+                button.connect("clicked", lambda btn, cfg=button_config: self._handle_custom_button_click(cfg))
+
+                if hasattr(button_config, 'tooltip') and button_config.tooltip:
+                    button.set_tooltip_text(button_config.tooltip)
+
+                compat['box_pack_start'](button_box, button, False, False, 0)
+
+        # Add a spacer to push default buttons to the right
+        spacer = Gtk.Box()
+        spacer.set_hexpand(True)
+        compat['box_pack_start'](button_box, spacer, True, True, 0)
+
+        # Cancel button (added to the right)
         if self.config.cancel_button:
             cancel_text = self.config.cancel_label or "Cancel"
             cancel_button = compat['button_new'](cancel_text)
             cancel_button.connect("clicked", lambda btn: self._handle_cancel())
             compat['box_pack_start'](button_box, cancel_button, False, False, 0)
 
-        # Submit button (added second to match Qt backend order)
+        # Submit button (added to the right, after cancel)
         if self.config.submit_button:
             submit_text = self.config.submit_label or "Submit"
             submit_button = compat['button_new'](submit_text)
@@ -508,7 +499,7 @@ class GtkGuiBuilder:
         """Show an error dialog."""
         try:
             if GTK_MAJOR_VERSION == 4:
-                # GTK4 approach
+                # GTK4 approach - use show() instead of run()
                 dialog = Gtk.MessageDialog(
                     transient_for=self.window,
                     modal=True,
@@ -516,6 +507,10 @@ class GtkGuiBuilder:
                     buttons=Gtk.ButtonsType.OK,
                     text=message
                 )
+                if title:
+                    dialog.set_title(title)
+                dialog.connect("response", lambda d, r: d.destroy())
+                dialog.show()
             else:
                 # GTK3 approach
                 dialog = Gtk.MessageDialog(
@@ -525,11 +520,10 @@ class GtkGuiBuilder:
                     buttons=Gtk.ButtonsType.OK,
                     message_format=message
                 )
-
-            if title:
-                dialog.set_title(title)
-            dialog.run()
-            dialog.destroy()
+                if title:
+                    dialog.set_title(title)
+                dialog.run()
+                dialog.destroy()
         except Exception as e:
             # Fallback: print to console if dialog creation fails
             print(f"Error: {title}: {message}")
@@ -539,7 +533,7 @@ class GtkGuiBuilder:
         """Show an info dialog."""
         try:
             if GTK_MAJOR_VERSION == 4:
-                # GTK4 approach
+                # GTK4 approach - use show() instead of run()
                 dialog = Gtk.MessageDialog(
                     transient_for=self.window,
                     modal=True,
@@ -547,6 +541,10 @@ class GtkGuiBuilder:
                     buttons=Gtk.ButtonsType.OK,
                     text=message
                 )
+                if title:
+                    dialog.set_title(title)
+                dialog.connect("response", lambda d, r: d.destroy())
+                dialog.show()
             else:
                 # GTK3 approach
                 dialog = Gtk.MessageDialog(
@@ -556,11 +554,10 @@ class GtkGuiBuilder:
                     buttons=Gtk.ButtonsType.OK,
                     message_format=message
                 )
-
-            if title:
-                dialog.set_title(title)
-            dialog.run()
-            dialog.destroy()
+                if title:
+                    dialog.set_title(title)
+                dialog.run()
+                dialog.destroy()
         except Exception as e:
             # Fallback: print to console if dialog creation fails
             print(f"Info: {title}: {message}")

@@ -20,6 +20,8 @@ Usage:
     app = GuiBuilder.create_and_run('config.json')
 """
 
+from typing import Callable, Any, Dict, Optional
+
 # Don't import GUI backends immediately - use lazy loading instead
 # This prevents conflicts between different GUI frameworks
 
@@ -190,15 +192,15 @@ class GuiBuilder:
         """
         return self._builder.set_field_value(field_name, value)
 
-    def set_submit_callback(self, callback) -> None:
+    def set_submit_callback(self, callback: Callable) -> None:
         """Set a callback function to be called when the form is submitted."""
         self._builder.set_submit_callback(callback)
 
-    def set_cancel_callback(self, callback) -> None:
+    def set_cancel_callback(self, callback: Callable) -> None:
         """Set a callback function to be called when the form is cancelled."""
         self._builder.set_cancel_callback(callback)
 
-    def set_custom_button_callback(self, button_name: str, callback) -> None:
+    def set_custom_button_callback(self, button_name: str, callback: Callable) -> None:
         """Set a callback function to be called when a custom button is clicked."""
         self._builder.set_custom_button_callback(button_name, callback)
 

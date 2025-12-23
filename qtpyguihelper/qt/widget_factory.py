@@ -95,7 +95,7 @@ class CustomColorButton(QPushButton):
 
     colorChanged = Signal(QColor)
 
-    def __init__(self, initial_color: QColor = QColor(255, 255, 255)):
+    def __init__(self, initial_color: QColor = QColor(255, 255, 255)) -> None:
         super().__init__()
         self.current_color = initial_color
         self.setText("Choose Color")
@@ -140,7 +140,7 @@ class CustomFileButton(QPushButton):
 
     fileChanged = Signal(str)
 
-    def __init__(self, file_mode: str = "open"):
+    def __init__(self, file_mode: str = "open") -> None:
         super().__init__()
         self.file_mode = file_mode
         self.selected_file = ""
@@ -178,7 +178,7 @@ class CustomFileButton(QPushButton):
 class WidgetFactory:
     """Factory class for creating PySide6 widgets from field configurations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.widgets: Dict[str, QWidget] = {}
         self.labels: Dict[str, QLabel] = {}
         self.radio_groups: Dict[str, QButtonGroup] = {}

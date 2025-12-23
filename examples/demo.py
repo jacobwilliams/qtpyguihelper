@@ -977,7 +977,7 @@ def demo_tkinter_backend():
         print(f"✗ Error with tkinter backend: {e}")
 
 
-def demo_gtk_backend():
+def demo_gtk_backend() -> None:
     """Demo the GTK backend specifically."""
     print("Starting GTK Backend Demo...")
 
@@ -1025,14 +1025,20 @@ def demo_gtk_backend():
                     "default_value": "GTK backend demo application"
                 }
             ],
-            "buttons": [
-                {"label": "Save Settings", "action": "submit"},
-                {"label": "Reset", "action": "reset"},
-                {"label": "Close", "action": "cancel"}
+            "submit_button": True,
+            "submit_label": "Save Settings",
+            "cancel_button": True,
+            "cancel_label": "Close",
+            "custom_buttons": [
+                {
+                    "name": "reset",
+                    "label": "Reset",
+                    "tooltip": "Reset to default values"
+                }
             ]
         }
 
-        def on_gtk_submit(form_data):
+        def on_gtk_submit(form_data) -> None:
             """Handle GTK form submission."""
             print("GTK Form submitted with data:")
             for key, value in form_data.items():

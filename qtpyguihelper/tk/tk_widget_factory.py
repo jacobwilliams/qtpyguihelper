@@ -91,13 +91,13 @@ def flatten_nested_dict(data: Dict[str, Any], parent_key: str = '', separator: s
 class CustomColorButton(tk.Button):
     """Custom button widget for color selection."""
 
-    def __init__(self, parent, initial_color: str = "#ffffff", callback: Optional[Callable] = None):
+    def __init__(self, parent: tk.Widget, initial_color: str = "#ffffff", callback: Optional[Callable] = None) -> None:
         super().__init__(parent)
         self.current_color = initial_color
         self.callback = callback
         self.config(text="Choose Color", command=self._choose_color, bg=initial_color)
 
-    def _choose_color(self):
+    def _choose_color(self) -> None:
         """Open color chooser dialog."""
         color = colorchooser.askcolor(color=self.current_color, title="Choose Color")
         if color[1]:  # color[1] is the hex value
@@ -110,7 +110,7 @@ class CustomColorButton(tk.Button):
         """Get the current color."""
         return self.current_color
 
-    def set_color(self, color: str):
+    def set_color(self, color: str) -> None:
         """Set the current color."""
         self.current_color = color
         self.config(bg=color)
@@ -119,7 +119,7 @@ class CustomColorButton(tk.Button):
 class RadioButtonGroup:
     """Container for radio button groups."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Widget) -> None:
         self.parent = parent
         self.var = tk.StringVar()
         self.buttons = []
@@ -140,7 +140,7 @@ class RadioButtonGroup:
         """Get the selected value."""
         return self.var.get()
 
-    def set_value(self, value: str):
+    def set_value(self, value: str) -> None:
         """Set the selected value."""
         self.var.set(value)
 
@@ -148,14 +148,14 @@ class RadioButtonGroup:
 class TkWidgetFactory:
     """Factory class for creating tkinter widgets based on field configurations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the widget factory."""
         self.widgets: Dict[str, tk.Widget] = {}
         self.radio_groups: Dict[str, RadioButtonGroup] = {}
         self.change_callbacks: Dict[str, List[Callable]] = {}
         self.theme_colors: Optional[Dict[str, str]] = None
 
-    def set_theme_colors(self, theme_colors: Dict[str, str]):
+    def set_theme_colors(self, theme_colors: Dict[str, str]) -> None:
         """Set theme colors for widgets."""
         self.theme_colors = theme_colors
 
@@ -533,7 +533,7 @@ class TkWidgetFactory:
         # Add label to show current value
         value_label = tk.Label(frame, text=str(scale.get()))
 
-        def update_label(*args):
+        def update_label(*args) -> None:
             value_label.config(text=str(scale.get()))
 
         scale.config(command=update_label)
@@ -563,7 +563,7 @@ class TkWidgetFactory:
 
         entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
-        def browse_file():
+        def browse_file() -> None:
             filename = filedialog.askopenfilename()
             if filename:
                 entry.delete(0, tk.END)
@@ -676,7 +676,7 @@ class TkWidgetFactory:
 
         return current_text
 
-    def _add_placeholder(self, entry: tk.Entry, placeholder: str):
+    def _add_placeholder(self, entry: tk.Entry, placeholder: str) -> None:
         """Add placeholder text to an entry widget."""
         entry.insert(0, placeholder)
 
@@ -690,12 +690,12 @@ class TkWidgetFactory:
 
         entry.config(fg=placeholder_color)
 
-        def on_focus_in(event):
+        def on_focus_in(event: tk.Event) -> None:
             if entry.get() == placeholder:
                 entry.delete(0, tk.END)
                 entry.config(fg=normal_color)
 
-        def on_focus_out(event):
+        def on_focus_out(event: tk.Event) -> None:
             if not entry.get():
                 entry.insert(0, placeholder)
                 entry.config(fg=placeholder_color)
@@ -703,12 +703,12 @@ class TkWidgetFactory:
         entry.bind('<FocusIn>', on_focus_in)
         entry.bind('<FocusOut>', on_focus_out)
 
-    def _setup_change_callback(self, widget: tk.Widget, field_name: str, value_getter: Callable):
+    def _setup_change_callback(self, widget: tk.Widget, field_name: str, value_getter: Callable) -> None:
         """Setup change callback for a widget."""
         if field_name not in self.change_callbacks:
             self.change_callbacks[field_name] = []
 
-        def on_change(*args):
+        def on_change(*args) -> None:
             for callback in self.change_callbacks[field_name]:
                 try:
                     callback(field_name, value_getter())
@@ -729,7 +729,7 @@ class TkWidgetFactory:
         elif isinstance(widget, tk.Spinbox):
             widget.bind('<KeyRelease>', on_change)
 
-    def add_change_callback(self, field_name: str, callback: Callable):
+    def add_change_callback(self, field_name: str, callback: Callable) -> None:
         """Add a change callback for a field."""
         if field_name not in self.change_callbacks:
             self.change_callbacks[field_name] = []
@@ -832,7 +832,7 @@ class TkWidgetFactory:
             print(f"Error setting value for {field_name}: {e}")
             return False
 
-    def clear_widgets(self):
+    def clear_widgets(self) -> None:
         """Clear all widget values."""
         for field_name in self.widgets.keys():
             self.set_widget_value(field_name, None)
@@ -848,7 +848,7 @@ class TkWidgetFactory:
                 data[field_name] = value
         return data
 
-    def set_all_values(self, data: Dict[str, Any]):
+    def set_all_values(self, data: Dict[str, Any]) -> None:
         """Set all widget values from a dictionary."""
         flat_data = flatten_nested_dict(data)
         for field_name, value in flat_data.items():
