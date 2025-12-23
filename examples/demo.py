@@ -1168,20 +1168,8 @@ def demo_backend_comparison() -> None:
         demo_tkinter_backend()    # tkinter demo
     elif backend_choice == "gtk":
         demo_gtk_backend()        # GTK demo
-    elif backend_choice == "all":
-        print("\n=== Running Qt Backend Demo ===")
-        demo_user_registration()
-
-        print("\n=== Running wxPython Backend Demo ===")
-        demo_wxpython_backend()
-
-        print("\n=== Running tkinter Backend Demo ===")
-        demo_tkinter_backend()
-
-        print("\n=== Running GTK Backend Demo ===")
-        demo_gtk_backend()
     else:
-        print("Invalid choice. Available options: qt, wx, tk, gtk, all")
+        print("Invalid choice. Available options: qt, wx, tk, gtk")
 
 
 def demo_unified_interface() -> None:
