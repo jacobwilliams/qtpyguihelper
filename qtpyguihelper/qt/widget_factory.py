@@ -3,6 +3,7 @@ Widget factory for creating Qt widgets based on field configurations.
 Compatible with both PySide6 and PyQt6 via qtpy.
 """
 
+import sys
 from typing import Any, Dict, Optional, List
 from qtpy.QtWidgets import (
     QWidget, QLabel, QLineEdit, QTextEdit, QSpinBox, QDoubleSpinBox,
@@ -343,12 +344,12 @@ class WidgetFactory:
         if field_config.min_value is not None:
             widget.setMinimum(float(field_config.min_value))
         else:
-            widget.setMinimum(-999999999.0)  # Default minimum
+            widget.setMinimum(-sys.float_info.max)  # Default minimum
 
         if field_config.max_value is not None:
             widget.setMaximum(float(field_config.max_value))
         else:
-            widget.setMaximum(999999999.0)  # Default maximum
+            widget.setMaximum(sys.float_info.max)  # Default maximum
 
         # Extract decimal places from format string
         decimals = 2  # Default to 2 decimal places

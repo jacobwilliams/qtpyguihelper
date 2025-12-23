@@ -196,8 +196,8 @@ class GtkWidgetFactory:
 
     def _create_float_widget(self, field_config: FieldConfig) -> Gtk.SpinButton:
         """Create a float spin button widget."""
-        min_val = field_config.min_value if field_config.min_value is not None else -1e6
-        max_val = field_config.max_value if field_config.max_value is not None else 1e6
+        min_val = field_config.min_value if field_config.min_value is not None else -sys.float_info.max
+        max_val = field_config.max_value if field_config.max_value is not None else sys.float_info.max
 
         # Determine decimal places from format string
         digits = 2  # default

@@ -262,8 +262,8 @@ class TkWidgetFactory:
 
     def _create_int_field(self, parent: tk.Widget, field_config: FieldConfig) -> tk.Spinbox:
         """Create an integer input field."""
-        min_val = field_config.min_value if field_config.min_value is not None else -999999
-        max_val = field_config.max_value if field_config.max_value is not None else 999999
+        min_val = field_config.min_value if field_config.min_value is not None else -2147483648
+        max_val = field_config.max_value if field_config.max_value is not None else 2147483647
 
         spinbox = tk.Spinbox(
             parent,

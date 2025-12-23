@@ -2,6 +2,7 @@
 wxPython widget factory for creating widgets based on field configurations.
 """
 
+import sys
 from typing import Any, Dict, Optional, List
 import wx
 import wx.lib.scrolledpanel as scrolled
@@ -217,15 +218,15 @@ class WxWidgetFactory:
         if (field_config.min_value is not None and isinstance(field_config.min_value, int) and
             field_config.max_value is not None and isinstance(field_config.max_value, int)):
             # Use SpinCtrl for integer ranges
-            min_val = int(field_config.min_value) if field_config.min_value is not None else -999999
-            max_val = int(field_config.max_value) if field_config.max_value is not None else 999999
+            min_val = int(field_config.min_value) if field_config.min_value is not None else -sys.float_info.max
+            max_val = int(field_config.max_value) if field_config.max_value is not None else sys.float_info.max
             widget = wx.SpinCtrl(parent, min=min_val, max=max_val)
             if field_config.default_value is not None:
                 widget.SetValue(int(field_config.default_value))
         else:
             # Use SpinCtrlDouble for float ranges
-            min_val = float(field_config.min_value) if field_config.min_value is not None else -999999.0
-            max_val = float(field_config.max_value) if field_config.max_value is not None else 999999.0
+            min_val = float(field_config.min_value) if field_config.min_value is not None else -sys.float_info.max
+            max_val = float(field_config.max_value) if field_config.max_value is not None else sys.float_info.max
             widget = wx.SpinCtrlDouble(parent, min=min_val, max=max_val)
             if field_config.default_value is not None:
                 widget.SetValue(float(field_config.default_value))
@@ -260,8 +261,8 @@ class WxWidgetFactory:
 
     def _create_spinctrl_float_field(self, parent: wx.Window, field_config: FieldConfig) -> wx.SpinCtrlDouble:
         """Create a float input field using SpinCtrlDouble."""
-        min_val = float(field_config.min_value) if field_config.min_value is not None else -999999.0
-        max_val = float(field_config.max_value) if field_config.max_value is not None else 999999.0
+        min_val = float(field_config.min_value) if field_config.min_value is not None else -sys.float_info.max
+        max_val = float(field_config.max_value) if field_config.max_value is not None else sys.float_info.max
 
         widget = wx.SpinCtrlDouble(parent, min=min_val, max=max_val)
 
