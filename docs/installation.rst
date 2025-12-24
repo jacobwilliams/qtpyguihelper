@@ -64,6 +64,17 @@ For GTK support:
 
 Note: GTK requires additional system-level dependencies. See the GTK installation guide for your platform.
 
+Flet Backend
+~~~~~~~~~~~~
+
+For Flet support (Material Design UI):
+
+.. code-block:: bash
+
+   pip install vibegui[flet]
+
+Flet provides a modern Material Design interface with excellent cross-platform support for desktop, web, and mobile applications.
+
 Tkinter Backend
 ~~~~~~~~~~~~~~~
 
@@ -102,6 +113,7 @@ Backend-specific requirements:
 * **Qt**: PySide6 6.5.0+ or PyQt6 6.5.0+ with qtpy 2.0.0+
 * **wxPython**: wxPython 4.2.0+
 * **GTK**: PyGObject 3.42.0+
+* **Flet**: Flet 0.24.0+
 * **tkinter**: Included with Python (no additional requirements)
 
 Verifying Installation

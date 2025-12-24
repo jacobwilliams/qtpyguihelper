@@ -16,18 +16,19 @@ Overview
 --------
 
 vibegui is a Python library for creating cross-platform GUIs from JSON configuration files.
-It supports multiple GUI backends including Qt (PySide6/PyQt6), wxPython, tkinter, and GTK3/GTK4.
+It supports multiple GUI backends including Qt (PySide6/PyQt6), wxPython, tkinter, GTK3/GTK4, and Flet.
 
 Key Features
 ~~~~~~~~~~~~
 
 * **JSON-driven configuration**: Define your GUI structure using simple JSON files
-* **Multiple backend support**: Choose from Qt, wxPython, tkinter, or GTK
+* **Multiple backend support**: Choose from Qt, wxPython, tkinter, GTK, or Flet
 * **Cross-platform compatibility**: Works on Windows, macOS, and Linux
 * **Rich widget support**: Text fields, numbers, dates, dropdowns, checkboxes, and more
 * **Form validation**: Built-in validation for required fields and data types
 * **Data persistence**: Save and load form data to/from JSON files
 * **Dark mode support**: Automatic theme detection and application
+* **Material Design UI**: Modern look with the Flet backend
 * **Extensible architecture**: Easy to add custom widgets and validation rules
 
 Quick Example

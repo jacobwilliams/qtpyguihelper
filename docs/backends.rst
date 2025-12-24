@@ -17,6 +17,8 @@ Overview
 +------------+------------------+------------------+-------------------+------------------+
 | GTK        | Linux/macOS      | PyGObject        | Good              | GTK theme        |
 +------------+------------------+------------------+-------------------+------------------+
+| Flet       | Excellent        | Flet             | Excellent         | Material Design  |
++------------+------------------+------------------+-------------------+------------------+
 
 Qt Backend
 ----------
@@ -185,6 +187,63 @@ On macOS with Homebrew:
 - Custom CSS styling
 - Responsive layouts
 
+Flet Backend
+------------
+
+The Flet backend provides a modern Material Design experience with excellent cross-platform support.
+
+**Advantages:**
+- Modern Material Design UI
+- Excellent cross-platform support (Desktop, Web, Mobile)
+- Beautiful animations and transitions
+- Automatic theme adaptation (light/dark mode)
+- Hot reload during development
+- Progressive Web App (PWA) support
+- No platform-specific dependencies
+
+**Requirements:**
+- Flet 0.24.0+
+
+**Installation:**
+.. code-block:: bash
+
+   pip install vibegui[flet]
+
+**Usage:**
+.. code-block:: python
+
+   from vibegui.flet import FletGuiBuilder
+
+   gui = FletGuiBuilder(config_path="form.json")
+   gui.run()
+
+**Features:**
+- Material Design 3 components
+- Smooth animations and transitions
+- Automatic light/dark theme switching
+- Responsive layouts
+- Touch-friendly controls
+- Built-in form validation with visual feedback
+- File upload/download support
+- Color picker widget
+- Slider controls with visual feedback
+- Rich date/time pickers
+
+**Deployment Options:**
+Flet applications can be deployed in multiple ways:
+
+- **Desktop**: Native executables for Windows, macOS, and Linux
+- **Web**: Progressive Web Apps (PWA) or static websites
+- **Mobile**: iOS and Android native apps
+- **Server**: Multi-user web applications
+
+**Unique Features:**
+- Can run as a desktop app or in a web browser
+- Automatic UI updates across all connected clients
+- Built-in support for responsive design
+- No JavaScript required
+- Seamless transition between desktop and web deployment
+
 Backend Selection
 -----------------
 
@@ -205,6 +264,7 @@ The selection priority is:
 2. tkinter (if available)
 3. wxPython (if available)
 4. GTK (if available on Linux/macOS)
+5. Flet (if available)
 
 Manual Backend Selection
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -218,6 +278,7 @@ You can explicitly choose a backend:
    gui = GuiBuilder.create_and_run(config_dict=config, backend='tkinter') # tkinter backend
    gui = GuiBuilder.create_and_run(config_dict=config, backend='wx')      # wxPython backend
    gui = GuiBuilder.create_and_run(config_dict=config, backend='gtk')     # GTK backend
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='flet')    # Flet backend
 
 Checking Available Backends
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -237,37 +298,37 @@ Backend-Specific Features
 Widget Support Matrix
 ~~~~~~~~~~~~~~~~~~~~~
 
-+----------------+-------+----------+----------+-------+
-| Widget Type    | Qt    | tkinter  | wxPython | GTK   |
-+================+=======+==========+==========+=======+
-| Text           | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Textarea       | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Password       | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Number         | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Float          | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Email          | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| URL            | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Date           | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Time           | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| DateTime       | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Checkbox       | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Dropdown       | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| Radio          | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
-| File           | ✓     | ✓        | ✓        | ✓     |
-+----------------+-------+----------+----------+-------+
++----------------+-------+----------+----------+-------+-------+
+| Widget Type    | Qt    | tkinter  | wxPython | GTK   | Flet  |
++================+=======+==========+==========+=======+=======+
+| Text           | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Textarea       | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Password       | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Number         | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Float          | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Email          | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| URL            | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Date           | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Time           | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| DateTime       | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Checkbox       | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Dropdown       | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| Radio          | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
+| File           | ✓     | ✓        | ✓        | ✓     | ✓     |
++----------------+-------+----------+----------+-------+-------+
 
 Platform Compatibility
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -282,6 +343,8 @@ Platform Compatibility
 | wxPython       | ✓       | ✓       | ✓       |
 +----------------+---------+---------+---------+
 | GTK            | ✗       | ✓       | ✓       |
++----------------+---------+---------+---------+
+| Flet           | ✓       | ✓       | ✓       |
 +----------------+---------+---------+---------+
 
 Troubleshooting
@@ -310,12 +373,18 @@ Common Issues
 - Requires system GTK libraries to be installed
 - PyGObject installation can be complex; use system package manager when possible
 
+**Flet Issues:**
+- Flet applications may take a moment to initialize on first launch
+- Web deployment requires proper CORS configuration
+- Mobile deployment requires additional setup with Flutter SDK
+
 Performance Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **Qt**: Best overall performance, especially for complex forms
+- **Flet**: Excellent performance with modern UI and animations
 - **tkinter**: Good performance, fastest startup time
 - **wxPython**: Good performance with native feel
 - **GTK**: Moderate performance, depends on system GTK version
 
-For applications with many fields or complex layouts, Qt is recommended for the best user experience.
+For applications with many fields or complex layouts, Qt or Flet are recommended for the best user experience.
