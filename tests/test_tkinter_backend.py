@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper import GuiBuilder, set_backend, get_backend_info, is_backend_available
+from vibegui import GuiBuilder, set_backend, get_backend_info, is_backend_available
 
 
 def test_tkinter_backend_availability():

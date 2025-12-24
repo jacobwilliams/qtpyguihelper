@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Comprehensive test to demonstrate tkinter backend functionality
-across all major features of qtpyguihelper.
+across all major features of vibegui.
 """
 
 import sys
@@ -10,7 +10,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper import set_backend, GuiBuilder, get_backend_info
+from vibegui import set_backend, GuiBuilder, get_backend_info
 
 
 def test_tkinter_comprehensive():

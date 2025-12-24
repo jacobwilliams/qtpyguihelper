@@ -12,11 +12,11 @@ def test_gtk_detection():
 
     try:
         # Test with no forced version
-        if 'QTPYGUIHELPER_GTK_VERSION' in os.environ:
-            del os.environ['QTPYGUIHELPER_GTK_VERSION']
+        if 'vibegui_GTK_VERSION' in os.environ:
+            del os.environ['vibegui_GTK_VERSION']
 
         # Import our GTK module
-        from qtpyguihelper.gtk import GTK_VERSION, GTK_MAJOR_VERSION, Gtk
+        from vibegui.gtk import GTK_VERSION, GTK_MAJOR_VERSION, Gtk
 
         print(f"Detected GTK version: {GTK_VERSION}")
         print(f"GTK major version: {GTK_MAJOR_VERSION}")
@@ -24,8 +24,8 @@ def test_gtk_detection():
 
         # Test creating a simple window
         print("\nTesting window creation...")
-        import qtpyguihelper
-        qtpyguihelper.set_backend('gtk')
+        import vibegui
+        vibegui.set_backend('gtk')
 
         config = {
             'window': {'title': 'GTK Version Test', 'width': 400, 'height': 300},
@@ -34,7 +34,7 @@ def test_gtk_detection():
             ]
         }
 
-        gui = qtpyguihelper.GuiBuilder(config_dict=config)
+        gui = vibegui.GuiBuilder(config_dict=config)
         print(f"GUI backend: {gui.backend}")
         print("GTK GUI created successfully!")
 

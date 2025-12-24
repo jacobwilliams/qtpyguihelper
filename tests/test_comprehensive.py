@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive test suite for qtpyguihelper library.
+Comprehensive test suite for vibegui library.
 Run with: python -m pytest tests/test_comprehensive.py -v
 """
 
@@ -14,8 +14,8 @@ import pytest
 # Add the library to the Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from qtpyguihelper.config_loader import ConfigLoader, FieldConfig
-from qtpyguihelper.backend import get_available_backends, set_backend, get_backend_info
+from vibegui.config_loader import ConfigLoader, FieldConfig
+from vibegui.backend import get_available_backends, set_backend, get_backend_info
 
 
 class TestConfigLoader:

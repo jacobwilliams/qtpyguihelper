@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for QtPyGuiHelper library configuration loading.
+Test script for vibegui library configuration loading.
 """
 
 import os
@@ -10,12 +10,12 @@ import json
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper.config_loader import ConfigLoader
+from vibegui.config_loader import ConfigLoader
 
 
 def test_config_loading():
     """Test loading and validation of example configurations."""
-    print("Testing QtPyGuiHelper Configuration Loading...")
+    print("Testing vibegui Configuration Loading...")
     print("=" * 50)
 
     loader = ConfigLoader()

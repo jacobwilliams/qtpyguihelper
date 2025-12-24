@@ -53,10 +53,10 @@ except (ImportError, ValueError) as e:
         class WindowTypeHint:
             NORMAL = None
 
-from qtpyguihelper.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
 
 if GTK_AVAILABLE:
-    from qtpyguihelper.gtk.gtk_widget_factory import GtkWidgetFactory
+    from vibegui.gtk.gtk_widget_factory import GtkWidgetFactory
 
 
 class GtkGuiBuilder:

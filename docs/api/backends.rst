@@ -6,7 +6,7 @@ This section documents the different GUI backend implementations.
 Qt Backend
 ----------
 
-.. automodule:: qtpyguihelper.qt.gui_builder
+.. automodule:: vibegui.qt.gui_builder
    :members:
    :undoc-members:
    :show-inheritance:
@@ -14,12 +14,12 @@ Qt Backend
 Tkinter Backend
 ---------------
 
-.. automodule:: qtpyguihelper.tk.tk_gui_builder
+.. automodule:: vibegui.tk.tk_gui_builder
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: qtpyguihelper.tk.tk_widget_factory
+.. automodule:: vibegui.tk.tk_widget_factory
    :members:
    :undoc-members:
    :show-inheritance:
@@ -27,12 +27,12 @@ Tkinter Backend
 wxPython Backend
 ----------------
 
-.. automodule:: qtpyguihelper.wx.wx_gui_builder
+.. automodule:: vibegui.wx.wx_gui_builder
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: qtpyguihelper.wx.wx_widget_factory
+.. automodule:: vibegui.wx.wx_widget_factory
    :members:
    :undoc-members:
    :show-inheritance:
@@ -40,12 +40,12 @@ wxPython Backend
 GTK Backend
 -----------
 
-.. automodule:: qtpyguihelper.gtk.gtk_gui_builder
+.. automodule:: vibegui.gtk.gtk_gui_builder
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: qtpyguihelper.gtk.gtk_widget_factory
+.. automodule:: vibegui.gtk.gtk_widget_factory
    :members:
    :undoc-members:
    :show-inheritance:

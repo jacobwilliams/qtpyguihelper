@@ -6,7 +6,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, colorchooser, messagebox
 from typing import Any, Dict, Optional, List, Callable
 
-from qtpyguihelper.config_loader import FieldConfig
+from vibegui.config_loader import FieldConfig
 
 
 def set_nested_value(data: Dict[str, Any], key_path: str, value: Any) -> None:

@@ -1,5 +1,5 @@
 """
-Test suite for qtpyguihelper library.
+Test suite for vibegui library.
 
 python -m pytest tests -v
 """

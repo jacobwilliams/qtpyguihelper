@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper import GuiBuilder
+from vibegui import GuiBuilder
 from qtpy.QtWidgets import QApplication
 
 

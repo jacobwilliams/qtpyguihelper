@@ -1,5 +1,5 @@
 """
-WxPython backend for qtpyguihelper.
+WxPython backend for vibegui.
 """
 
 from .wx_gui_builder import WxGuiBuilder

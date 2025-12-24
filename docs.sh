@@ -1,5 +1,5 @@
 #!/bin/bash
-# Documentation build and serve script for QtPyGuiHelper
+# Documentation build and serve script for vibegui
 
 set -e
 

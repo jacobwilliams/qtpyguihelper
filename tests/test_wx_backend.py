@@ -10,7 +10,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 # sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
 
-from qtpyguihelper import set_backend, GuiBuilder
+from vibegui import set_backend, GuiBuilder
 
 # Handle both direct execution and pytest imports
 try:

@@ -1,5 +1,5 @@
 """
-JSON Schema Validation Script for qtpyguihelper
+JSON Schema Validation Script for vibegui
 
 This script validates all GUI configuration files in the examples directory
 against the JSON schema (gui_config_schema.json). It ensures that all example
@@ -21,7 +21,7 @@ from pathlib import Path
 from jsonschema import validate, ValidationError
 
 # Load schema
-with open('qtpyguihelper/schema/gui_config_schema.json') as f:
+with open('vibegui/schema/gui_config_schema.json') as f:
     schema = json.load(f)
 
 # Find all JSON files in examples directory, excluding data files

@@ -1,5 +1,5 @@
 """
-Tkinter backend for qtpyguihelper.
+Tkinter backend for vibegui.
 """
 
 from .tk_gui_builder import TkGuiBuilder

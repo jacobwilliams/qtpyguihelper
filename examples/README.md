@@ -1,6 +1,6 @@
-# QtPyGuiHelper Examples
+# vibegui Examples
 
-This directory contains example files and demonstrations of the QtPyGuiHelper library.
+This directory contains example files and demonstrations of the vibegui library.
 
 ## Demo Files
 
@@ -54,7 +54,7 @@ python examples/demo.py unified
 
 ### Simple Examples
 
-**`simple_example.py`** - Basic getting-started example showing minimal QtPyGuiHelper usage. Perfect for beginners.
+**`simple_example.py`** - Basic getting-started example showing minimal vibegui usage. Perfect for beginners.
 
 **`qt_backend_demo.py`** - Demonstrates how to set specific Qt backends (PySide6, PyQt6, PyQt5, PySide2) using qtpy environment variables. Educational for understanding Qt API compatibility.
 

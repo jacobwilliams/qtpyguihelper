@@ -593,7 +593,7 @@ class GuiBuilder(QMainWindow):
 
         metadata = {
             "_metadata": {
-                "config_source": "qtpyguihelper",
+                "config_source": "vibegui",
                 "window_title": self.config.window.title,
                 "layout": self.config.layout,
                 "field_count": len(self.config.fields),

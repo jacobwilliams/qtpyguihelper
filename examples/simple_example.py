@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple example showing basic QtPyGuiHelper usage.
+Simple example showing basic vibegui usage.
 """
 
 import sys
@@ -10,7 +10,7 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 try:
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
     def on_form_submit(form_data: dict) -> None:

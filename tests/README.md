@@ -1,6 +1,6 @@
-# QtPyGuiHelper Test Suite
+# vibegui Test Suite
 
-This directory contains all tests for the qtpyguihelper library.
+This directory contains all tests for the vibegui library.
 
 ## Running Tests
 

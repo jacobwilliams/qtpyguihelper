@@ -8,9 +8,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
-from qtpyguihelper.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from qtpyguihelper.utils import FileUtils, ValidationUtils, PlatformUtils
-from qtpyguihelper.tk.tk_widget_factory import TkWidgetFactory
+from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from vibegui.utils import FileUtils, ValidationUtils, PlatformUtils
+from vibegui.tk.tk_widget_factory import TkWidgetFactory
 
 
 class TkGuiBuilder:

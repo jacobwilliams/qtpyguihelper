@@ -1,7 +1,7 @@
 API Reference
 =============
 
-This section provides detailed documentation for all QtPyGuiHelper modules and classes.
+This section provides detailed documentation for all vibegui modules and classes.
 
 .. toctree::
    :maxdepth: 2
@@ -15,17 +15,17 @@ This section provides detailed documentation for all QtPyGuiHelper modules and c
 Core Functions
 --------------
 
-.. autofunction:: qtpyguihelper.get_available_backends
+.. autofunction:: vibegui.get_available_backends
 
 Quick Reference
 ---------------
 
 Main Classes by Backend:
 
-* :class:`qtpyguihelper.qt.QtGuiBuilder` - Qt backend (PySide6/PyQt6)
-* :class:`qtpyguihelper.tk.TkGuiBuilder` - tkinter backend
-* :class:`qtpyguihelper.wx.WxGuiBuilder` - wxPython backend
-* :class:`qtpyguihelper.gtk.GtkGuiBuilder` - GTK backend
+* :class:`vibegui.qt.QtGuiBuilder` - Qt backend (PySide6/PyQt6)
+* :class:`vibegui.tk.TkGuiBuilder` - tkinter backend
+* :class:`vibegui.wx.WxGuiBuilder` - wxPython backend
+* :class:`vibegui.gtk.GtkGuiBuilder` - GTK backend
 
 Configuration Classes:
 

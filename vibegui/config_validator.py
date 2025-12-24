@@ -1,5 +1,5 @@
 """
-Configuration validation utilities for QtPyGuiHelper.
+Configuration validation utilities for vibegui.
 """
 
 from typing import Dict, Any, List, Optional

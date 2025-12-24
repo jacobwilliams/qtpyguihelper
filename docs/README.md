@@ -1,6 +1,6 @@
 # Sphinx Documentation
 
-This directory contains the Sphinx documentation for QtPyGuiHelper.
+This directory contains the Sphinx documentation for vibegui.
 
 ## Building the Documentation
 
@@ -9,7 +9,7 @@ This directory contains the Sphinx documentation for QtPyGuiHelper.
 Install the documentation dependencies:
 
 ```bash
-pip install qtpyguihelper[docs]
+pip install vibegui[docs]
 ```
 
 Or install Sphinx and the theme manually:
@@ -90,7 +90,7 @@ Subsubsection
 ```rst
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
    gui = GuiBuilder.create_and_run(config_dict=config)
 ```
 
@@ -104,7 +104,7 @@ Subsubsection
 
 #### API Documentation
 ```rst
-.. automodule:: qtpyguihelper.utils
+.. automodule:: vibegui.utils
    :members:
    :undoc-members:
    :show-inheritance:

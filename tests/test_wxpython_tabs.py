@@ -15,12 +15,12 @@ def test_wxpython_tabs():
 
     try:
         # Force wxPython backend
-        from qtpyguihelper import set_backend
+        from vibegui import set_backend
         set_backend('wx')
         print("✓ wxPython backend selected")
 
         import wx
-        from qtpyguihelper import WxGuiBuilder
+        from vibegui import WxGuiBuilder
 
         # Create configuration with tabs
         config = {

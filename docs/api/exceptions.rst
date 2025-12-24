@@ -1,9 +1,9 @@
 Exceptions
 ==========
 
-Exception classes used throughout QtPyGuiHelper.
+Exception classes used throughout vibegui.
 
-.. automodule:: qtpyguihelper.exceptions
+.. automodule:: vibegui.exceptions
    :members:
    :undoc-members:
    :show-inheritance:

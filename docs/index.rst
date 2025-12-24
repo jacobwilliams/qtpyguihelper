@@ -1,4 +1,4 @@
-QtPyGuiHelper Documentation
+vibegui Documentation
 =============================
 
 .. toctree::
@@ -15,7 +15,7 @@ QtPyGuiHelper Documentation
 Overview
 --------
 
-QtPyGuiHelper is a Python library for creating cross-platform GUIs from JSON configuration files.
+vibegui is a Python library for creating cross-platform GUIs from JSON configuration files.
 It supports multiple GUI backends including Qt (PySide6/PyQt6), wxPython, tkinter, and GTK3/GTK4.
 
 Key Features
@@ -35,7 +35,7 @@ Quick Example
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    config = {
        "window": {"title": "My App", "width": 400, "height": 300},

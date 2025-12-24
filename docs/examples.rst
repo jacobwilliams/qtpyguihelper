@@ -1,7 +1,7 @@
 Examples
 ========
 
-This section provides comprehensive examples showing how to use QtPyGuiHelper in different scenarios.
+This section provides comprehensive examples showing how to use vibegui in different scenarios.
 
 Basic Examples
 --------------
@@ -13,7 +13,7 @@ Here's a simple contact form example:
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    config = {
        "window": {
@@ -69,7 +69,7 @@ Advanced Form with Validation
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    config = {
        "window": {
@@ -166,7 +166,7 @@ Tabbed Interface Example
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    config = {
        "window": {
@@ -222,7 +222,7 @@ Custom Buttons Example
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    config = {
        "window": {"title": "Data Entry Form", "width": 500, "height": 400},
@@ -281,7 +281,7 @@ Data Persistence Example
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
    import os
 
    config = {
@@ -346,7 +346,7 @@ Field Change Callbacks
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    config = {
        "window": {"title": "Dynamic Form", "width": 400, "height": 300},
@@ -390,10 +390,10 @@ Using Specific Backends
 
 .. code-block:: python
 
-   from qtpyguihelper.tk import TkGuiBuilder
-   from qtpyguihelper.qt import QtGuiBuilder
-   from qtpyguihelper.wx import WxGuiBuilder
-   from qtpyguihelper.gtk import GtkGuiBuilder
+   from vibegui.tk import TkGuiBuilder
+   from vibegui.qt import QtGuiBuilder
+   from vibegui.wx import WxGuiBuilder
+   from vibegui.gtk import GtkGuiBuilder
 
    config = {"window": {"title": "Backend Test"}, "fields": []}
 
@@ -443,10 +443,10 @@ Create a JSON configuration file and load it:
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    # Load from JSON file
    gui = GuiBuilder.create_and_run(config_path="my_form.json")
    gui.run()
 
-For more examples, check the ``examples/`` directory in the QtPyGuiHelper repository.
+For more examples, check the ``examples/`` directory in the vibegui repository.

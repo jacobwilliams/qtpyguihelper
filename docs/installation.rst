@@ -4,16 +4,16 @@ Installation
 Basic Installation
 ------------------
 
-Install QtPyGuiHelper using pip:
+Install vibegui using pip:
 
 .. code-block:: bash
 
-   pip install qtpyguihelper
+   pip install vibegui
 
 Backend-Specific Installation
 -----------------------------
 
-QtPyGuiHelper supports multiple GUI backends. You can install the specific backend you need:
+vibegui supports multiple GUI backends. You can install the specific backend you need:
 
 Qt Backend (PySide6)
 ~~~~~~~~~~~~~~~~~~~~
@@ -22,7 +22,7 @@ For Qt support with PySide6 (recommended):
 
 .. code-block:: bash
 
-   pip install qtpyguihelper[pyside6]
+   pip install vibegui[pyside6]
 
 Qt Backend (PyQt6)
 ~~~~~~~~~~~~~~~~~~
@@ -31,7 +31,7 @@ For Qt support with PyQt6:
 
 .. code-block:: bash
 
-   pip install qtpyguihelper[pyqt6]
+   pip install vibegui[pyqt6]
 
 Qt Backend (Generic)
 ~~~~~~~~~~~~~~~~~~~~
@@ -40,7 +40,7 @@ For generic Qt support (requires separate installation of PySide6 or PyQt6):
 
 .. code-block:: bash
 
-   pip install qtpyguihelper[qt]
+   pip install vibegui[qt]
    # Then install either:
    pip install PySide6  # or PyQt6
 
@@ -51,7 +51,7 @@ For wxPython support:
 
 .. code-block:: bash
 
-   pip install qtpyguihelper[wxpython]
+   pip install vibegui[wxpython]
 
 GTK Backend
 ~~~~~~~~~~~
@@ -60,7 +60,7 @@ For GTK support:
 
 .. code-block:: bash
 
-   pip install qtpyguihelper[gtk]
+   pip install vibegui[gtk]
 
 Note: GTK requires additional system-level dependencies. See the GTK installation guide for your platform.
 
@@ -76,7 +76,7 @@ To install all supported backends:
 
 .. code-block:: bash
 
-   pip install qtpyguihelper[all]
+   pip install vibegui[all]
 
 Development Installation
 ------------------------
@@ -85,8 +85,8 @@ For development, clone the repository and install in editable mode:
 
 .. code-block:: bash
 
-   git clone https://github.com/jacobwilliams/qtpyguihelper.git
-   cd qtpyguihelper
+   git clone https://github.com/jacobwilliams/vibegui.git
+   cd vibegui
    pip install -e .[dev]
 
 This installs all development dependencies including testing tools, code formatters, and documentation tools.
@@ -111,9 +111,9 @@ To verify your installation, run:
 
 .. code-block:: python
 
-   import qtpyguihelper
-   print(qtpyguihelper.__version__)
+   import vibegui
+   print(vibegui.__version__)
 
    # Test backend availability
-   from qtpyguihelper.backend import get_available_backends
+   from vibegui.backend import get_available_backends
    print("Available backends:", get_available_backends())

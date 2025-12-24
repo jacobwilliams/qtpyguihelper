@@ -1,7 +1,7 @@
 Quick Start Guide
 =================
 
-This guide will help you get started with QtPyGuiHelper quickly.
+This guide will help you get started with vibegui quickly.
 
 Basic Usage
 -----------
@@ -10,7 +10,7 @@ The simplest way to create a GUI is using a JSON configuration:
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    # Define your GUI structure
    config = {
@@ -68,7 +68,7 @@ You can also load your configuration from a JSON file:
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    # Load from file
    gui = GuiBuilder.create_and_run(config_path="my_form.json")
@@ -174,7 +174,7 @@ Save form data to files and load it back:
 Field Types
 -----------
 
-QtPyGuiHelper supports various field types:
+vibegui supports various field types:
 
 * ``text`` - Single-line text input
 * ``textarea`` - Multi-line text input

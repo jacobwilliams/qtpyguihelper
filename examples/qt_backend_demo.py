@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Example showing how to set the Qt backend for qtpyguihelper.
+Example showing how to set the Qt backend for vibegui.
 This demonstrates the flexibility of using qtpy for Qt binding compatibility.
 """
 
@@ -13,7 +13,7 @@ def demo_pyside6() -> None:
     os.environ['QT_API'] = 'pyside6'
 
     # Import and run demo
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication
 
     print(f"Using Qt backend: {os.environ.get('QT_API', 'default')}")
@@ -42,7 +42,7 @@ def demo_pyqt6() -> None:
 
     try:
         # Import and run demo
-        from qtpyguihelper import GuiBuilder
+        from vibegui import GuiBuilder
         from qtpy.QtWidgets import QApplication
 
         print(f"Using Qt backend: {os.environ.get('QT_API', 'default')}")
@@ -105,7 +105,7 @@ def main() -> None:
     if len(sys.argv) > 1:
         backend = sys.argv[1].lower()
     else:
-        print("Qt Backend Demo for QtPyGuiHelper")
+        print("Qt Backend Demo for vibegui")
         print("Available commands:")
         print("  python qt_backend_demo.py pyside6  - Use PySide6")
         print("  python qt_backend_demo.py pyqt6    - Use PyQt6")

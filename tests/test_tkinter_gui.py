@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Test tkinter GUI with run() method."""
 
-from qtpyguihelper import set_backend, GuiBuilder
+from vibegui import set_backend, GuiBuilder
 
 def test_tkinter_gui():
     # Set tkinter backend

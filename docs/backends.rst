@@ -1,7 +1,7 @@
 GUI Backends
 ============
 
-QtPyGuiHelper supports multiple GUI backends, each with their own strengths and use cases. This page provides detailed information about each backend.
+vibegui supports multiple GUI backends, each with their own strengths and use cases. This page provides detailed information about each backend.
 
 Overview
 --------
@@ -38,14 +38,14 @@ The Qt backend provides the most feature-rich and polished GUI experience.
 **Installation:**
 .. code-block:: bash
 
-   pip install qtpyguihelper[pyside6]  # Recommended
+   pip install vibegui[pyside6]  # Recommended
    # or
-   pip install qtpyguihelper[pyqt6]
+   pip install vibegui[pyqt6]
 
 **Usage:**
 .. code-block:: python
 
-   from qtpyguihelper.qt import QtGuiBuilder
+   from vibegui.qt import QtGuiBuilder
 
    gui = QtGuiBuilder(config_path="form.json")
    gui.run()
@@ -76,12 +76,12 @@ The tkinter backend is included with Python and provides good cross-platform sup
 **Installation:**
 .. code-block:: bash
 
-   pip install qtpyguihelper  # tkinter support included
+   pip install vibegui  # tkinter support included
 
 **Usage:**
 .. code-block:: python
 
-   from qtpyguihelper.tk import TkGuiBuilder
+   from vibegui.tk import TkGuiBuilder
 
    gui = TkGuiBuilder(config_path="form.json")
    gui.run()
@@ -120,12 +120,12 @@ The wxPython backend provides native look and feel on all platforms.
 **Installation:**
 .. code-block:: bash
 
-   pip install qtpyguihelper[wxpython]
+   pip install vibegui[wxpython]
 
 **Usage:**
 .. code-block:: python
 
-   from qtpyguihelper.wx import WxGuiBuilder
+   from vibegui.wx import WxGuiBuilder
 
    gui = WxGuiBuilder(config_path="form.json")
    gui.run()
@@ -157,7 +157,7 @@ The GTK backend is primarily designed for Linux environments but also works on m
 **Installation:**
 .. code-block:: bash
 
-   pip install qtpyguihelper[gtk]
+   pip install vibegui[gtk]
 
 **System Dependencies:**
 On Ubuntu/Debian:
@@ -173,7 +173,7 @@ On macOS with Homebrew:
 **Usage:**
 .. code-block:: python
 
-   from qtpyguihelper.gtk import GtkGuiBuilder
+   from vibegui.gtk import GtkGuiBuilder
 
    gui = GtkGuiBuilder(config_path="form.json")
    gui.run()
@@ -191,11 +191,11 @@ Backend Selection
 Automatic Backend Selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-QtPyGuiHelper can automatically choose the best available backend:
+vibegui can automatically choose the best available backend:
 
 .. code-block:: python
 
-   from qtpyguihelper import GuiBuilder
+   from vibegui import GuiBuilder
 
    # Automatically selects the best available backend
    gui = GuiBuilder.create_and_run(config_dict=config)
@@ -226,7 +226,7 @@ To see which backends are available on your system:
 
 .. code-block:: python
 
-   from qtpyguihelper import get_available_backends
+   from vibegui import get_available_backends
 
    backends = get_available_backends()
    print("Available backends:", backends)

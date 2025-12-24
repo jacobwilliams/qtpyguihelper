@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test suite for custom buttons functionality in qtpyguihelper.
+Test suite for custom buttons functionality in vibegui.
 """
 
 import sys
@@ -9,10 +9,10 @@ import json
 import tempfile
 from pathlib import Path
 
-# Add the qtpyguihelper module to the path
+# Add the vibegui module to the path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from qtpyguihelper import GuiBuilder, ConfigLoader, CustomButtonConfig
+from vibegui import GuiBuilder, ConfigLoader, CustomButtonConfig
 
 
 def test_custom_button_config():

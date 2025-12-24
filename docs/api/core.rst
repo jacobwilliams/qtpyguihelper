@@ -4,7 +4,7 @@ Core Module
 Main GuiBuilder Class
 ---------------------
 
-.. autoclass:: qtpyguihelper.GuiBuilder
+.. autoclass:: vibegui.GuiBuilder
    :members:
    :undoc-members:
    :show-inheritance:
@@ -13,7 +13,7 @@ Main GuiBuilder Class
 Backend Management
 ------------------
 
-.. automodule:: qtpyguihelper.backend
+.. automodule:: vibegui.backend
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,5 +1,5 @@
 """
-GTK backend for qtpyguihelper using PyGObject/GTK3 or GTK4.
+GTK backend for vibegui using PyGObject/GTK3 or GTK4.
 
 This module provides GTK-based implementations for creating GUI forms
 and widgets using the PyGObject library. It automatically detects and
@@ -9,7 +9,7 @@ supports both GTK3 and GTK4 versions.
 import os
 
 # Allow user to force a specific GTK version via environment variable
-FORCE_GTK_VERSION = os.environ.get('QTPYGUIHELPER_GTK_VERSION')
+FORCE_GTK_VERSION = os.environ.get('vibegui_GTK_VERSION')
 
 def _detect_gtk_version() -> tuple[str, object]:
     """Detect available GTK version and return version info."""

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-All notable changes to QtPyGuiHelper will be documented in this file.
+All notable changes to vibegui will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
@@ -11,7 +11,7 @@ Version 1.0.0 (2025-01-08)
 
 **Added**
 
-- Initial release of QtPyGuiHelper
+- Initial release of vibegui
 - Support for multiple GUI backends:
 
   - Qt backend (PySide6/PyQt6) with qtpy abstraction
@@ -143,4 +143,4 @@ We welcome contributions! Please see our contributing guidelines for:
 License
 -------
 
-QtPyGuiHelper is released under the MIT License. See LICENSE file for details.
+vibegui is released under the MIT License. See LICENSE file for details.

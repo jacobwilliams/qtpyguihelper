@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper import set_backend, GuiBuilder
+from vibegui import set_backend, GuiBuilder
 
 
 def test_qt_backend():

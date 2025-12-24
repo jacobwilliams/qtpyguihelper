@@ -15,7 +15,7 @@ def test_wx_tabs():
 
     try:
         # Force wxPython backend
-        from qtpyguihelper import set_backend
+        from vibegui import set_backend
         set_backend('wx')
         print("✓ wxPython backend selected")
 
@@ -24,7 +24,7 @@ def test_wx_tabs():
         # Use the existing tabbed_config.json file
         config_path = os.path.join(os.path.dirname(__file__), "..", "examples", "tabbed_config.json")
 
-        from qtpyguihelper import GuiBuilder
+        from vibegui import GuiBuilder
 
         # Create wxPython application
         from .wx_test_utils import create_wx_app

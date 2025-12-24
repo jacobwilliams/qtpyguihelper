@@ -6,7 +6,7 @@ Configuration classes for defining GUI structure and behavior.
 Configuration Loader
 --------------------
 
-.. automodule:: qtpyguihelper.config_loader
+.. automodule:: vibegui.config_loader
    :members:
    :undoc-members:
    :show-inheritance:
@@ -14,7 +14,7 @@ Configuration Loader
 Configuration Validator
 -----------------------
 
-.. automodule:: qtpyguihelper.config_validator
+.. automodule:: vibegui.config_validator
    :members:
    :undoc-members:
    :show-inheritance:

@@ -9,8 +9,8 @@ import sys
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper.config_loader import ConfigLoader
-from qtpyguihelper.qt.widget_factory import WidgetFactory
+from vibegui.config_loader import ConfigLoader
+from vibegui.qt.widget_factory import WidgetFactory
 
 
 def test_format_strings():

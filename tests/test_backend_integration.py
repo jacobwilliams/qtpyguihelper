@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper import (
+from vibegui import (
     GuiBuilder, get_available_backends, get_backend_info,
     set_backend, is_backend_available, BackendError
 )
@@ -114,8 +114,8 @@ def test_widget_factory_imports():
     print("\n=== Widget Factory Import Test ===")
 
     try:
-        from qtpyguihelper.qt.widget_factory import WidgetFactory
-        from qtpyguihelper.wx.wx_widget_factory import WxWidgetFactory
+        from vibegui.qt.widget_factory import WidgetFactory
+        from vibegui.wx.wx_widget_factory import WxWidgetFactory
 
         # Test that we can create factory instances
         qt_factory = WidgetFactory()
@@ -134,7 +134,7 @@ def test_config_compatibility():
     """Test that configurations work with all backends."""
     print("\n=== Configuration Compatibility Test ===")
 
-    from qtpyguihelper.config_loader import ConfigLoader
+    from vibegui.config_loader import ConfigLoader
 
     config = {
         'window': {'title': 'Cross-Backend Test', 'width': 500, 'height': 400},

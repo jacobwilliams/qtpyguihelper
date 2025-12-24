@@ -1,5 +1,5 @@
 """
-Qt backend for qtpyguihelper.
+Qt backend for vibegui.
 """
 
 from .gui_builder import GuiBuilder

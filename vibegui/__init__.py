@@ -1,5 +1,5 @@
 """
-QtPyGuiHelper - A Python library for creating GUI applications from JSON configuration files.
+vibegui - A Python library for creating GUI applications from JSON configuration files.
 
 This library allows you to define GUI layouts, widgets, and their properties in JSON format
 and automatically generate the corresponding interface using either Qt (PySide6/PyQt6) or wxPython.
@@ -11,16 +11,16 @@ Backend Support:
 
 Usage:
     # Simplest approach - using the unified interface
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     GuiBuilder.create_and_run('config.json')
 
     # Explicit backend selection
-    from qtpyguihelper import set_backend, GuiBuilder
+    from vibegui import set_backend, GuiBuilder
     set_backend('tk')  # or 'qt' or 'wx' or 'gtk'
     GuiBuilder.create_and_run('config.json')
 
     # Advanced: Manual application lifecycle (Qt example)
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication
     import sys
     app = QApplication(sys.argv)
@@ -84,18 +84,18 @@ class GuiBuilder:
     Example:
         Simplest usage - create and run immediately:
 
-        >>> from qtpyguihelper import GuiBuilder
+        >>> from vibegui import GuiBuilder
         >>> GuiBuilder.create_and_run('config.json')
 
         Force a specific backend:
 
-        >>> from qtpyguihelper import set_backend, GuiBuilder
+        >>> from vibegui import set_backend, GuiBuilder
         >>> set_backend('tk')
         >>> GuiBuilder.create_and_run('config.json')
 
         For Qt backend, create QApplication first:
 
-        >>> from qtpyguihelper import GuiBuilder
+        >>> from vibegui import GuiBuilder
         >>> from qtpy.QtWidgets import QApplication
         >>> import sys
         >>> app = QApplication(sys.argv)
@@ -105,7 +105,7 @@ class GuiBuilder:
 
         For tkinter backend:
 
-        >>> from qtpyguihelper import set_backend, GuiBuilder
+        >>> from vibegui import set_backend, GuiBuilder
         >>> set_backend('tk')
         >>> gui = GuiBuilder('config.json')
         >>> gui.show()
@@ -314,7 +314,7 @@ class GuiBuilder:
 
 
 __version__ = "1.0.0"
-__author__ = "QtPyGuiHelper Team"
+__author__ = "vibegui Team"
 
 __all__ = [
     "GuiBuilder", "QtGuiBuilder", "WxGuiBuilder", "TkGuiBuilder", "GtkGuiBuilder",

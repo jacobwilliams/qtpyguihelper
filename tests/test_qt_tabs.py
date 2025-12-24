@@ -15,7 +15,7 @@ def test_qt_tabs():
 
     try:
         # Force Qt backend
-        from qtpyguihelper import set_backend
+        from vibegui import set_backend
         set_backend('qt')
         print("✓ Qt backend selected")
 
@@ -34,7 +34,7 @@ def test_qt_tabs():
             app = QApplication(sys.argv)
 
         # Create GUI builder with Qt backend using the config file
-        from qtpyguihelper import GuiBuilder
+        from vibegui import GuiBuilder
         gui_builder = GuiBuilder(config_path=config_path)
 
         # Set up callbacks

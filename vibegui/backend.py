@@ -1,5 +1,5 @@
 """
-Backend detection and selection for qtpyguihelper.
+Backend detection and selection for vibegui.
 Supports Qt (via qtpy), wxPython, tkinter, and GTK backends.
 """
 

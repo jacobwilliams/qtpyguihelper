@@ -28,10 +28,10 @@ def test_qtpy_imports():
         print("✓ Qt widget imports successful")
 
         # Test library imports
-        from qtpyguihelper import GuiBuilder
-        from qtpyguihelper.qt.widget_factory import WidgetFactory
-        from qtpyguihelper.config_loader import ConfigLoader
-        print("✓ QtPyGuiHelper imports successful")
+        from vibegui import GuiBuilder
+        from vibegui.qt.widget_factory import WidgetFactory
+        from vibegui.config_loader import ConfigLoader
+        print("✓ vibegui imports successful")
         assert True, "All qtpy imports successful"
 
     except ImportError as e:
@@ -44,7 +44,7 @@ def test_simple_gui_creation():
     print("\nTesting GUI creation...")
 
     try:
-        from qtpyguihelper import GuiBuilder
+        from vibegui import GuiBuilder
         from qtpy.QtWidgets import QApplication
         import sys
 

@@ -10,7 +10,7 @@ import json
 # Add the library to the Python path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from qtpyguihelper.config_loader import ConfigLoader
+from vibegui.config_loader import ConfigLoader
 
 
 def test_tab_configuration():

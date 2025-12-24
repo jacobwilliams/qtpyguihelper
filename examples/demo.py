@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Demo script showing how to use the QtPyGuiHelper library.
+Demo script showing how to use the vibegui library.
 """
 
 import sys
@@ -45,7 +45,7 @@ def on_cancel() -> None:
 
 def demo_user_registration() -> None:
     """Demo the user registration form."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication
 
     print("Starting User Registration Demo...")
@@ -70,7 +70,7 @@ def demo_user_registration() -> None:
 
 def demo_settings_form() -> None:
     """Demo the settings form."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication
 
     print("Starting Settings Form Demo...")
@@ -94,7 +94,7 @@ def demo_settings_form() -> None:
 
 def demo_project_form() -> None:
     """Demo the project form."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication
 
     print("Starting Project Form Demo...")
@@ -168,7 +168,7 @@ def demo_programmatic_config() -> None:
     }
 
     # Create the application
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication
     app = QApplication(sys.argv)
 
@@ -204,7 +204,7 @@ def demo_programmatic_config() -> None:
 
 def demo_data_persistence() -> None:
     """Demo data loading and saving functionality."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
     print("Starting Data Persistence Demo...")
@@ -261,7 +261,7 @@ def demo_data_persistence() -> None:
 
 def demo_tabbed_interface() -> None:
     """Demo the tabbed interface functionality."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
     print("Starting Tabbed Interface Demo...")
@@ -297,7 +297,7 @@ def demo_tabbed_interface() -> None:
 
 def demo_complex_tabs() -> None:
     """Demo a complex tabbed configuration interface."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
     print("Starting Complex Tabbed Configuration Demo...")
@@ -339,7 +339,7 @@ def demo_complex_tabs() -> None:
 
 def demo_nested_fields() -> None:
     """Demo nested field names with dot notation."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
     print("Starting Nested Fields Demo...")
@@ -398,7 +398,7 @@ def demo_nested_fields() -> None:
 
 def demo_float_fields() -> None:
     """Demo float fields with various format specifications."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
     print("Starting Float Fields Demo...")
@@ -483,7 +483,7 @@ def demo_float_fields() -> None:
 
 def demo_format_strings() -> None:
     """Demo various format string specifications including scientific notation."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
     print("Starting Format Strings Demo...")
@@ -542,7 +542,7 @@ def demo_format_strings() -> None:
 
 def demo_custom_buttons() -> None:
     """Demo custom buttons with callbacks."""
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     from qtpy.QtWidgets import QApplication, QMessageBox
 
     print("Starting Custom Buttons Demo...")
@@ -661,10 +661,10 @@ def demo_custom_buttons() -> None:
 
 def demo_complex_tabs_wx() -> None:
     # Force wxPython backend
-    from qtpyguihelper import set_backend
+    from vibegui import set_backend
     set_backend('wx')
     print("✓ wxPython backend selected")
-    from qtpyguihelper import GuiBuilder
+    from vibegui import GuiBuilder
     import wx
 
     app = wx.App()
@@ -684,7 +684,7 @@ def demo_wxpython_backend() -> None:
 
     try:
         # Force wxPython backend
-        from qtpyguihelper import set_backend
+        from vibegui import set_backend
         set_backend('wx')
         print("✓ wxPython backend selected")
 
@@ -790,7 +790,7 @@ def demo_wxpython_backend() -> None:
         app = wx.App()
 
         # Create GUI builder with wxPython backend
-        from qtpyguihelper import set_backend, GuiBuilder
+        from vibegui import set_backend, GuiBuilder
         set_backend('wx')
         gui_builder = GuiBuilder(config_dict=config)
 
@@ -853,7 +853,7 @@ def demo_tkinter_backend() -> None:
 
     try:
         # Force tkinter backend FIRST, before any GUI imports
-        from qtpyguihelper import set_backend
+        from vibegui import set_backend
         set_backend('tk')
         print("✓ tkinter backend selected")
 
@@ -862,7 +862,7 @@ def demo_tkinter_backend() -> None:
         from tkinter import messagebox
 
         # NOW import GuiBuilder after backend is set
-        from qtpyguihelper import GuiBuilder
+        from vibegui import GuiBuilder
 
         # Create configuration
         config = {
@@ -1017,7 +1017,7 @@ def demo_gtk_backend() -> None:
     print("Starting GTK Backend Demo...")
 
     try:
-        from qtpyguihelper import set_backend, GuiBuilder
+        from vibegui import set_backend, GuiBuilder
         set_backend('gtk')
 
         # Simple form configuration
@@ -1101,11 +1101,11 @@ def demo_complex_tabs_gtk() -> None:
 
     try:
         # Force GTK backend
-        from qtpyguihelper import set_backend
+        from vibegui import set_backend
         set_backend('gtk')
         print("✓ GTK backend selected")
 
-        from qtpyguihelper import GuiBuilder
+        from vibegui import GuiBuilder
 
         # Create GUI from JSON file
         config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
@@ -1154,7 +1154,7 @@ def demo_backend_comparison() -> None:
     """Demo Qt, wxPython, tkinter, and GTK backends side by side."""
     print("Starting Backend Comparison Demo...")
 
-    # Don't import from qtpyguihelper here - it may trigger Qt imports!
+    # Don't import from vibegui here - it may trigger Qt imports!
     # Just show what backends are typically available
     print("Available backends: ['qt', 'wx', 'tk', 'gtk']")
 
@@ -1176,7 +1176,7 @@ def demo_unified_interface() -> None:
     """Demo the unified GuiBuilder interface that auto-selects backend."""
     print("Starting Unified Interface Demo...")
 
-    from qtpyguihelper import GuiBuilder, get_backend_info
+    from vibegui import GuiBuilder, get_backend_info
 
     # Show current backend info
     info = get_backend_info()
@@ -1265,7 +1265,7 @@ def demo_complex_tabs_tk() -> None:
 
     try:
         # Force tkinter backend
-        from qtpyguihelper import set_backend
+        from vibegui import set_backend
         set_backend('tk')
         print("✓ tkinter backend selected")
 
@@ -1274,7 +1274,7 @@ def demo_complex_tabs_tk() -> None:
         from tkinter import messagebox
 
         # NOW import GuiBuilder after backend is set
-        from qtpyguihelper import GuiBuilder
+        from vibegui import GuiBuilder
 
         # Create GUI from JSON file
         config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")

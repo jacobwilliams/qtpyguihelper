@@ -1,4 +1,4 @@
-from qtpyguihelper import GuiBuilder
+from vibegui import GuiBuilder
 
 config = {
     "window": {"title": "My App", "width": 400, "height": 300},

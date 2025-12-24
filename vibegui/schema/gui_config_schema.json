@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/yourusername/qtpyguihelper/schemas/gui-config.json",
+  "$id": "https://github.com/yourusername/vibegui/schemas/gui-config.json",
   "title": "GUI Configuration Schema",
-  "description": "Schema for validating GUI configuration files for qtpyguihelper",
+  "description": "Schema for validating GUI configuration files for vibegui",
   "type": "object",
   "additionalProperties": false,
   "properties": {

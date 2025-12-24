@@ -11,8 +11,8 @@ import tempfile
 # Add the library to the Python path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from qtpyguihelper.config_loader import ConfigLoader
-from qtpyguihelper.qt.gui_builder import GuiBuilder
+from vibegui.config_loader import ConfigLoader
+from vibegui.qt.gui_builder import GuiBuilder
 
 
 def test_data_persistence():
@@ -135,7 +135,7 @@ def test_data_persistence():
 
         metadata = {
             "_metadata": {
-                "config_source": "qtpyguihelper",
+                "config_source": "vibegui",
                 "window_title": gui_config.window.title,
                 "layout": gui_config.layout,
                 "field_count": len(gui_config.fields),

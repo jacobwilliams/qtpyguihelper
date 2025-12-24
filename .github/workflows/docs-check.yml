@@ -4,13 +4,13 @@ on:
   push:
     paths:
     - 'docs/**'
-    - 'qtpyguihelper/**/*.py'
+    - 'vibegui/**/*.py'
     - 'pyproject.toml'
     - '.github/workflows/docs-check.yml'
   pull_request:
     paths:
     - 'docs/**'
-    - 'qtpyguihelper/**/*.py'
+    - 'vibegui/**/*.py'
     - 'pyproject.toml'
     - '.github/workflows/docs-check.yml'
 

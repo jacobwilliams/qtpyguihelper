@@ -15,7 +15,7 @@ def test_wx_tabs_simple():
 
     try:
         # Force wxPython backend
-        from qtpyguihelper import set_backend
+        from vibegui import set_backend
         set_backend('wx')
         print("✓ wxPython backend selected")
 
@@ -115,7 +115,7 @@ def test_wx_tabs_simple():
         app = create_wx_app()
 
         # Create GUI builder with wxPython backend
-        from qtpyguihelper import WxGuiBuilder
+        from vibegui import WxGuiBuilder
         gui_builder = WxGuiBuilder(config_dict=config)
 
         # Set up callbacks

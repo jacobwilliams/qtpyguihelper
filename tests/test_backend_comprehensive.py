@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive test of QtPyGuiHelper backend functionality.
+Comprehensive test of vibegui backend functionality.
 """
 
 import sys
@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from qtpyguihelper import (
+from vibegui import (
     get_available_backends, get_backend_info, set_backend,
     is_backend_available
 )
@@ -73,19 +73,19 @@ def test_import_safety():
     print("=== Import Safety Test ===")
 
     try:
-        from qtpyguihelper import GuiBuilder
+        from vibegui import GuiBuilder
         print("✓ GuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ GuiBuilder import error: {e}")
 
     try:
-        from qtpyguihelper.qt.gui_builder import GuiBuilder as QtGuiBuilder
+        from vibegui.qt.gui_builder import GuiBuilder as QtGuiBuilder
         print("✓ QtGuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ QtGuiBuilder import error: {e}")
 
     try:
-        from qtpyguihelper.wx.wx_gui_builder import WxGuiBuilder
+        from vibegui.wx.wx_gui_builder import WxGuiBuilder
         print("✓ WxGuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ WxGuiBuilder import error: {e}")
@@ -97,7 +97,7 @@ def test_config_loading():
     """Test configuration loading with different backends."""
     print("=== Configuration Loading Test ===")
 
-    from qtpyguihelper.config_loader import ConfigLoader
+    from vibegui.config_loader import ConfigLoader
 
     config_dict = {
         "window": {"title": "Test", "width": 500, "height": 400},
@@ -133,14 +133,14 @@ def test_widget_factories():
     print("=== Widget Factory Test ===")
 
     try:
-        from qtpyguihelper.qt.widget_factory import WidgetFactory
+        from vibegui.qt.widget_factory import WidgetFactory
         _qt_factory = WidgetFactory()
         print("✓ Qt WidgetFactory created successfully")
     except (ImportError, RuntimeError) as e:
         print(f"✗ Qt WidgetFactory error: {e}")
 
     try:
-        from qtpyguihelper.wx.wx_widget_factory import WxWidgetFactory
+        from vibegui.wx.wx_widget_factory import WxWidgetFactory
         _wx_factory = WxWidgetFactory()
         print("✓ wxPython WxWidgetFactory created successfully")
     except (ImportError, RuntimeError) as e:

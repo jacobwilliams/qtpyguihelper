@@ -13,7 +13,7 @@ def test_backend_detection():
     """Test backend detection and availability."""
     print("=== Backend Detection Test ===")
 
-    from qtpyguihelper import get_available_backends, get_backend_info, is_backend_available
+    from vibegui import get_available_backends, get_backend_info, is_backend_available
 
     available = get_available_backends()
     print(f"Available backends: {available}")
@@ -30,7 +30,7 @@ def test_backend_switching():
     """Test switching between backends."""
     print("\n=== Backend Switching Test ===")
 
-    from qtpyguihelper import set_backend, get_backend, get_available_backends
+    from vibegui import set_backend, get_backend, get_available_backends
 
     available = get_available_backends()
 
@@ -52,7 +52,7 @@ def test_unified_interface():
     print("\n=== Unified Interface Test ===")
 
     try:
-        from qtpyguihelper import GuiBuilder, set_backend, is_backend_available
+        from vibegui import GuiBuilder, set_backend, is_backend_available
 
         # Create a simple configuration
         config = {
@@ -106,8 +106,8 @@ def test_widget_factories():
     print("\n=== Widget Factory Test ===")
 
     try:
-        from qtpyguihelper import WidgetFactory, WxWidgetFactory
-        from qtpyguihelper.config_loader import FieldConfig
+        from vibegui import WidgetFactory, WxWidgetFactory
+        from vibegui.config_loader import FieldConfig
 
         # Test basic widget factory creation
         qt_factory = WidgetFactory()
@@ -134,7 +134,7 @@ def test_configuration_loading():
     print("\n=== Configuration Loading Test ===")
 
     try:
-        from qtpyguihelper.config_loader import ConfigLoader
+        from vibegui.config_loader import ConfigLoader
 
         # Test programmatic configuration
         config_dict = {
