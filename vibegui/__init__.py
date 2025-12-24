@@ -58,6 +58,12 @@ def _lazy_import_gtk() -> tuple:
     from .gtk.gtk_widget_factory import GtkWidgetFactory
     return GtkGuiBuilder, GtkWidgetFactory
 
+def _lazy_import_flet() -> tuple:
+    """Lazy import Flet backend."""
+    from .flet.flet_gui_builder import FletGuiBuilder
+    from .flet.flet_widget_factory import FletWidgetFactory
+    return FletGuiBuilder, FletWidgetFactory
+
 from .config_loader import ConfigLoader, CustomButtonConfig
 from .backend import (
     get_backend, set_backend, get_available_backends,
@@ -154,6 +160,12 @@ class GuiBuilder:
                 self._builder = GtkGuiBuilder(config_path, config_dict)
             except ImportError:
                 raise BackendError(f"GTK backend is not available (missing dependencies)")
+        elif self._backend == 'flet':
+            try:
+                FletGuiBuilder, _ = _lazy_import_flet()
+                self._builder = FletGuiBuilder(config_path, config_dict)
+            except ImportError:
+                raise BackendError(f"Flet backend is not available (missing dependencies)")
         else:
             raise BackendError(f"Unsupported backend: {self._backend}")
 

@@ -1150,6 +1150,153 @@ def demo_complex_tabs_gtk() -> None:
         print("  python examples/demo.py gtk")
 
 
+def demo_flet_backend() -> None:
+    """Demo the Flet backend with a simple form."""
+    print("Starting Flet Backend Demo...")
+
+    try:
+        # Force Flet backend
+        from vibegui import set_backend
+        set_backend('flet')
+        print("✓ Flet backend selected")
+
+        from vibegui import GuiBuilder
+
+        # Create a simple configuration
+        config = {
+            "window": {
+                "title": "Flet Backend Demo",
+                "width": 600,
+                "height": 500
+            },
+            "fields": [
+                {
+                    "name": "username",
+                    "label": "Username",
+                    "type": "text",
+                    "required": True,
+                    "placeholder": "Enter your username"
+                },
+                {
+                    "name": "email",
+                    "label": "Email",
+                    "type": "email",
+                    "required": True,
+                    "placeholder": "user@example.com"
+                },
+                {
+                    "name": "password",
+                    "label": "Password",
+                    "type": "password",
+                    "required": True
+                },
+                {
+                    "name": "theme",
+                    "label": "Preferred Theme",
+                    "type": "select",
+                    "options": ["Light", "Dark", "System"],
+                    "default_value": "System"
+                },
+                {
+                    "name": "notifications",
+                    "label": "Enable Notifications",
+                    "type": "checkbox",
+                    "default_value": True
+                },
+                {
+                    "name": "description",
+                    "label": "About You",
+                    "type": "textarea",
+                    "placeholder": "Tell us about yourself..."
+                }
+            ],
+            "submit_button": True,
+            "submit_label": "Save Settings",
+            "cancel_button": True,
+            "cancel_label": "Close"
+        }
+
+        def on_flet_submit(form_data: dict) -> None:
+            """Handle Flet form submission."""
+            print("Flet Form submitted with data:")
+            for key, value in form_data.items():
+                print(f"  {key}: {value}")
+
+        # Create the GUI builder
+        gui_builder = GuiBuilder(config_dict=config)
+        gui_builder.set_submit_callback(on_flet_submit)
+
+        print("✓ Flet backend demo starting...")
+        print("  Flet uses Material Design UI")
+        print("  Automatically adapts to system theme")
+        print("  Close the window or click 'Close' to exit")
+
+        # Run the application
+        gui_builder.run()
+
+    except ImportError as e:
+        print(f"✗ Flet not available: {e}")
+        print("  Install Flet support: pip install flet")
+    except Exception as e:
+        print(f"✗ Error with Flet backend: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+def demo_complex_tabs_flet() -> None:
+    """Demo a complex tabbed configuration interface using Flet backend."""
+    print("Starting Complex Tabbed Configuration Demo (Flet)...")
+
+    try:
+        # Force Flet backend
+        from vibegui import set_backend
+        set_backend('flet')
+        print("✓ Flet backend selected")
+
+        from vibegui import GuiBuilder
+
+        # Create GUI from JSON file
+        config_path = os.path.join(os.path.dirname(__file__), "tabbed_config.json")
+        gui = GuiBuilder(config_path=config_path)
+
+        # Set callbacks
+        def on_save_config(form_data: dict) -> None:
+            print("Configuration saved (Flet):")
+            for key, value in form_data.items():
+                print(f"  {key}: {value}")
+
+            # Save to file
+            output_path = os.path.join(os.path.dirname(__file__), "tabbed_config_output_flet.json")
+            success = gui.save_data_to_file(output_path)
+            if success:
+                print(f"Configuration saved to {output_path}")
+
+            print("✓ Configuration has been saved successfully!")
+
+        gui.set_submit_callback(on_save_config)
+
+        print("✓ Flet tabbed GUI created")
+        print("  - Modern Material Design interface")
+        print("  - Multiple tabs available - switch between them")
+        print("  - Beautiful animations and transitions")
+        print("  - Automatically adapts to system theme")
+        print("  - Submit to see the form data structure")
+        print("✓ Starting Flet application...")
+
+        # Show and run the GUI
+        gui.run()
+
+    except ImportError as e:
+        print(f"✗ Flet not available: {e}")
+        print("  Install Flet support: pip install flet")
+    except Exception as e:
+        print(f"✗ Error with Flet backend: {e}")
+        import traceback
+        traceback.print_exc()
+        print("  Note: If you encounter issues, try the simpler Flet demo:")
+        print("  python examples/demo.py flet")
+
+
 def demo_backend_comparison() -> None:
     """Demo Qt, wxPython, tkinter, and GTK backends side by side."""
     print("Starting Backend Comparison Demo...")
@@ -1332,6 +1479,7 @@ def main() -> None:
         print("  python demo.py complex_tabs_wx - Complex tabbed configuration demo (wxPython)")
         print("  python demo.py complex_tabs_tk - Complex tabbed configuration demo (tkinter)")
         print("  python demo.py complex_tabs_gtk - Complex tabbed configuration demo (GTK)")
+        print("  python demo.py complex_tabs_flet - Complex tabbed configuration demo (Flet)")
         print("  python demo.py nested          - Nested field names demo (Qt)")
         print("  python demo.py float           - Float fields demo (Qt)")
         print("  python demo.py format          - Format strings demo (Qt)")
@@ -1341,6 +1489,7 @@ def main() -> None:
         print("  python demo.py wxpython      - wxPython backend demo")
         print("  python demo.py tkinter       - tkinter backend demo")
         print("  python demo.py gtk           - GTK backend demo")
+        print("  python demo.py flet          - Flet backend demo")
         print("  python demo.py compare       - Compare all backends")
         print("  python demo.py unified       - Unified interface (auto-backend)")
         print()
@@ -1374,19 +1523,23 @@ def main() -> None:
         demo_complex_tabs_tk()
     elif demo_type == "complex_tabs_gtk":
         demo_complex_tabs_gtk()
+    elif demo_type == "complex_tabs_flet":
+        demo_complex_tabs_flet()
     elif demo_type == "wx" or demo_type == "wxpython":
         demo_wxpython_backend()
     elif demo_type == "tk" or demo_type == "tkinter":
         demo_tkinter_backend()
     elif demo_type == "gtk":
         demo_gtk_backend()
+    elif demo_type == "flet":
+        demo_flet_backend()
     elif demo_type == "backend_comparison" or demo_type == "compare":
         demo_backend_comparison()
     elif demo_type == "unified":
         demo_unified_interface()
     else:
         print(f"Unknown demo type: {demo_type}")
-        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, complex_tabs_wx, complex_tabs_tk, complex_tabs_gtk, nested, float, format, custom_buttons, wx, wxpython, tk, tkinter, gtk, compare, backend_comparison, unified")
+        print("Available options: registration, settings, project, contact, persistence, tabs, complex_tabs, complex_tabs_wx, complex_tabs_tk, complex_tabs_gtk, complex_tabs_flet, nested, float, format, custom_buttons, wx, wxpython, tk, tkinter, gtk, flet, compare, backend_comparison, unified")
 
 
 if __name__ == "__main__":
