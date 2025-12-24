@@ -7,8 +7,9 @@ A Python library for creating GUI applications from JSON configuration files. Th
 - **wxPython backend** as a cross-platform alternative
 - **tkinter backend** built into Python (no additional dependencies)
 - **GTK backend** via PyGObject (native Linux desktop integration, GTK3/GTK4 support)
+- **Flet backend** - Modern Material Design UI with beautiful animations and transitions
 
-The library automatically detects available backends and provides a unified interface, allowing you to switch between Qt, wxPython, tkinter, and GTK seamlessly.
+The library automatically detects available backends and provides a unified interface, allowing you to switch between Qt, wxPython, tkinter, GTK, and Flet seamlessly.
 
 ## Examples
 
@@ -51,6 +52,7 @@ vibegui supports multiple GUI backends for maximum flexibility and cross-platfor
 **wxPython Backend**: Alternative cross-platform GUI toolkit with native look and feel.
 **GTK Backend**: PyGObject is a Python package which provides bindings for GObject based libraries such as GTK.
 **tkinter Backend**: Built into Python, requires no additional dependencies, perfect for simple GUIs.
+**Flet Backend**: Modern Python framework with Material Design UI, beautiful animations, and automatic theme adaptation.
 
 ### Dependency installation
 
@@ -72,6 +74,8 @@ pixi add pyside6
 pixi add qtpy
 ### for wxPython backend:
 pixi add wxpython
+### for Flet backend:
+pixi add flet
 
 pixi install
 pixi shell
@@ -95,6 +99,10 @@ pip install -e .
 
 pip install pygobject>=3.42.0  # Install with GTK Backend
 pip install -e .
+
+pip install flet>=0.24.0  # Install with Flet Backend
+pip install -e .
+
 # System dependencies for GTK development (Linux)
 # GTK3:
 sudo apt-get install libgtk-3-dev  # Ubuntu/Debian
@@ -170,7 +178,7 @@ gui.show()
 
 # Method 2: Force specific backend
 from vibegui import set_backend
-set_backend('wx')  # or 'qt'
+set_backend('flet')  # or 'qt', 'wx', 'tk', 'gtk'
 gui = GuiBuilder(config_path="my_form.json")
 gui.set_submit_callback(on_submit)
 

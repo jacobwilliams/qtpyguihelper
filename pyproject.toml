@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "vibegui"
 version = "1.0.0"
-description = "A Python library for creating cross-platform GUIs from JSON configuration files. Supports Qt (PySide6/PyQt6), wxPython, tkinter, and GTK3/GTK4 backends."
+description = "A Python library for creating cross-platform GUIs from JSON configuration files. Supports Qt (PySide6/PyQt6), wxPython, tkinter, GTK3/GTK4, and Flet backends."
 readme = "README.md"
 requires-python = ">=3.8"
 license = "MIT"
@@ -29,7 +29,7 @@ classifiers = [
     "Topic :: Desktop Environment",
     "Topic :: Software Development :: Widget Sets",
 ]
-keywords = ["gui", "json", "configuration", "form", "builder", "qt", "pyside6", "pyqt6", "qtpy", "wxpython", "tkinter", "gtk", "gtk3", "gtk4", "cross-platform", "desktop"]
+keywords = ["gui", "json", "configuration", "form", "builder", "qt", "pyside6", "pyqt6", "qtpy", "wxpython", "tkinter", "gtk", "gtk3", "gtk4", "flet", "material-design", "cross-platform", "desktop"]
 dependencies = [
     # No required dependencies - all GUI backends are optional
 ]
@@ -59,11 +59,15 @@ gtk3 = [
 gtk4 = [
     "PyGObject>=3.42.0",
 ]
+flet = [
+    "flet>=0.24.0",
+]
 all = [
     "qtpy>=2.0.0",
     "PySide6>=6.5.0",
     "wxPython>=4.2.0",
     "PyGObject>=3.42.0",
+    "flet>=0.24.0",
 ]
 dev = [
     "pytest>=6.0",
@@ -76,6 +80,7 @@ dev = [
     "qtpy>=2.0.0",
     "wxPython>=4.2.0",  # Optional: for wxPython testing
     "PyGObject>=3.42.0",  # Optional: for GTK testing
+    "flet>=0.24.0",  # Optional: for Flet testing
 ]
 test = [
     "pytest>=6.0",
@@ -168,6 +173,7 @@ markers = [
     "wx: marks tests specific to wxPython backend",
     "tk: marks tests specific to tkinter backend",
     "gtk: marks tests specific to GTK backend",
+    "flet: marks tests specific to Flet backend",
 ]
 
 # Coverage configuration
