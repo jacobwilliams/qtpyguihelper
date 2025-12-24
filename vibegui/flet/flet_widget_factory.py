@@ -227,20 +227,54 @@ class FletWidgetFactory:
         )
         return text_field
 
-    def _create_range_field(self, field_config: FieldConfig) -> ft.Slider:
+    def _create_range_field(self, field_config: FieldConfig) -> ft.Column:
         """Create a range/slider field."""
         # Parse min/max from field config if available
         min_val = 0
         max_val = 100
 
+        # Create a text element to display the current value
+        initial_value = float(field_config.default_value) if field_config.default_value else min_val
+        value_text = ft.Text(
+            value=f"{initial_value:.1f}",
+            size=14,
+            weight=ft.FontWeight.BOLD
+        )
+
+        def on_slider_change(e):
+            """Update the value text when slider changes."""
+            value_text.value = f"{e.control.value:.1f}"
+            e.page.update()
+            self._trigger_change_callback(field_config.name, e.control.value)
+
         slider = ft.Slider(
             min=min_val,
             max=max_val,
-            value=float(field_config.default_value) if field_config.default_value else min_val,
+            value=initial_value,
             label="{value}",
-            on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
+            on_change=on_slider_change,
+            expand=True
         )
-        return slider
+
+        # Store reference to both slider and value text
+        container = ft.Column(
+            controls=[
+                ft.Row(
+                    controls=[
+                        ft.Text(self._create_label_text(field_config)),
+                        value_text
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+                slider
+            ],
+            spacing=5
+        )
+
+        # Store the slider in widgets dict, not the container
+        self.widgets[field_config.name] = slider
+
+        return container
 
     def _create_file_field(self, field_config: FieldConfig) -> ft.FilePicker:
         """Create a file picker field."""
