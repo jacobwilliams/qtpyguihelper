@@ -1266,7 +1266,7 @@ def demo_complex_tabs_flet() -> None:
                 print(f"  {key}: {value}")
 
             # Save to file
-            output_path = os.path.join(os.path.dirname(__file__), "tabbed_config_output_flet.json")
+            output_path = os.path.join(os.path.dirname(__file__), "tabbed_config_flet_data.json")
             success = gui.save_data_to_file(output_path)
             if success:
                 print(f"Configuration saved to {output_path}")
