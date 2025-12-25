@@ -90,7 +90,7 @@ class FletGuiBuilder:
         elif button_row:
             page.add(button_row)
 
-    def _build_form_interface(self) -> ft.Container:
+    def _build_form_interface(self) -> Optional[ft.Container]:
         """Build a simple form interface."""
         if not self.config or not self.config.fields:
             return None
@@ -118,7 +118,7 @@ class FletGuiBuilder:
 
         return form_container
 
-    def _build_tabbed_interface(self) -> ft.Tabs:
+    def _build_tabbed_interface(self) -> Optional[ft.Tabs]:
         """Build a tabbed interface."""
         if not self.config or not self.config.tabs:
             return None
@@ -153,7 +153,7 @@ class FletGuiBuilder:
         # Tabs should expand to fill available space (but buttons will be below in layout)
         return ft.Tabs(tabs=tabs, expand=True)
 
-    def _build_buttons(self) -> Optional[ft.Row]:
+    def _build_buttons(self) -> Optional[ft.Container]:
         """Build button row with custom and default buttons."""
         if not self.config:
             return None
