@@ -283,6 +283,41 @@ class FletGuiBuilder:
         if self.page:
             self.page.update()
 
+    def clear_form(self) -> None:
+        """Clear all form fields."""
+        if not self.config:
+            return
+
+        # Get all fields from config
+        all_fields = []
+        if self.config.use_tabs and self.config.tabs:
+            for tab in self.config.tabs:
+                if hasattr(tab, 'fields') and tab.fields:
+                    all_fields.extend(tab.fields)
+        elif self.config.fields:
+            all_fields = self.config.fields
+
+        # Clear each field
+        for field_config in all_fields:
+            self.widget_factory.set_value(field_config.name, "")
+
+        if self.page:
+            self.page.update()
+
+    def get_field_value(self, field_name: str) -> Any:
+        """Get the value of a specific field."""
+        return self.widget_factory.get_value(field_name)
+
+    def set_field_value(self, field_name: str, value: Any) -> bool:
+        """Set the value of a specific field."""
+        try:
+            self.widget_factory.set_value(field_name, value)
+            if self.page:
+                self.page.update()
+            return True
+        except Exception:
+            return False
+
     def save_data_to_file(self, file_path: str, include_empty: bool = True) -> bool:
         """Save current form data to a JSON file."""
         try:
@@ -304,6 +339,17 @@ class FletGuiBuilder:
             print(f"Error loading data from file: {e}")
             return False
 
+    def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
+        """Load form data from a dictionary."""
+        try:
+            if data:
+                self.set_form_data(data)
+                return True
+            return False
+        except Exception as e:
+            print(f"Error loading data from dict: {e}")
+            return False
+
     def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
         """Set callback for form submission."""
         self.submit_callback = callback
@@ -315,6 +361,33 @@ class FletGuiBuilder:
     def set_custom_button_callback(self, button_id: str, callback: Callable[[Dict[str, Any]], None]) -> None:
         """Set callback for a custom button."""
         self.custom_button_callbacks[button_id] = callback
+
+    def remove_custom_button_callback(self, button_id: str) -> None:
+        """Remove a custom button callback."""
+        if button_id in self.custom_button_callbacks:
+            del self.custom_button_callbacks[button_id]
+
+    def get_custom_button_names(self) -> List[str]:
+        """Get a list of all custom button names from the configuration."""
+        if not self.config or not self.config.custom_buttons:
+            return []
+        return [button.id for button in self.config.custom_buttons]
+
+    def enable_field(self, field_name: str, enabled: bool = True) -> None:
+        """Enable or disable a specific field."""
+        widget = self.widget_factory.widgets.get(field_name)
+        if widget:
+            widget.disabled = not enabled
+            if self.page:
+                self.page.update()
+
+    def show_field(self, field_name: str, visible: bool = True) -> None:
+        """Show or hide a specific field."""
+        widget = self.widget_factory.widgets.get(field_name)
+        if widget:
+            widget.visible = visible
+            if self.page:
+                self.page.update()
 
     def add_field_change_callback(self, field_name: str, callback: Callable[[str, Any], None]) -> None:
         """Add a callback for when a field's value changes."""
@@ -389,6 +462,11 @@ class FletGuiBuilder:
     def show(self) -> None:
         """Show the GUI (alias for run in Flet)."""
         self.run()
+
+    def close(self) -> None:
+        """Close the GUI application."""
+        if self.page:
+            self.page.window_close()
 
     @staticmethod
     def create_and_run(config_path: str | None = None,
