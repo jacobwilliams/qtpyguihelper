@@ -13,7 +13,7 @@ from .exceptions import BackendError
 class BackendManager:
     """Manages GUI backend selection and availability."""
 
-    SUPPORTED_BACKENDS = ['qt', 'wx', 'tk', 'gtk']
+    SUPPORTED_BACKENDS = ['qt', 'wx', 'tk', 'gtk', 'flet']
     DEFAULT_BACKEND = 'qt'
 
     def __init__(self) -> None:
@@ -67,6 +67,16 @@ class BackendManager:
                     return False
             except (ImportError, ValueError):
                 self._backend_available['gtk'] = False
+                return False
+
+        # Check Flet availability
+        elif backend == 'flet':
+            try:
+                import flet  # noqa: F401
+                self._backend_available['flet'] = True
+                return True
+            except ImportError:
+                self._backend_available['flet'] = False
                 return False
 
         else:
@@ -173,6 +183,12 @@ class BackendManager:
                 info['gtk_version'] = f"{Gtk.get_major_version()}.{Gtk.get_minor_version()}.{Gtk.get_micro_version()}"
                 info['glib_version'] = gi.version_info
             except (ImportError, ValueError):
+                pass
+        elif backend == 'flet':
+            try:
+                import flet
+                info['flet_version'] = flet.version.version
+            except (ImportError, AttributeError):
                 pass
 
         return info

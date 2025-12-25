@@ -29,6 +29,7 @@ Usage:
     app.exec()
 """
 
+from __future__ import annotations
 from typing import Callable, Any, Dict, Optional
 
 # Don't import GUI backends immediately - use lazy loading instead
@@ -57,6 +58,12 @@ def _lazy_import_gtk() -> tuple:
     from .gtk.gtk_gui_builder import GtkGuiBuilder
     from .gtk.gtk_widget_factory import GtkWidgetFactory
     return GtkGuiBuilder, GtkWidgetFactory
+
+def _lazy_import_flet() -> tuple:
+    """Lazy import Flet backend."""
+    from .flet.flet_gui_builder import FletGuiBuilder
+    from .flet.flet_widget_factory import FletWidgetFactory
+    return FletGuiBuilder, FletWidgetFactory
 
 from .config_loader import ConfigLoader, CustomButtonConfig
 from .backend import (
@@ -154,6 +161,12 @@ class GuiBuilder:
                 self._builder = GtkGuiBuilder(config_path, config_dict)
             except ImportError:
                 raise BackendError(f"GTK backend is not available (missing dependencies)")
+        elif self._backend == 'flet':
+            try:
+                FletGuiBuilder, _ = _lazy_import_flet()
+                self._builder = FletGuiBuilder(config_path, config_dict)
+            except ImportError:
+                raise BackendError(f"Flet backend is not available (missing dependencies)")
         else:
             raise BackendError(f"Unsupported backend: {self._backend}")
 
@@ -275,8 +288,8 @@ class GuiBuilder:
 
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,
-                      config_dict: Optional[Dict[str, Any]] = None,
-                      backend: Optional[str] = None) -> 'GuiBuilder':
+                       config_dict: Optional[Dict[str, Any]] = None,
+                       backend: Optional[str] = None) -> 'GuiBuilder':
         """
         Create and run a GUI application with automatic backend detection.
 
@@ -304,11 +317,11 @@ class GuiBuilder:
             TkGuiBuilder, _ = _lazy_import_tk()
             return TkGuiBuilder.create_and_run(config_path, config_dict)
         elif current_backend == 'gtk':
-            try:
-                GtkGuiBuilder, _ = _lazy_import_gtk()
-                return GtkGuiBuilder.create_and_run(config_path, config_dict)
-            except ImportError:
-                raise BackendError(f"GTK backend is not available (missing dependencies)")
+            GtkGuiBuilder, _ = _lazy_import_gtk()
+            return GtkGuiBuilder.create_and_run(config_path, config_dict)
+        elif current_backend == 'flet':
+            FletGuiBuilder, _ = _lazy_import_flet()
+            return FletGuiBuilder.create_and_run(config_path, config_dict)
         else:
             raise BackendError(f"Unsupported backend: {current_backend}")
 

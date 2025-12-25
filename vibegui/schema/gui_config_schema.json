@@ -1,11 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/yourusername/vibegui/schemas/gui-config.json",
+  "$id": "https://raw.githubusercontent.com/jacobwilliams/vibegui/master/vibegui/schema/gui_config_schema.json",
   "title": "GUI Configuration Schema",
   "description": "Schema for validating GUI configuration files for vibegui",
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for IDE validation and autocomplete"
+    },
     "window": {
       "type": "object",
       "description": "Configuration for the main window",

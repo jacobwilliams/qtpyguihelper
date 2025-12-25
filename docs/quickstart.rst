@@ -60,6 +60,7 @@ You can specify which GUI backend to use:
    gui = GuiBuilder.create_and_run(config_dict=config, backend='tk')      # tkinter
    gui = GuiBuilder.create_and_run(config_dict=config, backend='wx')      # wxPython
    gui = GuiBuilder.create_and_run(config_dict=config, backend='gtk')     # GTK
+   gui = GuiBuilder.create_and_run(config_dict=config, backend='flet')    # Flet (Material Design)
 
 Loading Configuration from File
 -------------------------------

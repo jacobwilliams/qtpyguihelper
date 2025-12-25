@@ -629,8 +629,8 @@ class GuiBuilder(QMainWindow):
 
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,
-                      config_dict: Optional[Dict[str, Any]] = None,
-                      app_args: Optional[list] = None) -> 'GuiBuilder':
+                       config_dict: Optional[Dict[str, Any]] = None,
+                       app_args: Optional[list] = None) -> 'GuiBuilder':
         """
         Create and run a GUI application.
 

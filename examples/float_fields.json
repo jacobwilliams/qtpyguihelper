@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/jacobwilliams/vibegui/master/vibegui/schema/gui_config_schema.json",
   "window": {
     "title": "Float Fields Example",
     "width": 500,
