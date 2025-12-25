@@ -29,6 +29,7 @@ Usage:
     app.exec()
 """
 
+from __future__ import annotations
 from typing import Callable, Any, Dict, Optional
 
 # Don't import GUI backends immediately - use lazy loading instead
@@ -287,8 +288,8 @@ class GuiBuilder:
 
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,
-                      config_dict: Optional[Dict[str, Any]] = None,
-                      backend: Optional[str] = None) -> 'GuiBuilder':
+                       config_dict: Optional[Dict[str, Any]] = None,
+                       backend: Optional[str] = None) -> 'GuiBuilder':
         """
         Create and run a GUI application with automatic backend detection.
 
@@ -316,11 +317,11 @@ class GuiBuilder:
             TkGuiBuilder, _ = _lazy_import_tk()
             return TkGuiBuilder.create_and_run(config_path, config_dict)
         elif current_backend == 'gtk':
-            try:
-                GtkGuiBuilder, _ = _lazy_import_gtk()
-                return GtkGuiBuilder.create_and_run(config_path, config_dict)
-            except ImportError:
-                raise BackendError(f"GTK backend is not available (missing dependencies)")
+            GtkGuiBuilder, _ = _lazy_import_gtk()
+            return GtkGuiBuilder.create_and_run(config_path, config_dict)
+        elif current_backend == 'flet':
+            FletGuiBuilder, _ = _lazy_import_flet()
+            return FletGuiBuilder.create_and_run(config_path, config_dict)
         else:
             raise BackendError(f"Unsupported backend: {current_backend}")
 

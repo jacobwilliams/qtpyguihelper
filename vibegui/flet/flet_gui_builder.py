@@ -391,15 +391,22 @@ class FletGuiBuilder:
         self.run()
 
     @staticmethod
-    def create_and_run(config_path: str, submit_callback: Optional[Callable] = None) -> None:
+    def create_and_run(config_path: str | None = None,
+                       config_dict: Optional[Dict[str, Any]] = None,
+                       submit_callback: Optional[Callable] = None) -> FletGuiBuilder:
         """
         Convenience method to create and run a GUI in one call.
 
         Args:
             config_path: Path to JSON configuration file
+            config_dict: Configuration dictionary (alternative to config_path)
             submit_callback: Optional callback for form submission
+
+        Returns:
+            FletGuiBuilder instance
         """
-        builder = FletGuiBuilder(config_path=config_path)
+        builder = FletGuiBuilder(config_path=config_path, config_dict=config_dict)
         if submit_callback:
             builder.set_submit_callback(submit_callback)
         builder.run()
+        return builder

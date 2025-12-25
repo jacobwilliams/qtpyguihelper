@@ -174,7 +174,7 @@ class WxGuiBuilder(wx.Frame):
                     if layout_type == "vertical" and i < len(fields) - 1:
                         sizer.Add((0, 10), 0)
 
-    def _create_tab_page(self, parent: wx.Notebook, tab_config) -> wx.Panel:
+    def _create_tab_page(self, parent: wx.Notebook, tab_config: GuiConfig) -> wx.Panel:
         """Create a tab page with its content."""
         # Create scrolled panel for the tab
         tab_panel = scrolled.ScrolledPanel(parent)
@@ -274,7 +274,7 @@ class WxGuiBuilder(wx.Frame):
 
         return button_sizer
 
-    def _connect_field_events(self):
+    def _connect_field_events(self) -> None:
         """Connect field change events."""
         for field_name, widget in self.widget_factory.widgets.items():
             if isinstance(widget, wx.TextCtrl):
@@ -313,13 +313,13 @@ class WxGuiBuilder(wx.Frame):
                         radio_button.Bind(wx.EVT_RADIOBUTTON,
                                          lambda evt, name=field_name: self._on_field_changed(name, evt.GetEventObject().GetLabel()))
 
-    def _on_field_changed(self, field_name: str, value: Any):
+    def _on_field_changed(self, field_name: str, value: Any) -> None:
         """Handle field value changes."""
         # Emit field change event (similar to Qt signal)
         # For now, we'll just print the change
         print(f"Field '{field_name}' changed to: {value}")
 
-    def _on_submit(self, event):
+    def _on_submit(self, event: wx.CommandEvent) -> None:
         """Handle submit button click."""
         # Validate required fields
         if not self._validate_required_fields():
@@ -339,7 +339,7 @@ class WxGuiBuilder(wx.Frame):
         # This is a basic implementation
         print("Form submitted:", form_data)
 
-    def _on_cancel(self, event):
+    def _on_cancel(self, event: wx.CommandEvent) -> None:
         """Handle cancel button click."""
         # Call custom callback if set
         if self.cancel_callback:
@@ -350,7 +350,7 @@ class WxGuiBuilder(wx.Frame):
 
         print("Form cancelled")
 
-    def _on_custom_button_clicked(self, button_name: str):
+    def _on_custom_button_clicked(self, button_name: str) -> None:
         """Handle custom button click."""
         # Call custom callback if registered
         if button_name in self.custom_button_callbacks:
@@ -390,7 +390,7 @@ class WxGuiBuilder(wx.Frame):
 
         return True
 
-    def _show_error(self, message: str):
+    def _show_error(self, message: str) -> None:
         """Show an error message dialog."""
         wx.MessageBox(message, "Error", wx.OK | wx.ICON_ERROR)
 
@@ -398,12 +398,12 @@ class WxGuiBuilder(wx.Frame):
         """Get all form data as a dictionary."""
         return self.widget_factory.get_all_values()
 
-    def set_form_data(self, data: Dict[str, Any]):
+    def set_form_data(self, data: Dict[str, Any]) -> None:
         """Set form data from a dictionary."""
         for field_name, value in data.items():
             self.widget_factory.set_widget_value(field_name, value)
 
-    def clear_form(self):
+    def clear_form(self) -> None:
         """Clear all form fields."""
         self.widget_factory.clear_all_widgets()
 
@@ -415,15 +415,15 @@ class WxGuiBuilder(wx.Frame):
         """Set the value of a specific field."""
         return self.widget_factory.set_widget_value(field_name, value)
 
-    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]):
+    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
         """Set a callback function to be called when the form is submitted."""
         self.submit_callback = callback
 
-    def set_cancel_callback(self, callback: Callable[[], None]):
+    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
         """Set a callback function to be called when the form is cancelled."""
         self.cancel_callback = callback
 
-    def set_custom_button_callback(self, button_name: str, callback: Callable[[Dict[str, Any]], None]):
+    def set_custom_button_callback(self, button_name: str, callback: Callable[[Dict[str, Any]], None]) -> None:
         """
         Set a callback function to be called when a custom button is clicked.
 
@@ -433,7 +433,7 @@ class WxGuiBuilder(wx.Frame):
         """
         self.custom_button_callbacks[button_name] = callback
 
-    def remove_custom_button_callback(self, button_name: str):
+    def remove_custom_button_callback(self, button_name: str) -> None:
         """Remove a custom button callback."""
         if button_name in self.custom_button_callbacks:
             del self.custom_button_callbacks[button_name]
@@ -444,12 +444,12 @@ class WxGuiBuilder(wx.Frame):
             return [button.name for button in self.config.custom_buttons]
         return []
 
-    def enable_field(self, field_name: str, enabled: bool = True):
+    def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""
         if field_name in self.widget_factory.widgets:
             self.widget_factory.widgets[field_name].Enable(enabled)
 
-    def show_field(self, field_name: str, visible: bool = True):
+    def show_field(self, field_name: str, visible: bool = True) -> None:
         """Show or hide a specific field."""
         if field_name in self.widget_factory.widgets:
             self.widget_factory.widgets[field_name].Show(visible)
