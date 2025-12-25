@@ -187,7 +187,7 @@ class BackendManager:
         elif backend == 'flet':
             try:
                 import flet
-                info['flet_version'] = flet.__version__
+                info['flet_version'] = flet.version.version
             except (ImportError, AttributeError):
                 pass
 
