@@ -6,6 +6,10 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for IDE validation and autocomplete"
+    },
     "window": {
       "type": "object",
       "description": "Configuration for the main window",
