@@ -200,6 +200,10 @@ class FletGuiBuilder:
 
     def _handle_submit(self) -> None:
         """Handle form submission."""
+        # Validate required fields first
+        if not self._validate_required_fields():
+            return
+
         form_data = self.get_form_data()
 
         if self.submit_callback:
@@ -317,6 +321,66 @@ class FletGuiBuilder:
         if field_name not in self.field_change_callbacks:
             self.field_change_callbacks[field_name] = []
         self.field_change_callbacks[field_name].append(callback)
+
+    def _validate_required_fields(self) -> bool:
+        """Validate that all required fields have values."""
+        if not self.config:
+            return True
+
+        # Get all fields from config
+        all_fields = []
+        if self.config.use_tabs and self.config.tabs:
+            for tab in self.config.tabs:
+                if hasattr(tab, 'fields') and tab.fields:
+                    all_fields.extend(tab.fields)
+        elif self.config.fields:
+            all_fields = self.config.fields
+
+        # Get required field names
+        required_field_names = []
+        for field_config in all_fields:
+            if field_config.required:
+                required_field_names.append(field_config.name)
+
+        # Get current form data and validate using utility
+        form_data = self.get_form_data()
+        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
+
+        if missing_field_names:
+            # Convert field names back to labels for user-friendly display
+            missing_labels = []
+            for field_name in missing_field_names:
+                field_config = next((f for f in all_fields if f.name == field_name), None)
+                label = field_config.label if field_config else field_name
+                missing_labels.append(label)
+
+            fields_text = "\n• ".join(missing_labels)
+            self._show_error(f"Please fill in the following required fields:\n• {fields_text}")
+            return False
+
+        return True
+
+    def _show_error(self, message: str) -> None:
+        """Display an error message to the user."""
+        if self.page:
+            # Use an AlertDialog for errors
+            dialog = ft.AlertDialog(
+                title=ft.Text("Validation Error"),
+                content=ft.Text(message),
+                actions=[
+                    ft.TextButton("OK", on_click=lambda e: self._close_dialog(dialog))
+                ],
+                actions_alignment=ft.MainAxisAlignment.END
+            )
+            self.page.dialog = dialog
+            dialog.open = True
+            self.page.update()
+
+    def _close_dialog(self, dialog: ft.AlertDialog) -> None:
+        """Close an alert dialog."""
+        dialog.open = False
+        if self.page:
+            self.page.update()
 
     def run(self) -> None:
         """Run the Flet application."""
