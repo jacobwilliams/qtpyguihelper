@@ -600,6 +600,33 @@ class TkGuiBuilder:
             self._setup_ui()
         return self.widget_factory.set_widget_value(field_name, value)
 
+    def enable_field(self, field_name: str, enabled: bool = True) -> None:
+        """Enable or disable a specific field."""
+        if field_name in self.widget_factory.widgets:
+            widget = self.widget_factory.widgets[field_name]
+            state = tk.NORMAL if enabled else tk.DISABLED
+            try:
+                widget.config(state=state)
+            except tk.TclError:
+                # Some widgets don't support state configuration
+                pass
+
+    def show_field(self, field_name: str, visible: bool = True) -> None:
+        """Show or hide a specific field."""
+        if field_name in self.widget_factory.widgets:
+            widget = self.widget_factory.widgets[field_name]
+            if visible:
+                widget.grid()
+            else:
+                widget.grid_remove()
+
+        if field_name in self.widget_factory.labels:
+            label = self.widget_factory.labels[field_name]
+            if visible:
+                label.grid()
+            else:
+                label.grid_remove()
+
     def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
         """Set a callback function to be called when the form is submitted."""
         self.submit_callback = callback
@@ -617,6 +644,12 @@ class TkGuiBuilder:
         if field_name not in self.field_change_callbacks:
             self.field_change_callbacks[field_name] = []
         self.field_change_callbacks[field_name].append(callback)
+
+    def get_custom_button_names(self) -> List[str]:
+        """Get list of custom button names."""
+        if self.config and self.config.custom_buttons:
+            return [button.name for button in self.config.custom_buttons]
+        return []
 
     def save_data_to_file(self, data_file_path: str, include_empty: bool = True) -> bool:
         """

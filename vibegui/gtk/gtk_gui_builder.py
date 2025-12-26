@@ -746,6 +746,19 @@ class GtkGuiBuilder:
         """Set the value of a specific field."""
         return self.widget_factory.set_widget_value(field_name, value)
 
+    def enable_field(self, field_name: str, enabled: bool = True) -> None:
+        """Enable or disable a specific field."""
+        if field_name in self.widget_factory.widgets:
+            self.widget_factory.widgets[field_name].set_sensitive(enabled)
+
+    def show_field(self, field_name: str, visible: bool = True) -> None:
+        """Show or hide a specific field."""
+        if field_name in self.widget_factory.widgets:
+            self.widget_factory.widgets[field_name].set_visible(visible)
+
+        if field_name in self.widget_factory.labels:
+            self.widget_factory.labels[field_name].set_visible(visible)
+
     def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
         """Set a callback function to be called when the form is submitted."""
         self.submit_callback = callback
