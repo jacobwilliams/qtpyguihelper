@@ -771,6 +771,11 @@ class GtkGuiBuilder:
         """Set a callback function for a custom button."""
         self.custom_button_callbacks[action_id] = callback
 
+    def remove_custom_button_callback(self, action_id: str) -> None:
+        """Remove a custom button callback."""
+        if action_id in self.custom_button_callbacks:
+            del self.custom_button_callbacks[action_id]
+
     def add_field_change_callback(self, field_name: str, callback: Callable[[str, Any], None]) -> None:
         """Add a callback function to be called when a field value changes."""
         if field_name not in self.field_change_callbacks:
