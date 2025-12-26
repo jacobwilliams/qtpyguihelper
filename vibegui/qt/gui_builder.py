@@ -17,11 +17,11 @@ from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
 from ..config_loader import ConfigLoader, GuiConfig
-from ..utils import FileUtils, ValidationUtils
+from ..utils import FileUtils, ValidationUtils, ValidationMixin
 from .widget_factory import WidgetFactory, get_nested_value
 
 
-class GuiBuilder(QMainWindow):
+class GuiBuilder(ValidationMixin, QMainWindow):
     """Main GUI builder class that creates Qt applications from JSON configuration."""
 
     # Signals
@@ -379,35 +379,6 @@ class GuiBuilder(QMainWindow):
                 self.custom_button_callbacks[button_name](form_data)
             except Exception as e:
                 self._show_error(f"Custom button '{button_name}' callback error: {str(e)}")
-
-    def _validate_required_fields(self) -> bool:
-        """Validate that all required fields have values."""
-        if not self.config:
-            return True
-
-        # Get required field names
-        required_field_names = []
-        for field_config in self.config.fields:
-            if field_config.required:
-                required_field_names.append(field_config.name)
-
-        # Get current form data and validate using utility
-        form_data = self.get_form_data()
-        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
-
-        if missing_field_names:
-            # Convert field names back to labels for user-friendly display
-            missing_labels = []
-            for field_name in missing_field_names:
-                field_config = next((f for f in self.config.fields if f.name == field_name), None)
-                label = field_config.label if field_config else field_name
-                missing_labels.append(label)
-
-            fields_text = "\n• ".join(missing_labels)
-            self._show_error(f"Please fill in the following required fields:\n• {fields_text}")
-            return False
-
-        return True
 
     def _show_error(self, message: str) -> None:
         """Show an error message dialog."""

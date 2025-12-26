@@ -9,11 +9,11 @@ from typing import Dict, Any, Callable, Optional, List
 import flet as ft
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils
+from vibegui.utils import FileUtils, ValidationUtils, ValidationMixin
 from vibegui.flet.flet_widget_factory import FletWidgetFactory
 
 
-class FletGuiBuilder:
+class FletGuiBuilder(ValidationMixin):
     """Main GUI builder class that creates Flet applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -394,44 +394,6 @@ class FletGuiBuilder:
         if field_name not in self.field_change_callbacks:
             self.field_change_callbacks[field_name] = []
         self.field_change_callbacks[field_name].append(callback)
-
-    def _validate_required_fields(self) -> bool:
-        """Validate that all required fields have values."""
-        if not self.config:
-            return True
-
-        # Get all fields from config
-        all_fields = []
-        if self.config.use_tabs and self.config.tabs:
-            for tab in self.config.tabs:
-                if hasattr(tab, 'fields') and tab.fields:
-                    all_fields.extend(tab.fields)
-        elif self.config.fields:
-            all_fields = self.config.fields
-
-        # Get required field names
-        required_field_names = []
-        for field_config in all_fields:
-            if field_config.required:
-                required_field_names.append(field_config.name)
-
-        # Get current form data and validate using utility
-        form_data = self.get_form_data()
-        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
-
-        if missing_field_names:
-            # Convert field names back to labels for user-friendly display
-            missing_labels = []
-            for field_name in missing_field_names:
-                field_config = next((f for f in all_fields if f.name == field_name), None)
-                label = field_config.label if field_config else field_name
-                missing_labels.append(label)
-
-            fields_text = "\n• ".join(missing_labels)
-            self._show_error(f"Please fill in the following required fields:\n• {fields_text}")
-            return False
-
-        return True
 
     def _show_error(self, message: str) -> None:
         """Display an error message to the user."""

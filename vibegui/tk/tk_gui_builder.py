@@ -9,11 +9,11 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, PlatformUtils
+from vibegui.utils import FileUtils, ValidationUtils, ValidationMixin, PlatformUtils
 from vibegui.tk.tk_widget_factory import TkWidgetFactory
 
 
-class TkGuiBuilder:
+class TkGuiBuilder(ValidationMixin):
     """Main GUI builder class that creates tkinter applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -317,47 +317,6 @@ class TkGuiBuilder:
         else:
             # Default behavior
             messagebox.showinfo("Button Clicked", f"Custom button '{button_config.label}' clicked")
-
-    def _validate_required_fields(self) -> bool:
-        """Validate that all required fields have values."""
-        if not self.config:
-            return True
-
-        # Collect all required field names and current form data
-        required_field_names = []
-        all_fields = []
-
-        # Collect all fields from tabs or main form
-        if self.config.use_tabs and self.config.tabs:
-            for tab in self.config.tabs:
-                all_fields.extend(tab.fields)
-        else:
-            all_fields = self.config.fields or []
-
-        # Get required field names
-        for field_config in all_fields:
-            if field_config.required:
-                required_field_names.append(field_config.name)
-
-        # Get current form data and validate using utility
-        form_data = self.get_form_data()
-        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
-
-        if missing_field_names:
-            # Convert field names back to labels for user-friendly display
-            missing_labels = []
-            for field_name in missing_field_names:
-                field_config = next((f for f in all_fields if f.name == field_name), None)
-                label = field_config.label if field_config else field_name
-                missing_labels.append(label)
-
-            messagebox.showerror(
-                "Required Fields Missing",
-                f"Please fill in the following required fields:\n\n" + "\n".join(f"• {label}" for label in missing_labels)
-            )
-            return False
-
-        return True
 
     def _show_form_data(self, data: Dict[str, Any]) -> None:
         """Show form data in a dialog (default submit behavior)."""

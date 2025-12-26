@@ -4,7 +4,79 @@ Common utilities used across different GUI backends.
 
 import json
 import platform
-from typing import Dict, Any, Optional, Union, List
+from typing import Dict, Any, Optional, Union, List, Callable
+
+
+class ValidationMixin:
+    """Mixin providing common validation functionality for GUI builders.
+
+    Classes using this mixin must implement:
+    - get_form_data() -> Dict[str, Any]: Get current form data
+    - _show_error(*args, **kwargs) -> None: Show error dialog
+    """
+
+    def _get_all_fields(self):
+        """Get all fields from config (handling tabs if present)."""
+        if not hasattr(self, 'config') or not self.config:
+            return []
+
+        all_fields = []
+        if hasattr(self.config, 'use_tabs') and self.config.use_tabs and hasattr(self.config, 'tabs') and self.config.tabs:
+            for tab in self.config.tabs:
+                if hasattr(tab, 'fields') and tab.fields:
+                    all_fields.extend(tab.fields)
+        elif hasattr(self.config, 'fields') and self.config.fields:
+            all_fields = self.config.fields
+
+        return all_fields
+
+    def _validate_required_fields(self) -> bool:
+        """
+        Validate that all required fields have values.
+
+        Returns:
+            True if all required fields are filled, False otherwise
+        """
+        if not hasattr(self, 'config') or not self.config:
+            return True
+
+        # Get all fields from config (handling tabs if present)
+        all_fields = self._get_all_fields()
+
+        # Get required field names
+        required_field_names = []
+        for field_config in all_fields:
+            if hasattr(field_config, 'required') and field_config.required:
+                required_field_names.append(field_config.name)
+
+        # Get current form data and validate using utility
+        form_data = self.get_form_data()
+        missing_field_names = ValidationUtils.validate_required_fields(form_data, required_field_names)
+
+        if missing_field_names:
+            # Convert field names back to labels for user-friendly display
+            missing_labels = []
+            for field_name in missing_field_names:
+                field_config = next((f for f in all_fields if f.name == field_name), None)
+                label = field_config.label if field_config and hasattr(field_config, 'label') else field_name
+                missing_labels.append(label)
+
+            # Format the error message
+            fields_text = "\n• ".join(missing_labels)
+            error_message = f"Please fill in the following required fields:\n• {fields_text}"
+
+            # Call the backend-specific error display
+            # Different backends have different signatures, so we try to handle both
+            try:
+                # Try two-argument form (GTK, Tk with title)
+                self._show_error("Required Fields Missing", error_message)
+            except TypeError:
+                # Fallback to one-argument form (Qt, Flet, Wx)
+                self._show_error(error_message)
+
+            return False
+
+        return True
 
 
 class ValidationUtils:
