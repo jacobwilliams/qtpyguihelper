@@ -9,11 +9,11 @@ from typing import Dict, Any, Callable, Optional, List
 import flet as ft
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, ValidationMixin
+from vibegui.utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin
 from vibegui.flet.flet_widget_factory import FletWidgetFactory
 
 
-class FletGuiBuilder(ValidationMixin):
+class FletGuiBuilder(ValidationMixin, DataPersistenceMixin):
     """Main GUI builder class that creates Flet applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -277,8 +277,7 @@ class FletGuiBuilder(ValidationMixin):
 
     def set_form_data(self, data: Dict[str, Any]) -> None:
         """Set form data from a dictionary."""
-        for field_name, value in data.items():
-            self.widget_factory.set_value(field_name, value)
+        self.widget_factory.set_all_values(data)
 
         if self.page:
             self.page.update()
@@ -316,38 +315,6 @@ class FletGuiBuilder(ValidationMixin):
                 self.page.update()
             return True
         except Exception:
-            return False
-
-    def save_data_to_file(self, file_path: str, include_empty: bool = True) -> bool:
-        """Save current form data to a JSON file."""
-        try:
-            form_data = self.get_form_data()
-            return FileUtils.save_data_to_json(form_data, file_path, include_empty)
-        except Exception as e:
-            print(f"Error saving data to file: {e}")
-            return False
-
-    def load_data_from_file(self, file_path: str) -> bool:
-        """Load form data from a JSON file."""
-        try:
-            data = FileUtils.load_data_from_json(file_path)
-            if data:
-                self.set_form_data(data)
-                return True
-            return False
-        except Exception as e:
-            print(f"Error loading data from file: {e}")
-            return False
-
-    def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
-        """Load form data from a dictionary."""
-        try:
-            if data:
-                self.set_form_data(data)
-                return True
-            return False
-        except Exception as e:
-            print(f"Error loading data from dict: {e}")
             return False
 
     def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:

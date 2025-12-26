@@ -79,8 +79,140 @@ class ValidationMixin:
         return True
 
 
+class DataPersistenceMixin:
+    """Mixin providing common data loading/saving functionality for GUI builders.
+
+    Classes using this mixin must implement:
+    - get_form_data() -> Dict[str, Any]: Get current form data
+    - set_form_data(data: Dict[str, Any]) -> None: Set form data
+    - _show_error(*args, **kwargs) -> None: Show error dialog (optional, for error handling)
+    """
+
+    def save_data_to_file(self, data_file_path: str, include_empty: bool = True) -> bool:
+        """
+        Save current form data to a JSON file.
+
+        Args:
+            data_file_path: Path where to save the JSON file
+            include_empty: Whether to include fields with empty/None values
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            data = self.get_form_data()
+            success = FileUtils.save_data_to_json(data, data_file_path, include_empty)
+
+            if not success and hasattr(self, '_show_error'):
+                try:
+                    self._show_error("Save Error", f"Failed to save data to file: {data_file_path}")
+                except TypeError:
+                    self._show_error(f"Failed to save data to file: {data_file_path}")
+
+            return success
+
+        except Exception as e:
+            if hasattr(self, '_show_error'):
+                try:
+                    self._show_error("Save Error", f"Failed to save data to file: {str(e)}")
+                except TypeError:
+                    self._show_error(f"Failed to save data to file: {str(e)}")
+            else:
+                print(f"Error saving data to file: {e}")
+            return False
+
+    def load_data_from_file(self, data_file_path: str) -> bool:
+        """
+        Load form data from a JSON file and populate the GUI.
+
+        Args:
+            data_file_path: Path to the JSON file to load
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            data = FileUtils.load_data_from_json(data_file_path)
+
+            if data is None:
+                if hasattr(self, '_show_error'):
+                    try:
+                        self._show_error("Load Error", f"Failed to load data from file: {data_file_path}")
+                    except TypeError:
+                        self._show_error(f"Failed to load data from file: {data_file_path}")
+                else:
+                    print(f"Error loading data from file: {data_file_path}")
+                return False
+
+            self.set_form_data(data)
+            return True
+
+        except Exception as e:
+            if hasattr(self, '_show_error'):
+                try:
+                    self._show_error("Load Error", f"Failed to load data from file: {str(e)}")
+                except TypeError:
+                    self._show_error(f"Failed to load data from file: {str(e)}")
+            else:
+                print(f"Error loading data from file: {e}")
+            return False
+
+    def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
+        """
+        Load form data from a dictionary and populate the GUI.
+
+        Args:
+            data: Dictionary containing the form data
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            if data:
+                self.set_form_data(data)
+                return True
+            return False
+        except Exception as e:
+            if hasattr(self, '_show_error'):
+                try:
+                    self._show_error("Load Error", f"Failed to load data from dictionary: {str(e)}")
+                except TypeError:
+                    self._show_error(f"Failed to load data from dictionary: {str(e)}")
+            else:
+                print(f"Error loading data from dict: {e}")
+            return False
+
+
 class ValidationUtils:
     """Utilities for validating form data and configurations."""
+
+    @staticmethod
+    def _get_nested_value(data: Dict[str, Any], key_path: str) -> Any:
+        """
+        Get a value from a nested dictionary using dot notation.
+
+        Args:
+            data: The dictionary to search
+            key_path: Dot-separated key path (e.g., "project.name")
+
+        Returns:
+            The value at the key path, or None if not found
+        """
+        if '.' not in key_path:
+            return data.get(key_path)
+
+        keys = key_path.split('.')
+        current = data
+
+        try:
+            for key in keys:
+                if isinstance(current, dict) and key in current:
+                    current = current[key]
+                else:
+                    return None
+            return current
+        except (KeyError, TypeError):
+            return None
 
     @staticmethod
     def validate_required_fields(form_data: Dict[str, Any], required_fields: List[str]) -> List[str]:
@@ -88,8 +220,8 @@ class ValidationUtils:
         Validate that all required fields have values.
 
         Args:
-            form_data: Dictionary of form field values
-            required_fields: List of field names that are required
+            form_data: Dictionary of form field values (may be nested)
+            required_fields: List of field names that are required (may use dot notation)
 
         Returns:
             List of missing field names (empty if all valid)
@@ -97,7 +229,8 @@ class ValidationUtils:
         missing_fields = []
 
         for field_name in required_fields:
-            value = form_data.get(field_name)
+            # Handle both flat and nested field names
+            value = ValidationUtils._get_nested_value(form_data, field_name)
             if value is None or (isinstance(value, str) and not value.strip()):
                 missing_fields.append(field_name)
 

@@ -9,11 +9,11 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, ValidationMixin, PlatformUtils
+from vibegui.utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin, PlatformUtils
 from vibegui.tk.tk_widget_factory import TkWidgetFactory
 
 
-class TkGuiBuilder(ValidationMixin):
+class TkGuiBuilder(ValidationMixin, DataPersistenceMixin):
     """Main GUI builder class that creates tkinter applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -609,72 +609,6 @@ class TkGuiBuilder(ValidationMixin):
         if self.config and self.config.custom_buttons:
             return [button.name for button in self.config.custom_buttons]
         return []
-
-    def save_data_to_file(self, data_file_path: str, include_empty: bool = True) -> bool:
-        """
-        Save current form data to a JSON file.
-
-        Args:
-            data_file_path: Path where to save the JSON file
-            include_empty: Whether to include fields with empty/None values
-
-        Returns:
-            bool: True if successful, False otherwise
-        """
-        try:
-            data = self.get_form_data()
-            success = FileUtils.save_data_to_json(data, data_file_path, include_empty)
-
-            if not success:
-                messagebox.showerror("Save Error", f"Failed to save data to file: {data_file_path}")
-
-            return success
-
-        except Exception as e:
-            messagebox.showerror("Save Error", f"Failed to save data to file: {str(e)}")
-            return False
-
-    def load_data_from_file(self, data_file_path: str) -> bool:
-        """
-        Load form data from a JSON file and populate the GUI.
-
-        Args:
-            data_file_path: Path to the JSON file to load
-
-        Returns:
-            bool: True if successful, False otherwise
-        """
-        try:
-            data = FileUtils.load_data_from_json(data_file_path)
-
-            if data is None:
-                messagebox.showerror("Load Error", f"Failed to load data from file: {data_file_path}")
-                return False
-
-            self.set_form_data(data)
-            return True
-
-        except Exception as e:
-            messagebox.showerror("Load Error", f"Failed to load data from file: {str(e)}")
-            return False
-
-    def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
-        """
-        Load form data from a dictionary and populate the GUI.
-
-        Args:
-            data: Dictionary containing the form data
-
-        Returns:
-            bool: True if successful, False otherwise
-        """
-        try:
-            self.set_form_data(data)
-            return True
-
-        except Exception as e:
-            messagebox.showerror("Load Error", f"Failed to load data from dictionary: {str(e)}")
-            return False
 
     @classmethod
     def create_and_run(cls, config_path: str | None = None, config_dict: Dict[str, Any] | None = None) -> 'TkGuiBuilder':

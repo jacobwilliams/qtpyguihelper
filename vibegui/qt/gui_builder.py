@@ -17,11 +17,11 @@ from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
 from ..config_loader import ConfigLoader, GuiConfig
-from ..utils import FileUtils, ValidationUtils, ValidationMixin
+from ..utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin
 from .widget_factory import WidgetFactory, get_nested_value
 
 
-class GuiBuilder(ValidationMixin, QMainWindow):
+class GuiBuilder(ValidationMixin, DataPersistenceMixin, QMainWindow):
     """Main GUI builder class that creates Qt applications from JSON configuration."""
 
     # Signals
@@ -394,8 +394,7 @@ class GuiBuilder(ValidationMixin, QMainWindow):
 
     def set_form_data(self, data: Dict[str, Any]) -> None:
         """Set form data from a dictionary."""
-        for field_name, value in data.items():
-            self.widget_factory.set_widget_value(field_name, value)
+        self.widget_factory.set_all_values(data)
 
     def clear_form(self) -> None:
         """Clear all form fields."""
@@ -450,105 +449,6 @@ class GuiBuilder(ValidationMixin, QMainWindow):
 
         if field_name in self.widget_factory.labels:
             self.widget_factory.labels[field_name].setVisible(visible)
-
-    def load_data_from_file(self, data_file_path: str) -> bool:
-        """
-        Load form data from a JSON file and populate the GUI.
-
-        Args:
-            data_file_path: Path to the JSON file containing form data
-
-        Returns:
-            bool: True if successful, False otherwise
-        """
-        try:
-            data = FileUtils.load_data_from_json(data_file_path)
-
-            if data is None:
-                self._show_error(f"Failed to load data from file: {data_file_path}")
-                return False
-
-            return self.load_data_from_dict(data)
-        except Exception as e:
-            self._show_error(f"Failed to load data from file: {str(e)}")
-            return False
-
-    def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
-        """
-        Load form data from a dictionary and populate the GUI.
-        Supports nested field names using dot notation.
-
-        Args:
-            data: Dictionary containing form field values (can be nested)
-
-        Returns:
-            bool: True if successful, False otherwise
-        """
-        try:
-            # For each field in the config, check if data exists
-            if not self.config:
-                return False
-
-            loaded_count = 0
-            for field_config in self.config.fields:
-                field_name = field_config.name
-
-                # Handle nested field names with dot notation
-                if '.' in field_name:
-                    # Use get_nested_value to handle dot notation
-                    field_value = get_nested_value(data, field_name)
-                    if field_value is not None:
-                        success = self.widget_factory.set_widget_value(field_name, field_value)
-                        if success:
-                            loaded_count += 1
-                    elif field_config.default_value is not None:
-                        # Use default value from config if no data provided
-                        success = self.widget_factory.set_widget_value(field_name, field_config.default_value)
-                        if success:
-                            loaded_count += 1
-                else:
-                    # Handle regular field names (for backward compatibility)
-                    if field_name in data:
-                        # Use provided value
-                        success = self.widget_factory.set_widget_value(field_name, data[field_name])
-                        if success:
-                            loaded_count += 1
-                    elif field_config.default_value is not None:
-                        # Use default value from config if no data provided
-                        success = self.widget_factory.set_widget_value(field_name, field_config.default_value)
-                        if success:
-                            loaded_count += 1
-
-            print(f"Loaded {loaded_count} field values from data")
-            return True
-
-        except Exception as e:
-            self._show_error(f"Failed to load data: {str(e)}")
-            return False
-
-    def save_data_to_file(self, data_file_path: str, include_empty: bool = True) -> bool:
-        """
-        Save current form data to a JSON file.
-
-        Args:
-            data_file_path: Path where to save the JSON file
-            include_empty: Whether to include fields with empty/None values
-
-        Returns:
-            bool: True if successful, False otherwise
-        """
-        try:
-            data = self.get_form_data()
-            success = FileUtils.save_data_to_json(data, data_file_path, include_empty)
-
-            if not success:
-                self._show_error(f"Failed to save data to file: {data_file_path}")
-
-            return success
-
-        except Exception as e:
-            self._show_error(f"Failed to save data to file: {str(e)}")
-            return False
 
     def get_data_with_metadata(self) -> Dict[str, Any]:
         """

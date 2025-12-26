@@ -347,6 +347,11 @@ class FletWidgetFactory:
         elif isinstance(widget, ft.Slider):
             widget.value = float(value) if value is not None else 0
 
+    def set_all_values(self, values: Dict[str, Any]) -> None:
+        """Set values for all widgets from a dictionary."""
+        for field_name, value in values.items():
+            self.set_value(field_name, value)
+
     def add_change_callback(self, field_name: str, callback: Callable) -> None:
         """Add a callback to be called when a field's value changes."""
         if field_name not in self.change_callbacks:

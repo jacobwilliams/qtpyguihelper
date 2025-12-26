@@ -620,6 +620,11 @@ class WxWidgetFactory:
         except (ValueError, TypeError, AttributeError):
             return False
 
+    def set_all_values(self, values: Dict[str, Any]) -> None:
+        """Set values for all widgets from a dictionary."""
+        for field_name, value in values.items():
+            self.set_widget_value(field_name, value)
+
     def get_all_values(self) -> Dict[str, Any]:
         """Get values from all widgets, creating nested dictionaries for dot notation field names."""
         values = {}

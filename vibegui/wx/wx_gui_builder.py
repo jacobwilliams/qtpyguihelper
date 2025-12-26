@@ -8,11 +8,11 @@ import wx
 import wx.lib.scrolledpanel as scrolled
 
 from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from ..utils import FileUtils, ValidationUtils, ValidationMixin
+from ..utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin
 from .wx_widget_factory import WxWidgetFactory, get_nested_value
 
 
-class WxGuiBuilder(ValidationMixin, wx.Frame):
+class WxGuiBuilder(ValidationMixin, DataPersistenceMixin, wx.Frame):
     """wxPython GUI builder class that creates applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, parent: Optional[wx.Window] = None) -> None:
@@ -371,8 +371,7 @@ class WxGuiBuilder(ValidationMixin, wx.Frame):
 
     def set_form_data(self, data: Dict[str, Any]) -> None:
         """Set form data from a dictionary."""
-        for field_name, value in data.items():
-            self.widget_factory.set_widget_value(field_name, value)
+        self.widget_factory.set_all_values(data)
 
     def clear_form(self) -> None:
         """Clear all form fields."""
@@ -427,78 +426,6 @@ class WxGuiBuilder(ValidationMixin, wx.Frame):
 
         if field_name in self.widget_factory.labels:
             self.widget_factory.labels[field_name].Show(visible)
-
-    def load_data_from_file(self, data_file_path: str) -> bool:
-        """
-        Load form data from a JSON file and populate the GUI.
-        """
-        try:
-            data = FileUtils.load_data_from_json(data_file_path)
-
-            if data is None:
-                self._show_error(f"Failed to load data from file: {data_file_path}")
-                return False
-
-            return self.load_data_from_dict(data)
-        except Exception as e:
-            self._show_error(f"Failed to load data from file: {str(e)}")
-            return False
-
-    def load_data_from_dict(self, data: Dict[str, Any]) -> bool:
-        """
-        Load form data from a dictionary and populate the GUI.
-        """
-        try:
-            if not self.config:
-                return False
-
-            loaded_count = 0
-            for field_config in self.config.fields:
-                field_name = field_config.name
-
-                if '.' in field_name:
-                    field_value = get_nested_value(data, field_name)
-                    if field_value is not None:
-                        success = self.widget_factory.set_widget_value(field_name, field_value)
-                        if success:
-                            loaded_count += 1
-                    elif field_config.default_value is not None:
-                        success = self.widget_factory.set_widget_value(field_name, field_config.default_value)
-                        if success:
-                            loaded_count += 1
-                else:
-                    if field_name in data:
-                        success = self.widget_factory.set_widget_value(field_name, data[field_name])
-                        if success:
-                            loaded_count += 1
-                    elif field_config.default_value is not None:
-                        success = self.widget_factory.set_widget_value(field_name, field_config.default_value)
-                        if success:
-                            loaded_count += 1
-
-            print(f"Loaded {loaded_count} field values from data")
-            return True
-
-        except Exception as e:
-            self._show_error(f"Failed to load data: {str(e)}")
-            return False
-
-    def save_data_to_file(self, data_file_path: str, include_empty: bool = True) -> bool:
-        """
-        Save current form data to a JSON file.
-        """
-        try:
-            data = self.get_form_data()
-            success = FileUtils.save_data_to_json(data, data_file_path, include_empty)
-
-            if not success:
-                self._show_error(f"Failed to save data to file: {data_file_path}")
-
-            return success
-
-        except Exception as e:
-            self._show_error(f"Failed to save data to file: {str(e)}")
-            return False
 
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,
