@@ -17,11 +17,11 @@ from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
 from ..config_loader import ConfigLoader, GuiConfig
-from ..utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
 from .widget_factory import WidgetFactory, get_nested_value
 
 
-class GuiBuilder(ValidationMixin, DataPersistenceMixin, QMainWindow):
+class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, QMainWindow):
     """Main GUI builder class that creates Qt applications from JSON configuration."""
 
     # Signals
@@ -43,9 +43,6 @@ class GuiBuilder(ValidationMixin, DataPersistenceMixin, QMainWindow):
         self.widget_factory = WidgetFactory()
         self.config: Optional[GuiConfig] = None
         self.central_widget: Optional[QWidget] = None
-        self.submit_callback: Optional[Callable] = None
-        self.cancel_callback: Optional[Callable] = None
-        self.custom_button_callbacks: Dict[str, Callable] = {}  # Store custom button callbacks
 
         # Load configuration
         if config_path:
@@ -407,35 +404,6 @@ class GuiBuilder(ValidationMixin, DataPersistenceMixin, QMainWindow):
     def set_field_value(self, field_name: str, value: Any) -> bool:
         """Set the value of a specific field."""
         return self.widget_factory.set_widget_value(field_name, value)
-
-    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
-        """Set a callback function to be called when the form is submitted."""
-        self.submit_callback = callback
-
-    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
-        """Set a callback function to be called when the form is cancelled."""
-        self.cancel_callback = callback
-
-    def set_custom_button_callback(self, button_name: str, callback: Callable[[Dict[str, Any]], None]) -> None:
-        """
-        Set a callback function to be called when a custom button is clicked.
-
-        Args:
-            button_name: The name of the custom button as defined in the configuration
-            callback: Function to call when button is clicked. Receives form data as parameter.
-        """
-        self.custom_button_callbacks[button_name] = callback
-
-    def remove_custom_button_callback(self, button_name: str) -> None:
-        """Remove a custom button callback."""
-        if button_name in self.custom_button_callbacks:
-            del self.custom_button_callbacks[button_name]
-
-    def get_custom_button_names(self) -> List[str]:
-        """Get a list of all custom button names from the configuration."""
-        if self.config and self.config.custom_buttons:
-            return [button.name for button in self.config.custom_buttons]
-        return []
 
     def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""

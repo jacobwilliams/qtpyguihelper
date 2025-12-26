@@ -7,6 +7,81 @@ import platform
 from typing import Dict, Any, Optional, Union, List, Callable
 
 
+class CallbackManagerMixin:
+    """Mixin providing common callback management functionality for GUI builders.
+
+    Provides standardized callback storage and setter methods for:
+    - submit_callback: Called when form is submitted
+    - cancel_callback: Called when form is cancelled
+    - custom_button_callbacks: Dictionary of callbacks for custom buttons
+    - field_change_callbacks: Dictionary of callbacks for field changes
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Initialize callback storage."""
+        # Pass all args/kwargs to super() to properly initialize base classes (especially wx.Frame)
+        super().__init__(*args, **kwargs)
+        self.submit_callback: Optional[Callable] = None
+        self.cancel_callback: Optional[Callable] = None
+        self.custom_button_callbacks: Dict[str, Callable] = {}
+        self.field_change_callbacks: Dict[str, List[Callable]] = {}
+
+    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
+        """Set a callback function to be called when the form is submitted.
+
+        Args:
+            callback: Function that takes form data dict as argument
+        """
+        self.submit_callback = callback
+
+    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
+        """Set a callback function to be called when the form is cancelled.
+
+        Args:
+            callback: Function with no arguments
+        """
+        self.cancel_callback = callback
+
+    def set_custom_button_callback(self, button_id: str, callback: Callable) -> None:
+        """Set a callback function for a custom button.
+
+        Args:
+            button_id: ID/name of the custom button
+            callback: Callback function (signature may vary by backend)
+        """
+        self.custom_button_callbacks[button_id] = callback
+
+    def remove_custom_button_callback(self, button_id: str) -> None:
+        """Remove a custom button callback.
+
+        Args:
+            button_id: ID/name of the custom button
+        """
+        if button_id in self.custom_button_callbacks:
+            del self.custom_button_callbacks[button_id]
+
+    def get_custom_button_names(self) -> List[str]:
+        """Get list of custom button IDs/names.
+
+        Returns:
+            List of button IDs that have been configured
+        """
+        if hasattr(self, 'config') and self.config and hasattr(self.config, 'custom_buttons') and self.config.custom_buttons:
+            return [button.name if hasattr(button, 'name') else button.id for button in self.config.custom_buttons]
+        return []
+
+    def add_field_change_callback(self, field_name: str, callback: Callable[[str, Any], None]) -> None:
+        """Add a callback function to be called when a field value changes.
+
+        Args:
+            field_name: Name of the field to monitor
+            callback: Function that takes (field_name, value) as arguments
+        """
+        if field_name not in self.field_change_callbacks:
+            self.field_change_callbacks[field_name] = []
+        self.field_change_callbacks[field_name].append(callback)
+
+
 class ValidationMixin:
     """Mixin providing common validation functionality for GUI builders.
 

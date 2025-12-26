@@ -286,6 +286,15 @@ class GuiBuilder:
         if hasattr(self._builder, 'close'):
             self._builder.close()
 
+    def __getattr__(self, name: str) -> Any:
+        """
+        Forward attribute access to the underlying builder.
+
+        This allows access to backend-specific attributes like Qt Signals
+        (fieldChanged, formSubmitted, formCancelled).
+        """
+        return getattr(self._builder, name)
+
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,
                        config_dict: Optional[Dict[str, Any]] = None,

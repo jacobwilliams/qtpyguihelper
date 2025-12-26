@@ -9,11 +9,11 @@ from typing import Dict, Any, Callable, Optional, List
 import flet as ft
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin
+from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
 from vibegui.flet.flet_widget_factory import FletWidgetFactory
 
 
-class FletGuiBuilder(ValidationMixin, DataPersistenceMixin):
+class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin):
     """Main GUI builder class that creates Flet applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -24,14 +24,12 @@ class FletGuiBuilder(ValidationMixin, DataPersistenceMixin):
             config_path: Path to JSON configuration file
             config_dict: Configuration dictionary (alternative to config_path)
         """
+        super().__init__()
+
         self.config_loader = ConfigLoader()
         self.widget_factory = FletWidgetFactory()
         self.config: Optional[GuiConfig] = None
         self.page: Optional[ft.Page] = None
-        self.submit_callback: Optional[Callable] = None
-        self.cancel_callback: Optional[Callable] = None
-        self.custom_button_callbacks: Dict[str, Callable] = {}
-        self.field_change_callbacks: Dict[str, List[Callable]] = {}
         self.main_column: Optional[ft.Column] = None
 
         # Load configuration
@@ -317,29 +315,6 @@ class FletGuiBuilder(ValidationMixin, DataPersistenceMixin):
         except Exception:
             return False
 
-    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
-        """Set callback for form submission."""
-        self.submit_callback = callback
-
-    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
-        """Set callback for form cancellation."""
-        self.cancel_callback = callback
-
-    def set_custom_button_callback(self, button_id: str, callback: Callable[[Dict[str, Any]], None]) -> None:
-        """Set callback for a custom button."""
-        self.custom_button_callbacks[button_id] = callback
-
-    def remove_custom_button_callback(self, button_id: str) -> None:
-        """Remove a custom button callback."""
-        if button_id in self.custom_button_callbacks:
-            del self.custom_button_callbacks[button_id]
-
-    def get_custom_button_names(self) -> List[str]:
-        """Get a list of all custom button names from the configuration."""
-        if not self.config or not self.config.custom_buttons:
-            return []
-        return [button.id for button in self.config.custom_buttons]
-
     def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""
         widget = self.widget_factory.widgets.get(field_name)
@@ -355,12 +330,6 @@ class FletGuiBuilder(ValidationMixin, DataPersistenceMixin):
             widget.visible = visible
             if self.page:
                 self.page.update()
-
-    def add_field_change_callback(self, field_name: str, callback: Callable[[str, Any], None]) -> None:
-        """Add a callback for when a field's value changes."""
-        if field_name not in self.field_change_callbacks:
-            self.field_change_callbacks[field_name] = []
-        self.field_change_callbacks[field_name].append(callback)
 
     def _show_error(self, message: str) -> None:
         """Display an error message to the user."""

@@ -6,7 +6,7 @@ import json
 from typing import Dict, Any, Callable, Optional, List
 import os
 
-from ..utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin, PlatformUtils
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, PlatformUtils
 
 try:
     import gi
@@ -59,7 +59,7 @@ if GTK_AVAILABLE:
     from vibegui.gtk.gtk_widget_factory import GtkWidgetFactory
 
 
-class GtkGuiBuilder(ValidationMixin, DataPersistenceMixin):
+class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin):
     """Main GUI builder class that creates GTK applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, submit_callback: Optional[Callable] = None, cancel_callback: Optional[Callable] = None) -> None:
@@ -72,6 +72,8 @@ class GtkGuiBuilder(ValidationMixin, DataPersistenceMixin):
             submit_callback: Callback function for form submission
             cancel_callback: Callback function for form cancellation
         """
+        super().__init__()
+
         self.config_loader = ConfigLoader()
         self.widget_factory = None
         if GTK_AVAILABLE:
@@ -79,10 +81,12 @@ class GtkGuiBuilder(ValidationMixin, DataPersistenceMixin):
         self.config: Optional[GuiConfig] = None
         self.window: Optional[Gtk.Window] = None
         self.main_container: Optional[Gtk.Widget] = None
-        self.submit_callback: Optional[Callable] = submit_callback
-        self.cancel_callback: Optional[Callable] = cancel_callback
-        self.custom_button_callbacks: Dict[str, Callable] = {}
-        self.field_change_callbacks: Dict[str, List[Callable]] = {}
+
+        # Set callbacks from constructor if provided
+        if submit_callback:
+            self.submit_callback = submit_callback
+        if cancel_callback:
+            self.cancel_callback = cancel_callback
 
         # Load configuration
         if config_path:
@@ -651,35 +655,6 @@ class GtkGuiBuilder(ValidationMixin, DataPersistenceMixin):
 
         if field_name in self.widget_factory.labels:
             self.widget_factory.labels[field_name].set_visible(visible)
-
-    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
-        """Set a callback function to be called when the form is submitted."""
-        self.submit_callback = callback
-
-    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
-        """Set a callback function to be called when the form is cancelled."""
-        self.cancel_callback = callback
-
-    def set_custom_button_callback(self, action_id: str, callback: Callable[[CustomButtonConfig, Dict[str, Any]], None]) -> None:
-        """Set a callback function for a custom button."""
-        self.custom_button_callbacks[action_id] = callback
-
-    def remove_custom_button_callback(self, action_id: str) -> None:
-        """Remove a custom button callback."""
-        if action_id in self.custom_button_callbacks:
-            del self.custom_button_callbacks[action_id]
-
-    def add_field_change_callback(self, field_name: str, callback: Callable[[str, Any], None]) -> None:
-        """Add a callback function to be called when a field value changes."""
-        if field_name not in self.field_change_callbacks:
-            self.field_change_callbacks[field_name] = []
-        self.field_change_callbacks[field_name].append(callback)
-
-    def get_custom_button_names(self) -> List[str]:
-        """Get list of custom button names."""
-        if self.config and self.config.custom_buttons:
-            return [button.name for button in self.config.custom_buttons]
-        return []
 
     @classmethod
     def create_and_run(cls, config_path: str = None, config_dict: Dict[str, Any] = None) -> 'GtkGuiBuilder':

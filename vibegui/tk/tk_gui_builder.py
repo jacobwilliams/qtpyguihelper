@@ -9,11 +9,11 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin, PlatformUtils
+from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, PlatformUtils
 from vibegui.tk.tk_widget_factory import TkWidgetFactory
 
 
-class TkGuiBuilder(ValidationMixin, DataPersistenceMixin):
+class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin):
     """Main GUI builder class that creates tkinter applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -24,15 +24,13 @@ class TkGuiBuilder(ValidationMixin, DataPersistenceMixin):
             config_path: Path to JSON configuration file
             config_dict: Configuration dictionary (alternative to config_path)
         """
+        super().__init__()
+
         self.config_loader = ConfigLoader()
         self.widget_factory = TkWidgetFactory()
         self.config: Optional[GuiConfig] = None
         self.root: Optional[tk.Tk] = None
         self.main_frame: Optional[tk.Frame] = None
-        self.submit_callback: Optional[Callable] = None
-        self.cancel_callback: Optional[Callable] = None
-        self.custom_button_callbacks: Dict[str, Callable] = {}
-        self.field_change_callbacks: Dict[str, List[Callable]] = {}
 
         # Load configuration
         if config_path:
@@ -585,30 +583,6 @@ class TkGuiBuilder(ValidationMixin, DataPersistenceMixin):
                 label.grid()
             else:
                 label.grid_remove()
-
-    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
-        """Set a callback function to be called when the form is submitted."""
-        self.submit_callback = callback
-
-    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
-        """Set a callback function to be called when the form is cancelled."""
-        self.cancel_callback = callback
-
-    def set_custom_button_callback(self, action_id: str, callback: Callable[[CustomButtonConfig, Dict[str, Any]], None]) -> None:
-        """Set a callback function for a custom button."""
-        self.custom_button_callbacks[action_id] = callback
-
-    def add_field_change_callback(self, field_name: str, callback: Callable[[str, Any], None]) -> None:
-        """Add a callback function to be called when a field value changes."""
-        if field_name not in self.field_change_callbacks:
-            self.field_change_callbacks[field_name] = []
-        self.field_change_callbacks[field_name].append(callback)
-
-    def get_custom_button_names(self) -> List[str]:
-        """Get list of custom button names."""
-        if self.config and self.config.custom_buttons:
-            return [button.name for button in self.config.custom_buttons]
-        return []
 
     @classmethod
     def create_and_run(cls, config_path: str | None = None, config_dict: Dict[str, Any] | None = None) -> 'TkGuiBuilder':

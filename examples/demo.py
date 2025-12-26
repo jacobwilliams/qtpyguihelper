@@ -177,6 +177,8 @@ def demo_programmatic_config() -> None:
 
     # Set callbacks
     def on_contact_submit(form_data: dict) -> None:
+        from qtpy.QtWidgets import QMessageBox
+
         print("Contact form submitted:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")

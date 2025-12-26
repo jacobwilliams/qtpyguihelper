@@ -8,11 +8,11 @@ import wx
 import wx.lib.scrolledpanel as scrolled
 
 from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from ..utils import FileUtils, ValidationUtils, ValidationMixin, DataPersistenceMixin
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
 from .wx_widget_factory import WxWidgetFactory, get_nested_value
 
 
-class WxGuiBuilder(ValidationMixin, DataPersistenceMixin, wx.Frame):
+class WxGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, wx.Frame):
     """wxPython GUI builder class that creates applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, parent: Optional[wx.Window] = None) -> None:
@@ -29,9 +29,6 @@ class WxGuiBuilder(ValidationMixin, DataPersistenceMixin, wx.Frame):
         self.config_loader = ConfigLoader()
         self.widget_factory = WxWidgetFactory()
         self.config: Optional[GuiConfig] = None
-        self.submit_callback: Optional[Callable] = None
-        self.cancel_callback: Optional[Callable] = None
-        self.custom_button_callbacks: Dict[str, Callable] = {}
 
         # Event IDs for custom buttons
         self._next_button_id = wx.ID_HIGHEST + 1
@@ -384,29 +381,6 @@ class WxGuiBuilder(ValidationMixin, DataPersistenceMixin, wx.Frame):
     def set_field_value(self, field_name: str, value: Any) -> bool:
         """Set the value of a specific field."""
         return self.widget_factory.set_widget_value(field_name, value)
-
-    def set_submit_callback(self, callback: Callable[[Dict[str, Any]], None]) -> None:
-        """Set a callback function to be called when the form is submitted."""
-        self.submit_callback = callback
-
-    def set_cancel_callback(self, callback: Callable[[], None]) -> None:
-        """Set a callback function to be called when the form is cancelled."""
-        self.cancel_callback = callback
-
-    def set_custom_button_callback(self, button_name: str, callback: Callable[[Dict[str, Any]], None]) -> None:
-        """
-        Set a callback function to be called when a custom button is clicked.
-
-        Args:
-            button_name: The name of the custom button as defined in the configuration
-            callback: Function to call when button is clicked. Receives form data as parameter.
-        """
-        self.custom_button_callbacks[button_name] = callback
-
-    def remove_custom_button_callback(self, button_name: str) -> None:
-        """Remove a custom button callback."""
-        if button_name in self.custom_button_callbacks:
-            del self.custom_button_callbacks[button_name]
 
     def get_custom_button_names(self) -> List[str]:
         """Get a list of all custom button names from the configuration."""
