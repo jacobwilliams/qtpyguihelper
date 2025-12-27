@@ -122,6 +122,35 @@ class WidgetFactoryMixin:
             return False
 
 
+class FieldStateMixin:
+    """Mixin providing common field state management methods.
+
+    Assumes the class has a self.widget_factory attribute with widgets dict.
+    Subclasses must implement _enable_widget and _show_widget methods for their specific backend.
+    """
+
+    def _enable_widget(self, widget: Any, enabled: bool) -> None:
+        """Enable or disable a widget (backend-specific implementation required)."""
+        raise NotImplementedError("Subclass must implement _enable_widget")
+
+    def _show_widget(self, widget: Any, visible: bool) -> None:
+        """Show or hide a widget (backend-specific implementation required)."""
+        raise NotImplementedError("Subclass must implement _show_widget")
+
+    def enable_field(self, field_name: str, enabled: bool = True) -> None:
+        """Enable or disable a specific field."""
+        if field_name in self.widget_factory.widgets:
+            self._enable_widget(self.widget_factory.widgets[field_name], enabled)
+
+    def show_field(self, field_name: str, visible: bool = True) -> None:
+        """Show or hide a specific field."""
+        if field_name in self.widget_factory.widgets:
+            self._show_widget(self.widget_factory.widgets[field_name], visible)
+
+        if hasattr(self.widget_factory, 'labels') and field_name in self.widget_factory.labels:
+            self._show_widget(self.widget_factory.labels[field_name], visible)
+
+
 class CallbackManagerMixin:
     """Mixin providing common callback management functionality for GUI builders.
 

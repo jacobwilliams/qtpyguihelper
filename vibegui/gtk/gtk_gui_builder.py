@@ -6,7 +6,7 @@ import json
 from typing import Dict, Any, Callable, Optional, List
 import os
 
-from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, PlatformUtils
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, PlatformUtils
 
 try:
     import gi
@@ -59,7 +59,7 @@ if GTK_AVAILABLE:
     from vibegui.gtk.gtk_widget_factory import GtkWidgetFactory
 
 
-class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin):
+class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin):
     """Main GUI builder class that creates GTK applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, submit_callback: Optional[Callable] = None, cancel_callback: Optional[Callable] = None) -> None:
@@ -625,19 +625,15 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
 
     # get_form_data, set_form_data, clear_form, get_field_value, set_field_value
     # are provided by WidgetFactoryMixin
+    # enable_field and show_field are provided by FieldStateMixin
 
-    def enable_field(self, field_name: str, enabled: bool = True) -> None:
-        """Enable or disable a specific field."""
-        if field_name in self.widget_factory.widgets:
-            self.widget_factory.widgets[field_name].set_sensitive(enabled)
+    def _enable_widget(self, widget: Gtk.Widget, enabled: bool) -> None:
+        """GTK-specific widget enable/disable."""
+        widget.set_sensitive(enabled)
 
-    def show_field(self, field_name: str, visible: bool = True) -> None:
-        """Show or hide a specific field."""
-        if field_name in self.widget_factory.widgets:
-            self.widget_factory.widgets[field_name].set_visible(visible)
-
-        if field_name in self.widget_factory.labels:
-            self.widget_factory.labels[field_name].set_visible(visible)
+    def _show_widget(self, widget: Gtk.Widget, visible: bool) -> None:
+        """GTK-specific widget show/hide."""
+        widget.set_visible(visible)
 
     @classmethod
     def create_and_run(cls, config_path: str = None, config_dict: Dict[str, Any] = None) -> 'GtkGuiBuilder':

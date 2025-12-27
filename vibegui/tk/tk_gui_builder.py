@@ -9,11 +9,11 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, PlatformUtils
+from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, PlatformUtils
 from vibegui.tk.tk_widget_factory import TkWidgetFactory
 
 
-class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin):
+class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin):
     """Main GUI builder class that creates tkinter applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -544,34 +544,23 @@ class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
 
     # get_form_data, set_form_data, clear_form, get_field_value, set_field_value
     # are provided by WidgetFactoryMixin
-    # Note: Tkinter doesn't need special UI setup logic for these methods
+    # enable_field and show_field are provided by FieldStateMixin
 
-    def enable_field(self, field_name: str, enabled: bool = True) -> None:
-        """Enable or disable a specific field."""
-        if field_name in self.widget_factory.widgets:
-            widget = self.widget_factory.widgets[field_name]
-            state = tk.NORMAL if enabled else tk.DISABLED
-            try:
-                widget.config(state=state)
-            except tk.TclError:
-                # Some widgets don't support state configuration
-                pass
+    def _enable_widget(self, widget: tk.Widget, enabled: bool) -> None:
+        """Tk-specific widget enable/disable."""
+        state = tk.NORMAL if enabled else tk.DISABLED
+        try:
+            widget.config(state=state)
+        except tk.TclError:
+            # Some widgets don't support state configuration
+            pass
 
-    def show_field(self, field_name: str, visible: bool = True) -> None:
-        """Show or hide a specific field."""
-        if field_name in self.widget_factory.widgets:
-            widget = self.widget_factory.widgets[field_name]
-            if visible:
-                widget.grid()
-            else:
-                widget.grid_remove()
-
-        if field_name in self.widget_factory.labels:
-            label = self.widget_factory.labels[field_name]
-            if visible:
-                label.grid()
-            else:
-                label.grid_remove()
+    def _show_widget(self, widget: tk.Widget, visible: bool) -> None:
+        """Tk-specific widget show/hide."""
+        if visible:
+            widget.grid()
+        else:
+            widget.grid_remove()
 
     @classmethod
     def create_and_run(cls, config_path: str | None = None, config_dict: Dict[str, Any] | None = None) -> 'TkGuiBuilder':

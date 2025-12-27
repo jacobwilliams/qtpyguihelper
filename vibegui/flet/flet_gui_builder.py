@@ -9,11 +9,11 @@ from typing import Dict, Any, Callable, Optional, List
 import flet as ft
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, set_nested_value, flatten_nested_dict
+from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, set_nested_value, flatten_nested_dict
 from vibegui.flet.flet_widget_factory import FletWidgetFactory
 
 
-class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin):
+class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin):
     """Main GUI builder class that creates Flet applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -321,21 +321,19 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
         except Exception:
             return False
 
-    def enable_field(self, field_name: str, enabled: bool = True) -> None:
-        """Enable or disable a specific field."""
-        widget = self.widget_factory.widgets.get(field_name)
-        if widget:
-            widget.disabled = not enabled
-            if self.page:
-                self.page.update()
+    # enable_field and show_field are provided by FieldStateMixin
 
-    def show_field(self, field_name: str, visible: bool = True) -> None:
-        """Show or hide a specific field."""
-        widget = self.widget_factory.widgets.get(field_name)
-        if widget:
-            widget.visible = visible
-            if self.page:
-                self.page.update()
+    def _enable_widget(self, widget: ft.Control, enabled: bool) -> None:
+        """Flet-specific widget enable/disable."""
+        widget.disabled = not enabled
+        if self.page:
+            self.page.update()
+
+    def _show_widget(self, widget: ft.Control, visible: bool) -> None:
+        """Flet-specific widget show/hide."""
+        widget.visible = visible
+        if self.page:
+            self.page.update()
 
     def _show_error(self, message: str) -> None:
         """Display an error message to the user."""

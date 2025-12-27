@@ -725,14 +725,13 @@ class WidgetFactory:
                     self.set_widget_value(field_name, 0)
                 elif isinstance(widget, QCheckBox):
                     self.set_widget_value(field_name, False)
+                elif isinstance(widget, CustomFileButton):
+                    widget.set_file_path("")
+                elif isinstance(widget, CustomColorButton):
+                    widget.set_color(QColor(255, 255, 255))
+                elif field_name in self.radio_groups:
+                    button_group = self.radio_groups[field_name]
+                    if button_group.buttons():
+                        button_group.buttons()[0].setChecked(True)
                 else:
                     self.set_widget_value(field_name, "")
-                slider.setValue(slider.minimum())
-            elif isinstance(widget, CustomFileButton):
-                widget.set_file_path("")
-            elif isinstance(widget, CustomColorButton):
-                widget.set_color(QColor(255, 255, 255))
-            elif field_name in self.radio_groups:
-                button_group = self.radio_groups[field_name]
-                if button_group.buttons():
-                    button_group.buttons()[0].setChecked(True)

@@ -366,19 +366,15 @@ class WxGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
     # are provided by WidgetFactoryMixin
 
     # get_custom_button_names is provided by CallbackManagerMixin
+    # enable_field and show_field are provided by FieldStateMixin
 
-    def enable_field(self, field_name: str, enabled: bool = True) -> None:
-        """Enable or disable a specific field."""
-        if field_name in self.widget_factory.widgets:
-            self.widget_factory.widgets[field_name].Enable(enabled)
+    def _enable_widget(self, widget: wx.Window, enabled: bool) -> None:
+        """Wx-specific widget enable/disable."""
+        widget.Enable(enabled)
 
-    def show_field(self, field_name: str, visible: bool = True) -> None:
-        """Show or hide a specific field."""
-        if field_name in self.widget_factory.widgets:
-            self.widget_factory.widgets[field_name].Show(visible)
-
-        if field_name in self.widget_factory.labels:
-            self.widget_factory.labels[field_name].Show(visible)
+    def _show_widget(self, widget: wx.Window, visible: bool) -> None:
+        """Wx-specific widget show/hide."""
+        widget.Show(visible)
 
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,

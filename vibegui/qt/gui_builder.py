@@ -17,11 +17,11 @@ from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
 from ..config_loader import ConfigLoader, GuiConfig
-from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin
 from .widget_factory import WidgetFactory
 
 
-class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, QMainWindow):
+class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, QMainWindow):
     """Main GUI builder class that creates Qt applications from JSON configuration."""
 
     # Signals
@@ -387,19 +387,15 @@ class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, Wi
 
     # get_form_data, set_form_data, clear_form, get_field_value, set_field_value
     # are provided by WidgetFactoryMixin
+    # enable_field and show_field are provided by FieldStateMixin
 
-    def enable_field(self, field_name: str, enabled: bool = True) -> None:
-        """Enable or disable a specific field."""
-        if field_name in self.widget_factory.widgets:
-            self.widget_factory.widgets[field_name].setEnabled(enabled)
+    def _enable_widget(self, widget: QWidget, enabled: bool) -> None:
+        """Qt-specific widget enable/disable."""
+        widget.setEnabled(enabled)
 
-    def show_field(self, field_name: str, visible: bool = True) -> None:
-        """Show or hide a specific field."""
-        if field_name in self.widget_factory.widgets:
-            self.widget_factory.widgets[field_name].setVisible(visible)
-
-        if field_name in self.widget_factory.labels:
-            self.widget_factory.labels[field_name].setVisible(visible)
+    def _show_widget(self, widget: QWidget, visible: bool) -> None:
+        """Qt-specific widget show/hide."""
+        widget.setVisible(visible)
 
     def get_data_with_metadata(self) -> Dict[str, Any]:
         """
