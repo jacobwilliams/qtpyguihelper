@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from vibegui import GuiBuilder
 
 
-def main():
+def main() -> None:
     """Demonstrate nested value support."""
     # Form configuration with nested field names
     config = {
@@ -40,7 +40,7 @@ def main():
         }
     }
 
-    def on_submit(data):
+    def on_submit(data: dict) -> bool:
         """Handle form submission."""
         print("\n=== Submitted Data (Nested Structure) ===")
         print(f"Name: {data.get('name')}")
