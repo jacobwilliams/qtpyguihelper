@@ -235,91 +235,26 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
                     ft.SnackBar(content=ft.Text(f"Custom button '{button_config.label}' clicked"))
                 )
 
-    def get_form_data(self) -> Dict[str, Any]:
-        """Get all form data as a dictionary with support for nested fields."""
-        form_data = {}
-
-        if not self.config:
-            return form_data
-
-        # Get data from all fields
-        all_fields = []
-
-        if self.config.use_tabs and self.config.tabs:
-            for tab in self.config.tabs:
-                if hasattr(tab, 'fields') and tab.fields:
-                    all_fields.extend(tab.fields)
-        elif self.config.fields:
-            all_fields = self.config.fields
-
-        for field_config in all_fields:
-            value = self.widget_factory.get_value(field_config.name)
-
-            # Convert value based on field type
-            if field_config.type in ('int', 'number'):
-                try:
-                    value = int(value) if value else None
-                except (ValueError, TypeError):
-                    value = None
-            elif field_config.type == 'float':
-                try:
-                    value = float(value) if value else None
-                except (ValueError, TypeError):
-                    value = None
-            elif field_config.type == 'checkbox':
-                value = bool(value)
-
-            # Support nested field names with dot notation
-            if '.' in field_config.name:
-                set_nested_value(form_data, field_config.name, value)
-            else:
-                form_data[field_config.name] = value
-
-        return form_data
+    # Override mixin methods to add Flet-specific page.update() calls
 
     def set_form_data(self, data: Dict[str, Any]) -> None:
-        """Set form data from a dictionary with support for nested structures."""
-        # Flatten nested dictionaries to dot notation for widget setting
-        flat_data = flatten_nested_dict(data)
-        self.widget_factory.set_all_values(flat_data)
-
+        """Set form data - override to add page.update()."""
+        super().set_form_data(data)
         if self.page:
             self.page.update()
 
     def clear_form(self) -> None:
-        """Clear all form fields."""
-        if not self.config:
-            return
-
-        # Get all fields from config
-        all_fields = []
-        if self.config.use_tabs and self.config.tabs:
-            for tab in self.config.tabs:
-                if hasattr(tab, 'fields') and tab.fields:
-                    all_fields.extend(tab.fields)
-        elif self.config.fields:
-            all_fields = self.config.fields
-
-        # Clear each field
-        for field_config in all_fields:
-            self.widget_factory.set_value(field_config.name, "")
-
+        """Clear form - override to add page.update()."""
+        super().clear_form()
         if self.page:
             self.page.update()
 
-    def get_field_value(self, field_name: str) -> Any:
-        """Get the value of a specific field."""
-        return self.widget_factory.get_value(field_name)
-
     def set_field_value(self, field_name: str, value: Any) -> bool:
-        """Set the value of a specific field."""
-        try:
-            self.widget_factory.set_value(field_name, value)
-            if self.page:
-                self.page.update()
-            return True
-        except Exception:
-            return False
+        """Set field value - override to add page.update()."""
+        result = super().set_field_value(field_name, value)
+        if result and self.page:
+            self.page.update()
+        return result
 
     # enable_field and show_field are provided by FieldStateMixin
 
