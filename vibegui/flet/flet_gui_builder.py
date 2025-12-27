@@ -224,7 +224,7 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
 
     def _handle_custom_button_click(self, button_config: CustomButtonConfig) -> None:
         """Handle custom button click."""
-        callback = self.custom_button_callbacks.get(button_config.id)
+        callback = self.custom_button_callbacks.get(button_config.name)
         if callback:
             form_data = self.get_form_data()
             callback(form_data)
