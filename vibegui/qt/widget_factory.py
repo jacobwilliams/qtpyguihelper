@@ -133,6 +133,7 @@ class WidgetFactory:
         self.widgets: Dict[str, QWidget] = {}
         self.labels: Dict[str, QLabel] = {}
         self.radio_groups: Dict[str, QButtonGroup] = {}
+        self.field_configs: Dict[str, FieldConfig] = {}
 
     def _set_expanding_size_policy(self, widget: QWidget) -> None:
         """Set size policy to make widget expand horizontally to fill available space."""
@@ -141,6 +142,7 @@ class WidgetFactory:
 
     def create_widget(self, field_config: FieldConfig) -> QWidget:
         """Create a widget based on the field configuration."""
+        self.field_configs[field_config.name] = field_config
         widget = None
 
         if field_config.type == "text":
@@ -709,25 +711,22 @@ class WidgetFactory:
         return values
 
     def clear_all_widgets(self) -> None:
-        """Clear all widget values."""
-        for field_name, widget in self.widgets.items():
-            if isinstance(widget, QLineEdit):
-                widget.clear()
-            elif isinstance(widget, QTextEdit):
-                widget.clear()
-            elif isinstance(widget, (QSpinBox, QDoubleSpinBox)):
-                widget.setValue(0)
-            elif isinstance(widget, QCheckBox):
-                widget.setChecked(False)
-            elif isinstance(widget, QComboBox):
-                widget.setCurrentIndex(0)
-            elif isinstance(widget, (QDateEdit, QTimeEdit, QDateTimeEdit)):
-                widget.setDateTime(QDateTime.currentDateTime())
-            elif isinstance(widget, QSlider):
-                widget.setValue(widget.minimum())
-            elif isinstance(widget, QWidget) and widget.property("slider_widget"):
-                # Handle slider container widget
-                slider = widget.property("slider_widget")
+        """Clear all widget values to their defaults."""
+        for field_name in self.widgets.keys():
+            field_config = self.field_configs.get(field_name)
+            if field_config and field_config.default_value is not None:
+                self.set_widget_value(field_name, field_config.default_value)
+            else:
+                # No default, clear to appropriate empty value
+                widget = self.widgets[field_name]
+                if isinstance(widget, (QLineEdit, QTextEdit)):
+                    self.set_widget_value(field_name, "")
+                elif isinstance(widget, (QSpinBox, QDoubleSpinBox)):
+                    self.set_widget_value(field_name, 0)
+                elif isinstance(widget, QCheckBox):
+                    self.set_widget_value(field_name, False)
+                else:
+                    self.set_widget_value(field_name, "")
                 slider.setValue(slider.minimum())
             elif isinstance(widget, CustomFileButton):
                 widget.set_file_path("")

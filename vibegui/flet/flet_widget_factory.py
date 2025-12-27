@@ -360,9 +360,9 @@ class FletWidgetFactory:
         return values
 
     def clear_all_widgets(self) -> None:
-        """Clear all widget values."""
-        for field_name in self.widgets.keys():
-            widget = self.widgets[field_name]
+        """Clear all widget values to their defaults."""
+        # Note: Flet doesn't store field_configs, so we just reset to empty values
+        for widget in self.widgets.values():
             if isinstance(widget, ft.TextField):
                 widget.value = ""
             elif isinstance(widget, ft.Checkbox):

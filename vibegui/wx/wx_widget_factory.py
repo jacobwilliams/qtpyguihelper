@@ -96,9 +96,11 @@ class WxWidgetFactory:
     def __init__(self) -> None:
         self.widgets: Dict[str, wx.Window] = {}
         self.labels: Dict[str, wx.StaticText] = {}
+        self.field_configs: Dict[str, FieldConfig] = {}
 
     def create_widget(self, parent: wx.Window, field_config: FieldConfig) -> Optional[wx.Window]:
         """Create a widget based on the field configuration."""
+        self.field_configs[field_config.name] = field_config
         widget = None
 
         if field_config.type == "text":
@@ -605,26 +607,10 @@ class WxWidgetFactory:
         return values
 
     def clear_all_widgets(self) -> None:
-        """Clear all widget values."""
+        """Clear all widget values to their defaults."""
         for field_name in self.widgets.keys():
-            widget = self.widgets[field_name]
-
-            if isinstance(widget, wx.TextCtrl):
-                widget.Clear()
-            elif isinstance(widget, (wx.SpinCtrl, wx.SpinCtrlDouble)):
-                widget.SetValue(0)
-            elif isinstance(widget, wx.CheckBox):
-                widget.SetValue(False)
-            elif isinstance(widget, wx.Choice):
-                widget.SetSelection(0)
-            elif isinstance(widget, (wx.adv.DatePickerCtrl, wx.adv.TimePickerCtrl)):
-                widget.SetValue(wx.DateTime.Now())
-            elif isinstance(widget, wx.Slider):
-                widget.SetValue(widget.GetMin())
-            elif isinstance(widget, WxCustomFileButton):
-                widget.set_file_path("")
-            elif isinstance(widget, WxCustomColorButton):
-                widget.set_color(wx.Colour(255, 255, 255))
-            elif isinstance(widget, wx.Panel):
-                if hasattr(widget, 'radio_buttons') and widget.radio_buttons:
-                    widget.radio_buttons[0].SetValue(True)
+            field_config = self.field_configs.get(field_name)
+            if field_config and field_config.default_value is not None:
+                self.set_widget_value(field_name, field_config.default_value)
+            else:
+                self.set_widget_value(field_name, "")

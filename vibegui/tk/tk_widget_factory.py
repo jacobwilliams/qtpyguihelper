@@ -76,6 +76,7 @@ class TkWidgetFactory:
         self.radio_groups: Dict[str, RadioButtonGroup] = {}
         self.change_callbacks: Dict[str, List[Callable]] = {}
         self.theme_colors: Optional[Dict[str, str]] = None
+        self.field_configs: Dict[str, FieldConfig] = {}
 
     def set_theme_colors(self, theme_colors: Dict[str, str]) -> None:
         """Set theme colors for widgets."""
@@ -83,6 +84,7 @@ class TkWidgetFactory:
 
     def create_widget(self, parent: tk.Widget, field_config: FieldConfig) -> tk.Widget:
         """Create a widget based on the field configuration."""
+        self.field_configs[field_config.name] = field_config
         widget = None
 
         if field_config.type == "text":
@@ -755,9 +757,13 @@ class TkWidgetFactory:
             return False
 
     def clear_all_widgets(self) -> None:
-        """Clear all widget values."""
+        """Clear all widget values to their defaults."""
         for field_name in self.widgets.keys():
-            self.set_widget_value(field_name, None)
+            field_config = self.field_configs.get(field_name)
+            if field_config and field_config.default_value is not None:
+                self.set_widget_value(field_name, field_config.default_value)
+            else:
+                self.set_widget_value(field_name, "")
 
     def get_all_values(self) -> Dict[str, Any]:
         """Get all widget values as a dictionary."""
