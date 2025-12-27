@@ -6,6 +6,7 @@ from typing import Dict, Any, Optional, List, Callable
 import sys
 
 from vibegui.config_loader import FieldConfig
+from vibegui.utils import set_nested_value, flatten_nested_dict
 
 try:
     import gi
@@ -570,17 +571,24 @@ class GtkWidgetFactory:
             return False
 
     def get_all_values(self) -> Dict[str, Any]:
-        """Get values from all widgets."""
+        """Get values from all widgets, supporting nested field names."""
         values = {}
         for field_name in self.widgets.keys():
             value = self.get_widget_value(field_name)
             if value is not None:
-                values[field_name] = value
+                if '.' in field_name:
+                    # Handle nested field names using dot notation
+                    set_nested_value(values, field_name, value)
+                else:
+                    # Handle regular field names
+                    values[field_name] = value
         return values
 
     def set_all_values(self, values: Dict[str, Any]) -> None:
-        """Set values for all widgets from a dictionary."""
-        for field_name, value in values.items():
+        """Set values for all widgets from a dictionary, supporting nested structures."""
+        # Flatten nested dictionaries to dot notation
+        flat_data = flatten_nested_dict(values)
+        for field_name, value in flat_data.items():
             self.set_widget_value(field_name, value)
 
     def clear_widgets(self) -> None:

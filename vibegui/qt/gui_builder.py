@@ -17,11 +17,11 @@ from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
 from ..config_loader import ConfigLoader, GuiConfig
-from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
-from .widget_factory import WidgetFactory, get_nested_value
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin
+from .widget_factory import WidgetFactory
 
 
-class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, QMainWindow):
+class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, QMainWindow):
     """Main GUI builder class that creates Qt applications from JSON configuration."""
 
     # Signals
@@ -385,25 +385,8 @@ class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, QM
         msg_box.setText(message)
         msg_box.exec()
 
-    def get_form_data(self) -> Dict[str, Any]:
-        """Get all form data as a dictionary."""
-        return self.widget_factory.get_all_values()
-
-    def set_form_data(self, data: Dict[str, Any]) -> None:
-        """Set form data from a dictionary."""
-        self.widget_factory.set_all_values(data)
-
-    def clear_form(self) -> None:
-        """Clear all form fields."""
-        self.widget_factory.clear_all_widgets()
-
-    def get_field_value(self, field_name: str) -> Any:
-        """Get the value of a specific field."""
-        return self.widget_factory.get_widget_value(field_name)
-
-    def set_field_value(self, field_name: str, value: Any) -> bool:
-        """Set the value of a specific field."""
-        return self.widget_factory.set_widget_value(field_name, value)
+    # get_form_data, set_form_data, clear_form, get_field_value, set_field_value
+    # are provided by WidgetFactoryMixin
 
     def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""

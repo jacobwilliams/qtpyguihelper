@@ -9,11 +9,11 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, PlatformUtils
+from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, PlatformUtils
 from vibegui.tk.tk_widget_factory import TkWidgetFactory
 
 
-class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin):
+class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin):
     """Main GUI builder class that creates tkinter applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -528,34 +528,9 @@ class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin):
         if self.root:
             self.root.withdraw()
 
-    def get_form_data(self) -> Dict[str, Any]:
-        """Get all form data as a dictionary."""
-        # Ensure UI is set up before trying to get data
-        if self.root is None and self.config:
-            self._setup_ui()
-        return self.widget_factory.get_all_values()
-
-    def set_form_data(self, data: Dict[str, Any]) -> None:
-        """Set form data from a dictionary."""
-        self.widget_factory.set_all_values(data)
-
-    def clear_form(self) -> None:
-        """Clear all form fields."""
-        self.widget_factory.clear_widgets()
-
-    def get_field_value(self, field_name: str) -> Any:
-        """Get the value of a specific field."""
-        # Ensure UI is set up before trying to get field value
-        if self.root is None:
-            self._setup_ui()
-        return self.widget_factory.get_widget_value(field_name)
-
-    def set_field_value(self, field_name: str, value: Any) -> bool:
-        """Set the value of a specific field."""
-        # Ensure UI is set up before trying to set field value
-        if self.root is None:
-            self._setup_ui()
-        return self.widget_factory.set_widget_value(field_name, value)
+    # get_form_data, set_form_data, clear_form, get_field_value, set_field_value
+    # are provided by WidgetFactoryMixin
+    # Note: Tkinter doesn't need special UI setup logic for these methods
 
     def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""

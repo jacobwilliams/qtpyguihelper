@@ -8,11 +8,11 @@ import wx
 import wx.lib.scrolledpanel as scrolled
 
 from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
-from .wx_widget_factory import WxWidgetFactory, get_nested_value
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin
+from .wx_widget_factory import WxWidgetFactory
 
 
-class WxGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, wx.Frame):
+class WxGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, wx.Frame):
     """wxPython GUI builder class that creates applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, parent: Optional[wx.Window] = None) -> None:
@@ -362,25 +362,8 @@ class WxGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
         """Show an error message dialog."""
         wx.MessageBox(message, "Error", wx.OK | wx.ICON_ERROR)
 
-    def get_form_data(self) -> Dict[str, Any]:
-        """Get all form data as a dictionary."""
-        return self.widget_factory.get_all_values()
-
-    def set_form_data(self, data: Dict[str, Any]) -> None:
-        """Set form data from a dictionary."""
-        self.widget_factory.set_all_values(data)
-
-    def clear_form(self) -> None:
-        """Clear all form fields."""
-        self.widget_factory.clear_all_widgets()
-
-    def get_field_value(self, field_name: str) -> Any:
-        """Get the value of a specific field."""
-        return self.widget_factory.get_widget_value(field_name)
-
-    def set_field_value(self, field_name: str, value: Any) -> bool:
-        """Set the value of a specific field."""
-        return self.widget_factory.set_widget_value(field_name, value)
+    # get_form_data, set_form_data, clear_form, get_field_value, set_field_value
+    # are provided by WidgetFactoryMixin
 
     def get_custom_button_names(self) -> List[str]:
         """Get a list of all custom button names from the configuration."""

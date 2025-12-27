@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from vibegui.qt.widget_factory import set_nested_value, get_nested_value, flatten_nested_dict
 
 
-def test_nested_value_functions():
+def test_nested_value_functions() -> None:
     """Test the nested value utility functions."""
     print("Testing nested value utility functions...")
 
@@ -57,7 +57,7 @@ def test_nested_value_functions():
     print("✓ All nested value utility functions working correctly!")
 
 
-def test_nested_config_loading():
+def test_nested_config_loading() -> None:
     """Test loading a config with nested field names."""
     print("\nTesting nested config loading...")
 
@@ -82,7 +82,7 @@ def test_nested_config_loading():
         print("⚠ Nested config file not found, skipping this test")
 
 
-def test_nested_data_loading():
+def test_nested_data_loading() -> None:
     """Test loading nested data."""
     print("\nTesting nested data loading...")
 

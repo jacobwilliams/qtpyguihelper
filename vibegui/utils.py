@@ -7,6 +7,125 @@ import platform
 from typing import Dict, Any, Optional, Union, List, Callable
 
 
+def set_nested_value(data: Dict[str, Any], key_path: str, value: Any) -> None:
+    """
+    Set a value in a nested dictionary using dot notation.
+
+    Args:
+        data: The dictionary to modify
+        key_path: Dot-separated key path (e.g., "project.name")
+        value: The value to set
+    """
+    keys = key_path.split('.')
+    current = data
+
+    # Navigate to the parent of the target key
+    for key in keys[:-1]:
+        if key not in current:
+            current[key] = {}
+        elif not isinstance(current[key], dict):
+            # If the intermediate key exists but isn't a dict, we can't proceed
+            return
+        current = current[key]
+
+    # Set the final value
+    current[keys[-1]] = value
+
+
+def get_nested_value(data: Dict[str, Any], key_path: str, default: Any = None) -> Any:
+    """
+    Get a value from a nested dictionary using dot notation.
+
+    Args:
+        data: The dictionary to search
+        key_path: Dot-separated key path (e.g., "project.name")
+        default: Default value if key not found
+
+    Returns:
+        The value at the key path, or default if not found
+    """
+    keys = key_path.split('.')
+    current = data
+
+    try:
+        for key in keys:
+            if isinstance(current, dict) and key in current:
+                current = current[key]
+            else:
+                return default
+        return current
+    except (KeyError, TypeError):
+        return default
+
+
+def flatten_nested_dict(data: Dict[str, Any], parent_key: str = '', separator: str = '.') -> Dict[str, Any]:
+    """
+    Flatten a nested dictionary into a flat dictionary with dot notation keys.
+
+    Args:
+        data: The nested dictionary to flatten
+        parent_key: The parent key path (for recursion)
+        separator: The separator to use (default: '.')
+
+    Returns:
+        Flattened dictionary with dot notation keys
+    """
+    items = []
+    for key, value in data.items():
+        new_key = f"{parent_key}{separator}{key}" if parent_key else key
+        if isinstance(value, dict):
+            items.extend(flatten_nested_dict(value, new_key, separator).items())
+        else:
+            items.append((new_key, value))
+    return dict(items)
+
+
+class WidgetFactoryMixin:
+    """Mixin providing common widget factory delegation methods.
+
+    Assumes the class has a self.widget_factory attribute.
+    Provides standardized methods for form data manipulation and field access.
+    """
+
+    def get_form_data(self) -> Dict[str, Any]:
+        """Get all form data as a dictionary."""
+        return self.widget_factory.get_all_values()
+
+    def set_form_data(self, data: Dict[str, Any]) -> None:
+        """Set form data from a dictionary."""
+        self.widget_factory.set_all_values(data)
+
+    def clear_form(self) -> None:
+        """Clear all form fields."""
+        # Handle different method names across widget factories
+        if hasattr(self.widget_factory, 'clear_all_widgets'):
+            self.widget_factory.clear_all_widgets()
+        elif hasattr(self.widget_factory, 'clear_widgets'):
+            self.widget_factory.clear_widgets()
+
+    def get_field_value(self, field_name: str) -> Any:
+        """Get the value of a specific field."""
+        # Handle different method names
+        if hasattr(self.widget_factory, 'get_widget_value'):
+            return self.widget_factory.get_widget_value(field_name)
+        elif hasattr(self.widget_factory, 'get_value'):
+            return self.widget_factory.get_value(field_name)
+        return None
+
+    def set_field_value(self, field_name: str, value: Any) -> bool:
+        """Set the value of a specific field."""
+        try:
+            # Handle different method names
+            if hasattr(self.widget_factory, 'set_widget_value'):
+                return self.widget_factory.set_widget_value(field_name, value)
+            elif hasattr(self.widget_factory, 'set_value'):
+                self.widget_factory.set_value(field_name, value)
+                return True
+            return False
+        except Exception:
+            return False
+
+
 class CallbackManagerMixin:
     """Mixin providing common callback management functionality for GUI builders.
 
@@ -17,7 +136,7 @@ class CallbackManagerMixin:
     - field_change_callbacks: Dictionary of callbacks for field changes
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Initialize callback storage."""
         # Pass all args/kwargs to super() to properly initialize base classes (especially wx.Frame)
         super().__init__(*args, **kwargs)
@@ -90,7 +209,7 @@ class ValidationMixin:
     - _show_error(*args, **kwargs) -> None: Show error dialog
     """
 
-    def _get_all_fields(self):
+    def _get_all_fields(self) -> List[Any]:
         """Get all fields from config (handling tabs if present)."""
         if not hasattr(self, 'config') or not self.config:
             return []

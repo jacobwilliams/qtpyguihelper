@@ -6,7 +6,7 @@ import json
 from typing import Dict, Any, Callable, Optional, List
 import os
 
-from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, PlatformUtils
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, PlatformUtils
 
 try:
     import gi
@@ -59,7 +59,7 @@ if GTK_AVAILABLE:
     from vibegui.gtk.gtk_widget_factory import GtkWidgetFactory
 
 
-class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin):
+class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin):
     """Main GUI builder class that creates GTK applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, submit_callback: Optional[Callable] = None, cancel_callback: Optional[Callable] = None) -> None:
@@ -623,25 +623,8 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin)
             compat = self._gtk_version_compat()
             compat['main_loop']()
 
-    def get_form_data(self) -> Dict[str, Any]:
-        """Get all form data as a dictionary."""
-        return self.widget_factory.get_all_values()
-
-    def set_form_data(self, data: Dict[str, Any]) -> None:
-        """Set form data from a dictionary."""
-        self.widget_factory.set_all_values(data)
-
-    def clear_form(self) -> None:
-        """Clear all form fields."""
-        self.widget_factory.clear_widgets()
-
-    def get_field_value(self, field_name: str) -> Any:
-        """Get the value of a specific field."""
-        return self.widget_factory.get_widget_value(field_name)
-
-    def set_field_value(self, field_name: str, value: Any) -> bool:
-        """Set the value of a specific field."""
-        return self.widget_factory.set_widget_value(field_name, value)
+    # get_form_data, set_form_data, clear_form, get_field_value, set_field_value
+    # are provided by WidgetFactoryMixin
 
     def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""

@@ -10,41 +10,7 @@ import wx.adv
 from datetime import datetime, date, time
 
 from ..config_loader import FieldConfig
-
-
-def set_nested_value(data: Dict[str, Any], key_path: str, value: Any) -> None:
-    """
-    Set a value in a nested dictionary using dot notation.
-    """
-    keys = key_path.split('.')
-    current = data
-
-    for key in keys[:-1]:
-        if key not in current:
-            current[key] = {}
-        elif not isinstance(current[key], dict):
-            return
-        current = current[key]
-
-    current[keys[-1]] = value
-
-
-def get_nested_value(data: Dict[str, Any], key_path: str, default: Any = None) -> Any:
-    """
-    Get a value from a nested dictionary using dot notation.
-    """
-    keys = key_path.split('.')
-    current = data
-
-    try:
-        for key in keys:
-            if isinstance(current, dict) and key in current:
-                current = current[key]
-            else:
-                return default
-        return current
-    except (KeyError, TypeError):
-        return default
+from ..utils import set_nested_value, flatten_nested_dict
 
 
 class WxCustomColorButton(wx.Button):
@@ -621,8 +587,10 @@ class WxWidgetFactory:
             return False
 
     def set_all_values(self, values: Dict[str, Any]) -> None:
-        """Set values for all widgets from a dictionary."""
-        for field_name, value in values.items():
+        """Set values for all widgets from a dictionary, supporting nested structures."""
+        # Flatten nested dictionaries to dot notation
+        flat_data = flatten_nested_dict(values)
+        for field_name, value in flat_data.items():
             self.set_widget_value(field_name, value)
 
     def get_all_values(self) -> Dict[str, Any]:

@@ -15,7 +15,7 @@ from vibegui.config_loader import ConfigLoader
 from vibegui.qt.gui_builder import GuiBuilder
 
 
-def test_data_persistence():
+def test_data_persistence() -> None:
     """Test the data persistence functionality."""
     print("Testing Data Persistence Features...")
     print("=" * 50)

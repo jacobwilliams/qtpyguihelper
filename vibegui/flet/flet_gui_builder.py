@@ -9,11 +9,11 @@ from typing import Dict, Any, Callable, Optional, List
 import flet as ft
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
+from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, set_nested_value, flatten_nested_dict
 from vibegui.flet.flet_widget_factory import FletWidgetFactory
 
 
-class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin):
+class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin):
     """Main GUI builder class that creates Flet applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -236,7 +236,7 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
                 )
 
     def get_form_data(self) -> Dict[str, Any]:
-        """Get all form data as a dictionary."""
+        """Get all form data as a dictionary with support for nested fields."""
         form_data = {}
 
         if not self.config:
@@ -269,13 +269,19 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
             elif field_config.type == 'checkbox':
                 value = bool(value)
 
-            form_data[field_config.name] = value
+            # Support nested field names with dot notation
+            if '.' in field_config.name:
+                set_nested_value(form_data, field_config.name, value)
+            else:
+                form_data[field_config.name] = value
 
         return form_data
 
     def set_form_data(self, data: Dict[str, Any]) -> None:
-        """Set form data from a dictionary."""
-        self.widget_factory.set_all_values(data)
+        """Set form data from a dictionary with support for nested structures."""
+        # Flatten nested dictionaries to dot notation for widget setting
+        flat_data = flatten_nested_dict(data)
+        self.widget_factory.set_all_values(flat_data)
 
         if self.page:
             self.page.update()

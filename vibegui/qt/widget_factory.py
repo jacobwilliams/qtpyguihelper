@@ -16,57 +16,7 @@ from qtpy.QtCore import Qt, QDate, QTime, QDateTime, Signal
 from qtpy.QtGui import QColor, QPixmap, QIcon, QDoubleValidator
 
 from ..config_loader import FieldConfig
-
-
-def set_nested_value(data: Dict[str, Any], key_path: str, value: Any) -> None:
-    """
-    Set a value in a nested dictionary using dot notation.
-
-    Args:
-        data: The dictionary to modify
-        key_path: Dot-separated key path (e.g., "global.project_name")
-        value: The value to set
-    """
-    keys = key_path.split('.')
-    current = data
-
-    # Navigate to the parent of the target key
-    for key in keys[:-1]:
-        if key not in current:
-            current[key] = {}
-        elif not isinstance(current[key], dict):
-            # If the intermediate key exists but isn't a dict, we can't proceed
-            return
-        current = current[key]
-
-    # Set the final value
-    current[keys[-1]] = value
-
-
-def get_nested_value(data: Dict[str, Any], key_path: str, default: Any = None) -> Any:
-    """
-    Get a value from a nested dictionary using dot notation.
-
-    Args:
-        data: The dictionary to search
-        key_path: Dot-separated key path (e.g., "global.project_name")
-        default: Default value if key not found
-
-    Returns:
-        The value at the key path, or default if not found
-    """
-    keys = key_path.split('.')
-    current = data
-
-    try:
-        for key in keys:
-            if isinstance(current, dict) and key in current:
-                current = current[key]
-            else:
-                return default
-        return current
-    except (KeyError, TypeError):
-        return default
+from ..utils import set_nested_value, flatten_nested_dict
 
 
 def flatten_nested_dict(data: Dict[str, Any], parent_key: str = '', separator: str = '.') -> Dict[str, Any]:
@@ -739,8 +689,10 @@ class WidgetFactory:
             return False
 
     def set_all_values(self, values: Dict[str, Any]) -> None:
-        """Set values for all widgets from a dictionary."""
-        for field_name, value in values.items():
+        """Set values for all widgets from a dictionary, supporting nested structures."""
+        # Flatten nested dictionaries to dot notation
+        flat_data = flatten_nested_dict(values)
+        for field_name, value in flat_data.items():
             self.set_widget_value(field_name, value)
 
     def get_all_values(self) -> Dict[str, Any]:

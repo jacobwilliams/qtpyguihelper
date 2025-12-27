@@ -288,10 +288,72 @@ def demo_tabbed_interface() -> None:
         msg.setText("Tabbed form data has been submitted successfully!")
         msg.exec()
 
+    def validate_callback(form_data: dict) -> None:
+        """Validate the tabbed form data."""
+        issues = []
+
+        # Check required fields
+        if not form_data.get('first_name', '').strip():
+            issues.append("First name is required")
+        if not form_data.get('last_name', '').strip():
+            issues.append("Last name is required")
+        if not form_data.get('email', '').strip():
+            issues.append("Email is required")
+        elif '@' not in form_data.get('email', ''):
+            issues.append("Email must contain @ symbol")
+
+        # Check numeric fields
+        years = form_data.get('years_experience', 0)
+        if years < 0:
+            issues.append("Years of experience cannot be negative")
+
+        salary = form_data.get('salary', 0)
+        if salary < 0:
+            issues.append("Salary cannot be negative")
+
+        rating = form_data.get('rating', 0)
+        if not (1.0 <= rating <= 10.0):
+            issues.append("Rating must be between 1.0 and 10.0")
+
+        # Show validation results
+        if issues:
+            msg = "Validation Issues Found:\n\n• " + "\n• ".join(issues)
+            QMessageBox.warning(None, "Validation Failed", msg)
+        else:
+            QMessageBox.information(None, "Validation Passed", "All form data is valid!")
+
+    def reset_callback(form_data: dict) -> None:
+        """Reset form to default values."""
+        reply = QMessageBox.question(
+            None,
+            "Confirm Reset",
+            "Are you sure you want to reset all fields to default values?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            # Reload the config to get default values
+            gui.load_data_from_dict({
+                'experience': 'Mid-level',
+                'years_experience': 5,
+                'salary': 75000.00,
+                'rating': 7.5
+            })
+            QMessageBox.information(None, "Form Reset", "Form has been reset to default values.")
+
     gui.set_submit_callback(on_submit_tabs)
+
+    # Register custom button callbacks
+    gui.set_custom_button_callback("validate", validate_callback)
+    gui.set_custom_button_callback("reset", reset_callback)
 
     # Show the GUI
     gui.show()
+
+    print("Custom buttons available:")
+    for button_name in gui.get_custom_button_names():
+        print(f"  - {button_name}")
 
     # Run the application
     app.exec()
