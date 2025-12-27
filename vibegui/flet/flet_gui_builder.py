@@ -4,12 +4,11 @@ Main GUI builder class that creates Flet applications from JSON configuration.
 
 from __future__ import annotations
 
-import json
-from typing import Dict, Any, Callable, Optional, List
+from typing import Dict, Any, Callable, Optional
 import flet as ft
 
-from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin, set_nested_value, flatten_nested_dict
+from vibegui.config_loader import ConfigLoader, GuiConfig, CustomButtonConfig
+from vibegui.utils import CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin
 from vibegui.flet.flet_widget_factory import FletWidgetFactory
 
 

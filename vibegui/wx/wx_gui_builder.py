@@ -2,13 +2,12 @@
 wxPython GUI builder class that creates applications from JSON configuration.
 """
 
-import json
-from typing import Dict, Any, Callable, Optional, List
+from typing import Dict, Any, Optional, List
 import wx
 import wx.lib.scrolledpanel as scrolled
 
-from ..config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin
+from ..config_loader import ConfigLoader, GuiConfig, FieldConfig
+from ..utils import CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin
 from .wx_widget_factory import WxWidgetFactory
 
 
