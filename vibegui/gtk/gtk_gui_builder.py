@@ -192,18 +192,13 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
         # Get compatibility helpers
         compat = self._gtk_version_compat()
 
-        # Create form grid
-        form_grid = Gtk.Grid()
-        form_grid.set_column_spacing(10)
-        form_grid.set_row_spacing(10)
-        compat['set_border_width'](form_grid, 10)
+        # Create container based on layout type
+        form_container = self._create_layout_container(self.config.layout)
+        compat['set_border_width'](form_container, 10)
+        compat['box_pack_start'](self.main_container, form_container, True, True, 0)
 
-        compat['box_pack_start'](self.main_container, form_grid, True, True, 0)
-
-        row = 0
-        for field_config in self.config.fields:
-            self._add_field_to_grid(form_grid, field_config, row)
-            row += 1
+        # Add fields based on layout type
+        self._add_fields_to_container(form_container, self.config.fields, self.config.layout)
 
     def _build_tabbed_interface(self) -> None:
         """Build a tabbed interface."""
@@ -240,15 +235,14 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
                 # GTK3 fallback - set minimum size only
                 tab_scrolled.set_size_request(500, 300)
 
-            tab_grid = Gtk.Grid()
-            tab_grid.set_column_spacing(10)
-            tab_grid.set_row_spacing(10)
-            tab_grid.set_hexpand(True)
-            tab_grid.set_vexpand(False)  # Don't expand vertically - align to top
-            tab_grid.set_valign(Gtk.Align.START)  # Align content to top of container
-            compat['set_border_width'](tab_grid, 10)
+            # Create container based on tab layout type
+            tab_container = self._create_layout_container(tab_config.layout)
+            tab_container.set_hexpand(True)
+            tab_container.set_vexpand(False)
+            tab_container.set_valign(Gtk.Align.START)
+            compat['set_border_width'](tab_container, 10)
 
-            compat['container_add'](tab_scrolled, tab_grid)
+            compat['container_add'](tab_scrolled, tab_container)
 
             # Create tab label
             tab_label = Gtk.Label(label=tab_config.title)
@@ -256,11 +250,97 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
             # Add tab to notebook
             notebook.append_page(tab_scrolled, tab_label)
 
-            # Add fields to the tab
-            row = 0
-            for field_config in tab_config.fields:
-                self._add_field_to_grid(tab_grid, field_config, row)
-                row += 1
+            # Add fields to the tab based on layout type
+            self._add_fields_to_container(tab_container, tab_config.fields, tab_config.layout)
+
+    def _create_layout_container(self, layout_type: str = None) -> Gtk.Widget:
+        """Create the appropriate container based on layout type."""
+        compat = self._gtk_version_compat()
+
+        if layout_type == "vertical":
+            box = compat['box_new'](compat['orientation_vertical'], 10)
+            return box
+        elif layout_type == "horizontal":
+            box = compat['box_new'](compat['orientation_horizontal'], 10)
+            return box
+        elif layout_type in ["grid", "form", None]:
+            # Default to grid for form and grid layouts
+            grid = Gtk.Grid()
+            grid.set_column_spacing(10)
+            grid.set_row_spacing(10)
+            return grid
+        else:
+            # Fallback to vertical box
+            return compat['box_new'](compat['orientation_vertical'], 10)
+
+    def _add_fields_to_container(self, container: Gtk.Widget, fields: list, layout_type: str = None) -> None:
+        """Add fields to a container based on layout type."""
+        compat = self._gtk_version_compat()
+
+        if layout_type in ["form", "grid", None]:
+            # Grid layout: label and widget in columns
+            for i, field_config in enumerate(fields):
+                if field_config.type == "checkbox":
+                    # Checkbox includes its own label
+                    widget = self.widget_factory.create_widget(container, field_config)
+                    if widget:
+                        widget.set_hexpand(True)
+                        widget.set_halign(Gtk.Align.FILL)
+                        container.attach(widget, 0, i, 2, 1)
+                        if field_config.tooltip:
+                            widget.set_tooltip_text(field_config.tooltip)
+                else:
+                    # Regular field with separate label
+                    label = self.widget_factory.create_label(container, field_config)
+                    label.set_halign(Gtk.Align.START)
+                    label.set_valign(Gtk.Align.START)
+                    container.attach(label, 0, i, 1, 1)
+
+                    widget = self.widget_factory.create_widget(container, field_config)
+                    if widget:
+                        widget.set_hexpand(True)
+                        widget.set_halign(Gtk.Align.FILL)
+                        if isinstance(widget, Gtk.ScrolledWindow):
+                            widget.set_vexpand(False)
+                            widget.set_valign(Gtk.Align.START)
+                        container.attach(widget, 1, i, 1, 1)
+                        if field_config.tooltip:
+                            widget.set_tooltip_text(field_config.tooltip)
+
+        elif layout_type == "horizontal":
+            # Horizontal box: fields side by side
+            for field_config in fields:
+                # Create a vertical box for each field (label on top, widget below)
+                field_box = compat['box_new'](compat['orientation_vertical'], 5)
+
+                if field_config.type != "checkbox":
+                    label = self.widget_factory.create_label(field_box, field_config)
+                    label.set_halign(Gtk.Align.START)
+                    compat['box_pack_start'](field_box, label, False, False, 0)
+
+                widget = self.widget_factory.create_widget(field_box, field_config)
+                if widget:
+                    widget.set_hexpand(True)
+                    compat['box_pack_start'](field_box, widget, True, True, 0)
+                    if field_config.tooltip:
+                        widget.set_tooltip_text(field_config.tooltip)
+
+                compat['box_pack_start'](container, field_box, True, True, 0)
+
+        else:  # vertical
+            # Vertical box: fields stacked
+            for field_config in fields:
+                if field_config.type != "checkbox":
+                    label = self.widget_factory.create_label(container, field_config)
+                    label.set_halign(Gtk.Align.START)
+                    compat['box_pack_start'](container, label, False, False, 0)
+
+                widget = self.widget_factory.create_widget(container, field_config)
+                if widget:
+                    widget.set_hexpand(True)
+                    compat['box_pack_start'](container, widget, False, False, 0)
+                    if field_config.tooltip:
+                        widget.set_tooltip_text(field_config.tooltip)
 
     def _add_field_to_grid(self, grid: Gtk.Grid, field_config: FieldConfig, row: int) -> None:
         """Add a field to the grid."""

@@ -189,13 +189,8 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
         form_frame = ttk.Frame(self.main_frame)
         form_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Configure column weights for proper resizing
-        form_frame.columnconfigure(1, weight=1)
-
-        row = 0
-        for field_config in self.config.fields:
-            self._add_field_to_form(form_frame, field_config, row)
-            row += 1
+        # Add fields based on layout type
+        self._add_fields_to_container(form_frame, self.config.fields, self.config.layout)
 
     def _build_tabbed_interface(self) -> None:
         """Build a tabbed interface."""
@@ -228,29 +223,65 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
             tab_canvas.pack(side="left", fill="both", expand=True)
             tab_scrollbar.pack(side="right", fill="y")
 
-            # Configure column weights
-            tab_content.columnconfigure(1, weight=1)
+            # Add fields to the tab based on layout type
+            self._add_fields_to_container(tab_content, tab_config.fields, tab_config.layout)
 
-            # Add fields to the tab
-            row = 0
-            for field_config in tab_config.fields:
-                self._add_field_to_form(tab_content, field_config, row)
-                row += 1
+    def _add_fields_to_container(self, parent: tk.Widget, fields: list, layout_type: str = None) -> None:
+        """Add fields to a container based on layout type."""
+        if layout_type is None:
+            layout_type = "form"  # Default to form layout
 
-    def _add_field_to_form(self, parent: tk.Widget, field_config: FieldConfig, row: int) -> None:
-        """Add a field to the form."""
-        # Create label
-        label = self.widget_factory.create_label(parent, field_config)
-        label.grid(row=row, column=0, sticky="nw", padx=(0, 10), pady=5)
+        if layout_type in ["form", "grid"]:
+            # Form/grid layout: use grid manager with label-widget pairs
+            parent.columnconfigure(1, weight=1)
+            for i, field_config in enumerate(fields):
+                if field_config.type == "checkbox":
+                    # Checkbox includes its own label
+                    widget = self.widget_factory.create_widget(parent, field_config)
+                    if widget:
+                        widget.grid(row=i, column=0, columnspan=2, sticky="w", pady=5)
+                        if field_config.tooltip:
+                            self._add_tooltip(widget, field_config.tooltip)
+                else:
+                    # Regular field with separate label
+                    label = self.widget_factory.create_label(parent, field_config)
+                    label.grid(row=i, column=0, sticky="nw", padx=(0, 10), pady=5)
 
-        # Create widget
-        widget = self.widget_factory.create_widget(parent, field_config)
-        if widget:
-            widget.grid(row=row, column=1, sticky="ew", pady=5)
+                    widget = self.widget_factory.create_widget(parent, field_config)
+                    if widget:
+                        widget.grid(row=i, column=1, sticky="ew", pady=5)
+                        if field_config.tooltip:
+                            self._add_tooltip(widget, field_config.tooltip)
 
-            # Add tooltip if specified
-            if field_config.tooltip:
-                self._add_tooltip(widget, field_config.tooltip)
+        elif layout_type == "horizontal":
+            # Horizontal layout: use pack manager with side="left"
+            for i, field_config in enumerate(fields):
+                # Create a container for each field
+                field_frame = ttk.Frame(parent)
+                field_frame.pack(side="left", fill="both", expand=True, padx=5)
+
+                if field_config.type != "checkbox":
+                    label = self.widget_factory.create_label(field_frame, field_config)
+                    label.pack(side="top", anchor="w")
+
+                widget = self.widget_factory.create_widget(field_frame, field_config)
+                if widget:
+                    widget.pack(side="top", fill="x")
+                    if field_config.tooltip:
+                        self._add_tooltip(widget, field_config.tooltip)
+
+        else:  # vertical or default
+            # Vertical layout: use pack manager with side="top"
+            for i, field_config in enumerate(fields):
+                if field_config.type != "checkbox":
+                    label = self.widget_factory.create_label(parent, field_config)
+                    label.pack(side="top", anchor="w", pady=(0, 2))
+
+                widget = self.widget_factory.create_widget(parent, field_config)
+                if widget:
+                    widget.pack(side="top", fill="x", pady=(0, 10))
+                    if field_config.tooltip:
+                        self._add_tooltip(widget, field_config.tooltip)
 
     def _setup_field_change_monitoring(self) -> None:
         """Set up field change monitoring."""

@@ -91,23 +91,18 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
         if not self.config or not self.config.fields:
             return None
 
-        form_controls = []
+        # Build fields based on layout type
+        form_content = self._create_layout_container(self.config.fields, self.config.layout)
 
+        # Set up field change monitoring
         for field_config in self.config.fields:
-            # Create widget
-            widget = self.widget_factory.create_widget(field_config)
-
-            # Add to form
-            form_controls.append(widget)
-
-            # Set up field change monitoring
             if field_config.name in self.field_change_callbacks:
                 for callback in self.field_change_callbacks[field_config.name]:
                     self.widget_factory.add_change_callback(field_config.name, callback)
 
         # Wrap in container with padding and scrolling
         form_container = ft.Container(
-            content=ft.Column(form_controls, spacing=15, scroll=ft.ScrollMode.AUTO, expand=True),
+            content=form_content,
             padding=20,
             expand=True
         )
@@ -122,24 +117,24 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
         tabs = []
 
         for tab_config in self.config.tabs:
-            # Create controls for this tab
-            tab_controls = []
-
+            # Set up field change monitoring first
             if hasattr(tab_config, 'fields') and tab_config.fields:
                 for field_config in tab_config.fields:
-                    widget = self.widget_factory.create_widget(field_config)
-                    tab_controls.append(widget)
-
-                    # Set up field change monitoring
                     if field_config.name in self.field_change_callbacks:
                         for callback in self.field_change_callbacks[field_config.name]:
                             self.widget_factory.add_change_callback(field_config.name, callback)
+
+            # Create content based on layout type
+            tab_content = self._create_layout_container(
+                tab_config.fields if hasattr(tab_config, 'fields') else [],
+                tab_config.layout if hasattr(tab_config, 'layout') else 'vertical'
+            )
 
             # Create tab
             tab = ft.Tab(
                 text=tab_config.title,
                 content=ft.Container(
-                    content=ft.Column(tab_controls, spacing=15, scroll=ft.ScrollMode.AUTO, expand=True),
+                    content=tab_content,
                     padding=20,
                     expand=True
                 )
@@ -148,6 +143,106 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
 
         # Tabs should expand to fill available space (but buttons will be below in layout)
         return ft.Tabs(tabs=tabs, expand=True)
+
+    def _create_layout_container(self, fields: list, layout_type: str = None) -> ft.Control:
+        """Create the appropriate container based on layout type."""
+        if layout_type == "horizontal":
+            # Horizontal layout: Row with fields side by side
+            controls = []
+            for field_config in fields:
+                # Flet widgets already include labels, so just add the widget
+                widget = self.widget_factory.create_widget(field_config)
+                # Use fixed width containers to ensure horizontal layout
+                controls.append(
+                    ft.Container(
+                        content=widget,
+                        width=200,  # Fixed width for horizontal layout
+                        padding=5
+                    )
+                )
+
+            return ft.Row(controls, spacing=15, scroll=ft.ScrollMode.AUTO)
+
+        elif layout_type == "grid":
+            # Grid layout: 2-column responsive grid
+            controls = []
+            for field_config in fields:
+                if field_config.type == "checkbox":
+                    # Checkbox spans both columns
+                    widget = self.widget_factory.create_widget(field_config)
+                    controls.append(
+                        ft.Container(
+                            content=widget,
+                            col={"xs": 12},  # Full width on all screens
+                            padding=5
+                        )
+                    )
+                else:
+                    # Label in first column
+                    if field_config.label:
+                        controls.append(
+                            ft.Container(
+                                content=ft.Text(field_config.label, weight=ft.FontWeight.BOLD),
+                                col={"xs": 12, "sm": 4},  # Full width on mobile, 1/3 on desktop
+                                padding=5
+                            )
+                        )
+
+                    # Widget in second column
+                    widget = self.widget_factory.create_widget(field_config)
+                    controls.append(
+                        ft.Container(
+                            content=widget,
+                            col={"xs": 12, "sm": 8},  # Full width on mobile, 2/3 on desktop
+                            padding=5
+                        )
+                    )
+
+            # Wrap ResponsiveRow in a scrollable Column
+            return ft.Column(
+                [ft.ResponsiveRow(controls, spacing=10, run_spacing=10)],
+                scroll=ft.ScrollMode.AUTO,
+                expand=True
+            )
+
+        elif layout_type == "form":
+            # Form layout: similar to grid but optimized for forms
+            controls = []
+            for field_config in fields:
+                # Create a row for each field (label and widget)
+                row_controls = []
+
+                if field_config.type == "checkbox":
+                    # Checkbox includes its label
+                    widget = self.widget_factory.create_widget(field_config)
+                    row_controls.append(ft.Container(content=widget, expand=True))
+                else:
+                    # Label
+                    if field_config.label:
+                        row_controls.append(
+                            ft.Container(
+                                content=ft.Text(field_config.label, weight=ft.FontWeight.BOLD),
+                                width=150,  # Fixed label width
+                                padding=ft.padding.only(right=10)
+                            )
+                        )
+
+                    # Widget
+                    widget = self.widget_factory.create_widget(field_config)
+                    row_controls.append(ft.Container(content=widget, expand=True))
+
+                controls.append(ft.Row(row_controls, spacing=10))
+
+            return ft.Column(controls, spacing=15, scroll=ft.ScrollMode.AUTO, expand=True)
+
+        else:  # vertical or default
+            # Vertical layout: Column with fields stacked
+            controls = []
+            for field_config in fields:
+                widget = self.widget_factory.create_widget(field_config)
+                controls.append(widget)
+
+            return ft.Column(controls, spacing=15, scroll=ft.ScrollMode.AUTO, expand=True)
 
     def _build_buttons(self) -> Optional[ft.Container]:
         """Build button row with custom and default buttons."""
