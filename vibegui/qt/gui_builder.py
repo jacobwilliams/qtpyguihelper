@@ -17,11 +17,11 @@ from qtpy.QtCore import Qt, Signal, QDateTime
 from qtpy.QtGui import QIcon
 
 from ..config_loader import ConfigLoader, GuiConfig
-from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin
 from .widget_factory import WidgetFactory
 
 
-class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, QMainWindow):
+class GuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, QMainWindow):
     """Main GUI builder class that creates Qt applications from JSON configuration."""
 
     # Signals
@@ -50,21 +50,7 @@ class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, Wi
         elif config_dict:
             self.load_config_from_dict(config_dict)
 
-    def load_config_from_file(self, config_path: str) -> None:
-        """Load configuration from a JSON file and build the GUI."""
-        try:
-            self.config = self.config_loader.load_from_file(config_path)
-            self._build_gui()
-        except Exception as e:
-            self._show_error(f"Failed to load configuration: {str(e)}")
-
-    def load_config_from_dict(self, config_dict: Dict[str, Any]) -> None:
-        """Load configuration from a dictionary and build the GUI."""
-        try:
-            self.config = self.config_loader.load_from_dict(config_dict)
-            self._build_gui()
-        except Exception as e:
-            self._show_error(f"Failed to load configuration: {str(e)}")
+    # load_config_from_file and load_config_from_dict provided by ConfigLoaderMixin
 
     def _build_gui(self) -> None:
         """Build the GUI based on the loaded configuration."""
@@ -337,45 +323,23 @@ class GuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, Wi
 
     def _on_submit(self) -> None:
         """Handle submit button click."""
-        # Validate required fields
-        if not self._validate_required_fields():
-            return
+        self._handle_submit_click()
 
-        # Get all form data
-        form_data = self.get_form_data()
-
-        # Call custom callback if set
-        if self.submit_callback:
-            try:
-                self.submit_callback(form_data)
-            except Exception as e:
-                self._show_error(f"Submit callback error: {str(e)}")
-
-        # Emit signal
+    def _on_form_submitted(self, form_data: Dict[str, Any]) -> None:
+        """Qt-specific: emit signal after successful submit."""
         self.formSubmitted.emit(form_data)
 
     def _on_cancel(self) -> None:
         """Handle cancel button click."""
-        # Call custom callback if set
-        if self.cancel_callback:
-            try:
-                self.cancel_callback()
-            except Exception as e:
-                self._show_error(f"Cancel callback error: {str(e)}")
+        self._handle_cancel_click()
 
-        # Emit signal
+    def _on_form_cancelled(self) -> None:
+        """Qt-specific: emit signal after cancel."""
         self.formCancelled.emit()
 
     def _on_custom_button_clicked(self, button_name: str) -> None:
         """Handle custom button click."""
-        # Call custom callback if registered
-        if button_name in self.custom_button_callbacks:
-            try:
-                # Get current form data to pass to callback
-                form_data = self.get_form_data()
-                self.custom_button_callbacks[button_name](form_data)
-            except Exception as e:
-                self._show_error(f"Custom button '{button_name}' callback error: {str(e)}")
+        self._handle_custom_button_click_by_name(button_name)
 
     def _show_error(self, message: str) -> None:
         """Show an error message dialog."""

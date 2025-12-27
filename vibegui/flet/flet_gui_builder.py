@@ -9,11 +9,11 @@ from typing import Dict, Any, Callable, Optional, List
 import flet as ft
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, set_nested_value, flatten_nested_dict
+from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin, set_nested_value, flatten_nested_dict
 from vibegui.flet.flet_widget_factory import FletWidgetFactory
 
 
-class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin):
+class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin):
     """Main GUI builder class that creates Flet applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -38,13 +38,12 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
         elif config_dict:
             self.load_config_from_dict(config_dict)
 
-    def load_config_from_file(self, config_path: str) -> None:
-        """Load configuration from a JSON file."""
-        self.config = self.config_loader.load_from_file(config_path)
+    # load_config_from_file and load_config_from_dict provided by ConfigLoaderMixin
+    # Note: Flet doesn't build UI immediately, it's deferred until ft.app() calls _build_ui
 
-    def load_config_from_dict(self, config_dict: Dict[str, Any]) -> None:
-        """Load configuration from a dictionary."""
-        self.config = self.config_loader.load_from_dict(config_dict)
+    def _should_build_ui_on_config_load(self) -> bool:
+        """Override to defer UI building until ft.app() is called."""
+        return False
 
     def _build_ui(self, page: ft.Page) -> None:
         """Build the user interface based on the loaded configuration."""
@@ -198,35 +197,30 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
 
     def _handle_submit(self) -> None:
         """Handle form submission."""
-        # Validate required fields first
-        if not self._validate_required_fields():
-            return
+        self._handle_submit_click()
 
-        form_data = self.get_form_data()
-
-        if self.submit_callback:
-            self.submit_callback(form_data)
-        else:
-            # Default behavior: show dialog with form data
-            if self.page:
-                self.page.show_snack_bar(
-                    ft.SnackBar(content=ft.Text("Form submitted successfully!"))
-                )
+    def _on_form_submitted(self, form_data: Dict[str, Any]) -> None:
+        """Flet-specific post-submit action - show snackbar if no callback."""
+        if not self.submit_callback and self.page:
+            self.page.show_snack_bar(
+                ft.SnackBar(content=ft.Text("Form submitted successfully!"))
+            )
 
     def _handle_cancel(self) -> None:
         """Handle form cancellation."""
-        if self.cancel_callback:
-            self.cancel_callback()
-        else:
-            # Default behavior: close window
-            if self.page:
-                self.page.window_close()
+        self._handle_cancel_click()
+
+    def _on_form_cancelled(self) -> None:
+        """Flet-specific post-cancel action - close window if no callback."""
+        if not self.cancel_callback and self.page:
+            self.page.window_close()
 
     def _handle_custom_button_click(self, button_config: CustomButtonConfig) -> None:
         """Handle custom button click."""
         callback = self.custom_button_callbacks.get(button_config.name)
         if callback:
             form_data = self.get_form_data()
+            # Flet custom callbacks receive just form_data (unlike Tk/GTK which get button_config too)
             callback(form_data)
         else:
             # Default behavior for custom buttons

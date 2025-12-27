@@ -151,6 +151,118 @@ class FieldStateMixin:
             self._show_widget(self.widget_factory.labels[field_name], visible)
 
 
+class ButtonHandlerMixin:
+    """Mixin providing common button click handler logic.
+
+    Assumes the class has:
+    - _validate_required_fields() -> bool
+    - get_form_data() -> Dict[str, Any]
+    - submit_callback, cancel_callback, custom_button_callbacks attributes
+    - _show_error(message: str) method
+    """
+
+    def _handle_submit_click(self) -> None:
+        """Common submit handler logic."""
+        # Validate required fields
+        if not self._validate_required_fields():
+            return
+
+        # Get form data
+        form_data = self.get_form_data()
+
+        # Call submit callback if set
+        if self.submit_callback:
+            try:
+                self.submit_callback(form_data)
+            except Exception as e:
+                self._show_error(f"Submit callback error: {str(e)}")
+
+        # Hook for backend-specific post-submit actions (e.g., Qt signals)
+        self._on_form_submitted(form_data)
+
+    def _on_form_submitted(self, form_data: Dict[str, Any]) -> None:
+        """Hook for backend-specific actions after successful submit (override if needed)."""
+        pass
+
+    def _handle_cancel_click(self) -> None:
+        """Common cancel handler logic."""
+        # Call cancel callback if set
+        if self.cancel_callback:
+            try:
+                self.cancel_callback()
+            except Exception as e:
+                self._show_error(f"Cancel callback error: {str(e)}")
+
+        # Hook for backend-specific post-cancel actions
+        self._on_form_cancelled()
+
+    def _on_form_cancelled(self) -> None:
+        """Hook for backend-specific actions after cancel (override if needed)."""
+        pass
+
+    def _handle_custom_button_click_by_name(self, button_name: str) -> None:
+        """Common custom button handler by button name."""
+        if button_name in self.custom_button_callbacks:
+            try:
+                form_data = self.get_form_data()
+                self.custom_button_callbacks[button_name](form_data)
+            except Exception as e:
+                self._show_error(f"Custom button '{button_name}' callback error: {str(e)}")
+
+
+class ConfigLoaderMixin:
+    """Mixin providing common configuration loading logic.
+
+    Assumes the class has:
+    - self.config_loader attribute
+    - self.config attribute to store loaded config
+    - _build_gui() or _build_ui() method (optional if _should_build_ui_on_config_load returns False)
+    """
+
+    def load_config_from_file(self, config_path: str) -> None:
+        """Load configuration from a JSON file and optionally build GUI."""
+        try:
+            self.config = self.config_loader.load_from_file(config_path)
+            # Only build UI if the backend wants it (Tk defers UI building)
+            if self._should_build_ui_on_config_load():
+                # Try _build_gui first (most backends), fall back to _build_ui (Flet)
+                if hasattr(self, '_build_gui'):
+                    self._build_gui()
+                elif hasattr(self, '_build_ui'):
+                    # Flet doesn't call _build_ui immediately, it's called by ft.app()
+                    pass
+        except Exception as e:
+            if hasattr(self, '_show_error'):
+                self._show_error(f"Failed to load configuration: {str(e)}")
+            else:
+                raise
+
+    def load_config_from_dict(self, config_dict: Dict[str, Any]) -> None:
+        """Load configuration from a dictionary and optionally build GUI."""
+        try:
+            self.config = self.config_loader.load_from_dict(config_dict)
+            # Only build UI if the backend wants it (Tk defers UI building)
+            if self._should_build_ui_on_config_load():
+                # Try _build_gui first (most backends), fall back to _build_ui (Flet)
+                if hasattr(self, '_build_gui'):
+                    self._build_gui()
+                elif hasattr(self, '_build_ui'):
+                    # Flet doesn't call _build_ui immediately, it's called by ft.app()
+                    pass
+        except Exception as e:
+            if hasattr(self, '_show_error'):
+                self._show_error(f"Failed to load configuration: {str(e)}")
+            else:
+                raise
+
+    def _should_build_ui_on_config_load(self) -> bool:
+        """Hook to control whether UI is built when config is loaded.
+
+        Returns True by default. Override to return False for deferred UI setup (e.g., Tk).
+        """
+        return True
+
+
 class CallbackManagerMixin:
     """Mixin providing common callback management functionality for GUI builders.
 

@@ -9,11 +9,11 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Callable, Optional, List
 
 from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
-from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, PlatformUtils
+from vibegui.utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin, PlatformUtils
 from vibegui.tk.tk_widget_factory import TkWidgetFactory
 
 
-class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin):
+class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin):
     """Main GUI builder class that creates tkinter applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None) -> None:
@@ -38,15 +38,12 @@ class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
         elif config_dict:
             self.load_config_from_dict(config_dict)
 
-    def load_config_from_file(self, config_path: str) -> None:
-        """Load configuration from a JSON file."""
-        self.config = self.config_loader.load_from_file(config_path)
-        # Note: UI setup is deferred until needed
+    # load_config_from_file and load_config_from_dict provided by ConfigLoaderMixin
+    # Note: Tk defers UI setup until show() is called, so no _build_gui() call needed
 
-    def load_config_from_dict(self, config_dict: Dict[str, Any]) -> None:
-        """Load configuration from a dictionary."""
-        self.config = self.config_loader.load_from_dict(config_dict)
-        # Note: UI setup is deferred until needed
+    def _should_build_ui_on_config_load(self) -> bool:
+        """Override to defer UI building until show() is called."""
+        return False
 
     def _setup_ui(self) -> None:
         """Set up the user interface based on the loaded configuration."""
@@ -272,49 +269,40 @@ class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
     def _handle_submit(self) -> None:
         """Handle submit button click."""
         try:
-            # Validate required fields
-            if not self._validate_required_fields():
-                return
-
-            # Get form data
-            form_data = self.get_form_data()
-
-            # Call submit callback if set
-            if self.submit_callback:
-                try:
-                    self.submit_callback(form_data)
-                except Exception as e:
-                    self._show_error("Error", f"Error in submit callback: {str(e)}")
-            else:
-                # Default behavior - show the data
-                self._show_form_data(form_data)
-
+            self._handle_submit_click()
         except Exception as e:
-            self._show_error("Error", f"Error submitting form: {str(e)}")
+            self._show_error(f"Error submitting form: {str(e)}")
+
+    def _on_form_submitted(self, form_data: Dict[str, Any]) -> None:
+        """Tk-specific post-submit action - show form data if no callback."""
+        if not self.submit_callback:
+            self._show_form_data(form_data)
 
     def _handle_cancel(self) -> None:
         """Handle cancel button click."""
-        if self.cancel_callback:
-            try:
-                self.cancel_callback()
-            except Exception as e:
-                self._show_error("Error", f"Error in cancel callback: {str(e)}")
-        else:
-            # Default behavior - close the window
-            if self.root:
-                self.root.quit()
+        try:
+            self._handle_cancel_click()
+        except Exception as e:
+            self._show_error(f"Error in cancel callback: {str(e)}")
+
+    def _on_form_cancelled(self) -> None:
+        """Tk-specific post-cancel action - quit if no callback."""
+        if not self.cancel_callback and self.root:
+            self.root.quit()
 
     def _handle_custom_button_click(self, button_config: CustomButtonConfig) -> None:
         """Handle custom button click."""
-        if button_config.name in self.custom_button_callbacks:
-            try:
+        try:
+            # Note: Tk custom button callbacks take (button_config, form_data)
+            # The mixin uses just button name, so we call callback directly here
+            if button_config.name in self.custom_button_callbacks:
                 callback = self.custom_button_callbacks[button_config.name]
                 callback(button_config, self.get_form_data())
-            except Exception as e:
-                self._show_error("Error", f"Error in custom button callback: {str(e)}")
-        else:
-            # Default behavior
-            messagebox.showinfo("Button Clicked", f"Custom button '{button_config.label}' clicked")
+            else:
+                # Default behavior
+                messagebox.showinfo("Button Clicked", f"Custom button '{button_config.label}' clicked")
+        except Exception as e:
+            self._show_error(f"Error in custom button callback: {str(e)}")
 
     def _show_error(self, title: str, message: str = None) -> None:
         """Show an error message dialog.

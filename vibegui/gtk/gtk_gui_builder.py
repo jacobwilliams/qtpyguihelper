@@ -6,7 +6,7 @@ import json
 from typing import Dict, Any, Callable, Optional, List
 import os
 
-from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, PlatformUtils
+from ..utils import FileUtils, ValidationUtils, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin, PlatformUtils
 
 try:
     import gi
@@ -59,7 +59,7 @@ if GTK_AVAILABLE:
     from vibegui.gtk.gtk_widget_factory import GtkWidgetFactory
 
 
-class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin):
+class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin):
     """Main GUI builder class that creates GTK applications from JSON configuration."""
 
     def __init__(self, config_path: Optional[str] = None, config_dict: Optional[Dict[str, Any]] = None, submit_callback: Optional[Callable] = None, cancel_callback: Optional[Callable] = None) -> None:
@@ -94,17 +94,12 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
         elif config_dict:
             self.load_config_from_dict(config_dict)
 
-    def load_config_from_file(self, config_path: str) -> None:
-        """Load configuration from a JSON file."""
-        self.config = self.config_loader.load_from_file(config_path)
-        if self.config:
-            self._setup_ui()
+    # load_config_from_file and load_config_from_dict provided by ConfigLoaderMixin
+    # GTK uses _setup_ui instead of _build_gui
 
-    def load_config_from_dict(self, config_dict: Dict[str, Any]) -> None:
-        """Load configuration from a dictionary."""
-        self.config = self.config_loader.load_from_dict(config_dict)
-        if self.config:
-            self._setup_ui()
+    def _build_gui(self) -> None:
+        """Alias for _setup_ui to match ConfigLoaderMixin expectations."""
+        self._setup_ui()
 
     def _setup_ui(self) -> None:
         """Set up the user interface based on the loaded configuration."""
@@ -362,50 +357,41 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
     def _handle_submit(self) -> None:
         """Handle submit button click."""
         try:
-            # Validate required fields
-            if not self._validate_required_fields():
-                return
-
-            # Get form data
-            form_data = self.get_form_data()
-
-            # Call submit callback if set
-            if self.submit_callback:
-                try:
-                    self.submit_callback(form_data)
-                except Exception as e:
-                    self._show_error("Error", f"Error in submit callback: {str(e)}")
-            else:
-                # Default behavior - show the data
-                self._show_form_data(form_data)
-
+            self._handle_submit_click()
         except Exception as e:
-            self._show_error("Error", f"Error submitting form: {str(e)}")
+            self._show_error(f"Error submitting form: {str(e)}")
+
+    def _on_form_submitted(self, form_data: Dict[str, Any]) -> None:
+        """GTK-specific post-submit action - show form data if no callback."""
+        if not self.submit_callback:
+            self._show_form_data(form_data)
 
     def _handle_cancel(self) -> None:
         """Handle cancel button click."""
-        if self.cancel_callback:
-            try:
-                self.cancel_callback()
-            except Exception as e:
-                self._show_error("Error", f"Error in cancel callback: {str(e)}")
-        else:
-            # Default behavior - close the window
-            if self.window:
-                compat = self._gtk_version_compat()
-                compat['main_quit']()
+        try:
+            self._handle_cancel_click()
+        except Exception as e:
+            self._show_error(f"Error in cancel callback: {str(e)}")
+
+    def _on_form_cancelled(self) -> None:
+        """GTK-specific post-cancel action - quit if no callback."""
+        if not self.cancel_callback and self.window:
+            compat = self._gtk_version_compat()
+            compat['main_quit']()
 
     def _handle_custom_button_click(self, button_config: CustomButtonConfig) -> None:
         """Handle custom button click."""
-        if button_config.name in self.custom_button_callbacks:
-            try:
+        try:
+            # Note: GTK custom button callbacks take (button_config, form_data)
+            # The mixin uses just button name, so we call callback directly here
+            if button_config.name in self.custom_button_callbacks:
                 callback = self.custom_button_callbacks[button_config.name]
                 callback(button_config, self.get_form_data())
-            except Exception as e:
-                self._show_error("Error", f"Error in custom button callback: {str(e)}")
-        else:
-            # Default behavior
-            self._show_info("Button Clicked", f"Custom button '{button_config.label}' clicked")
+            else:
+                # Default behavior
+                self._show_info("Button Clicked", f"Custom button '{button_config.label}' clicked")
+        except Exception as e:
+            self._show_error(f"Error in custom button callback: {str(e)}")
 
     def _show_form_data(self, data: Dict[str, Any]) -> None:
         """Show form data in a dialog (default submit behavior)."""

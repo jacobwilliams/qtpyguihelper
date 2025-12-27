@@ -40,13 +40,21 @@ def main() -> None:
         elif '@' not in form_data.get('email', ''):
             issues.append("Email must contain @ symbol")
 
-        age = form_data.get('age', 0)
-        if age < 18:
-            issues.append("Age must be 18 or older")
+        # Convert age to int for comparison
+        try:
+            age = int(form_data.get('age', 0) or 0)
+            if age < 18:
+                issues.append("Age must be 18 or older")
+        except (ValueError, TypeError):
+            issues.append("Age must be a valid number")
 
-        salary = form_data.get('salary', 0)
-        if salary < 0:
-            issues.append("Salary cannot be negative")
+        # Convert salary to float for comparison
+        try:
+            salary = float(form_data.get('salary', 0) or 0)
+            if salary < 0:
+                issues.append("Salary cannot be negative")
+        except (ValueError, TypeError):
+            issues.append("Salary must be a valid number")
 
         # Show validation results
         if issues:
