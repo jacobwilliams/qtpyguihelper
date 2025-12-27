@@ -7,7 +7,7 @@ from tkinter import ttk, filedialog, colorchooser, messagebox
 from typing import Any, Dict, Optional, List, Callable
 
 from vibegui.config_loader import FieldConfig
-from vibegui.utils import set_nested_value, flatten_nested_dict
+from vibegui.utils import NestedValueMixin
 
 
 class CustomColorButton(tk.Button):
@@ -67,7 +67,7 @@ class RadioButtonGroup:
         self.var.set(value)
 
 
-class TkWidgetFactory:
+class TkWidgetFactory(NestedValueMixin):
     """Factory class for creating tkinter widgets based on field configurations."""
 
     def __init__(self) -> None:
@@ -765,19 +765,4 @@ class TkWidgetFactory:
             else:
                 self.set_widget_value(field_name, "")
 
-    def get_all_values(self) -> Dict[str, Any]:
-        """Get all widget values as a dictionary."""
-        data = {}
-        for field_name in self.widgets.keys():
-            value = self.get_widget_value(field_name)
-            if '.' in field_name:
-                set_nested_value(data, field_name, value)
-            else:
-                data[field_name] = value
-        return data
-
-    def set_all_values(self, data: Dict[str, Any]) -> None:
-        """Set all widget values from a dictionary."""
-        flat_data = flatten_nested_dict(data)
-        for field_name, value in flat_data.items():
-            self.set_widget_value(field_name, value)
+    # get_all_values and set_all_values provided by NestedValueMixin

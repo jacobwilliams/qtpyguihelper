@@ -80,6 +80,36 @@ def flatten_nested_dict(data: Dict[str, Any], parent_key: str = '', separator: s
     return dict(items)
 
 
+class NestedValueMixin:
+    """Mixin providing get_all_values and set_all_values with nested field support.
+
+    Assumes the class has:
+    - self.widgets: Dict[str, Any] - dictionary of field name to widget
+    - get_widget_value(field_name: str) -> Any - method to get value from a widget
+    - set_widget_value(field_name: str, value: Any) -> bool - method to set value on a widget
+    """
+
+    def get_all_values(self) -> Dict[str, Any]:
+        """Get values from all widgets, creating nested dictionaries for dot notation field names."""
+        values = {}
+        for field_name in self.widgets.keys():
+            field_value = self.get_widget_value(field_name)
+            if '.' in field_name:
+                # Handle nested field names using dot notation
+                set_nested_value(values, field_name, field_value)
+            else:
+                # Handle regular field names
+                values[field_name] = field_value
+        return values
+
+    def set_all_values(self, values: Dict[str, Any]) -> None:
+        """Set values for all widgets from a dictionary, supporting nested structures."""
+        # Flatten nested dictionaries to dot notation
+        flat_data = flatten_nested_dict(values)
+        for field_name, value in flat_data.items():
+            self.set_widget_value(field_name, value)
+
+
 class WidgetFactoryMixin:
     """Mixin providing common widget factory delegation methods.
 

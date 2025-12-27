@@ -8,9 +8,10 @@ from typing import Dict, Any, Callable, Optional, List
 import flet as ft
 
 from vibegui.config_loader import FieldConfig
+from vibegui.utils import NestedValueMixin
 
 
-class FletWidgetFactory:
+class FletWidgetFactory(NestedValueMixin):
     """Factory class for creating Flet controls based on field configurations."""
 
     def __init__(self) -> None:
@@ -241,7 +242,7 @@ class FletWidgetFactory:
             weight=ft.FontWeight.BOLD
         )
 
-        def on_slider_change(e):
+        def on_slider_change(e: ft.ControlEvent) -> None:
             """Update the value text when slider changes."""
             value_text.value = f"{e.control.value:.1f}"
             e.page.update()
@@ -347,17 +348,19 @@ class FletWidgetFactory:
         elif isinstance(widget, ft.Slider):
             widget.value = float(value) if value is not None else 0
 
-    def set_all_values(self, values: Dict[str, Any]) -> None:
-        """Set values for all widgets from a dictionary."""
-        for field_name, value in values.items():
-            self.set_value(field_name, value)
+    # get_all_values and set_all_values provided by NestedValueMixin (now with nested support!)
+    # Note: Renamed get_value/set_value to match mixin expectations
+    def get_widget_value(self, field_name: str) -> Any:
+        """Alias for get_value to match NestedValueMixin interface."""
+        return self.get_value(field_name)
 
-    def get_all_values(self) -> Dict[str, Any]:
-        """Get values from all widgets as a dictionary."""
-        values = {}
-        for field_name in self.widgets.keys():
-            values[field_name] = self.get_value(field_name)
-        return values
+    def set_widget_value(self, field_name: str, value: Any) -> bool:
+        """Alias for set_value to match NestedValueMixin interface."""
+        try:
+            self.set_value(field_name, value)
+            return True
+        except Exception:
+            return False
 
     def clear_all_widgets(self) -> None:
         """Clear all widget values to their defaults."""

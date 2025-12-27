@@ -10,7 +10,7 @@ import json
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from vibegui.qt.widget_factory import set_nested_value, get_nested_value, flatten_nested_dict
+from vibegui.utils import set_nested_value, flatten_nested_dict, get_nested_value
 
 
 def test_nested_value_functions() -> None:

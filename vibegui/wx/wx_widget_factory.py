@@ -10,7 +10,7 @@ import wx.adv
 from datetime import datetime, date, time
 
 from ..config_loader import FieldConfig
-from ..utils import set_nested_value, flatten_nested_dict
+from ..utils import NestedValueMixin
 
 
 class WxCustomColorButton(wx.Button):
@@ -90,7 +90,7 @@ class WxCustomFileButton(wx.Button):
             self.SetLabel("Choose File...")
 
 
-class WxWidgetFactory:
+class WxWidgetFactory(NestedValueMixin):
     """Factory class for creating wxPython widgets from field configurations."""
 
     def __init__(self) -> None:
@@ -588,23 +588,7 @@ class WxWidgetFactory:
         except (ValueError, TypeError, AttributeError):
             return False
 
-    def set_all_values(self, values: Dict[str, Any]) -> None:
-        """Set values for all widgets from a dictionary, supporting nested structures."""
-        # Flatten nested dictionaries to dot notation
-        flat_data = flatten_nested_dict(values)
-        for field_name, value in flat_data.items():
-            self.set_widget_value(field_name, value)
-
-    def get_all_values(self) -> Dict[str, Any]:
-        """Get values from all widgets, creating nested dictionaries for dot notation field names."""
-        values = {}
-        for field_name in self.widgets.keys():
-            field_value = self.get_widget_value(field_name)
-            if '.' in field_name:
-                set_nested_value(values, field_name, field_value)
-            else:
-                values[field_name] = field_value
-        return values
+    # get_all_values and set_all_values provided by NestedValueMixin
 
     def clear_all_widgets(self) -> None:
         """Clear all widget values to their defaults."""
