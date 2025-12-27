@@ -97,11 +97,7 @@ class WidgetFactoryMixin:
 
     def clear_form(self) -> None:
         """Clear all form fields."""
-        # Handle different method names across widget factories
-        if hasattr(self.widget_factory, 'clear_all_widgets'):
-            self.widget_factory.clear_all_widgets()
-        elif hasattr(self.widget_factory, 'clear_widgets'):
-            self.widget_factory.clear_widgets()
+        self.widget_factory.clear_all_widgets()
 
     def get_field_value(self, field_name: str) -> Any:
         """Get the value of a specific field."""

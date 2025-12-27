@@ -352,6 +352,26 @@ class FletWidgetFactory:
         for field_name, value in values.items():
             self.set_value(field_name, value)
 
+    def get_all_values(self) -> Dict[str, Any]:
+        """Get values from all widgets as a dictionary."""
+        values = {}
+        for field_name in self.widgets.keys():
+            values[field_name] = self.get_value(field_name)
+        return values
+
+    def clear_all_widgets(self) -> None:
+        """Clear all widget values."""
+        for field_name in self.widgets.keys():
+            widget = self.widgets[field_name]
+            if isinstance(widget, ft.TextField):
+                widget.value = ""
+            elif isinstance(widget, ft.Checkbox):
+                widget.value = False
+            elif isinstance(widget, (ft.Dropdown, ft.RadioGroup)):
+                widget.value = None
+            elif isinstance(widget, ft.Slider):
+                widget.value = 0
+
     def add_change_callback(self, field_name: str, callback: Callable) -> None:
         """Add a callback to be called when a field's value changes."""
         if field_name not in self.change_callbacks:

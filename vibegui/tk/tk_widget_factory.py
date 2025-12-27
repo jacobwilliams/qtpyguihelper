@@ -754,7 +754,7 @@ class TkWidgetFactory:
             print(f"Error setting value for {field_name}: {e}")
             return False
 
-    def clear_widgets(self) -> None:
+    def clear_all_widgets(self) -> None:
         """Clear all widget values."""
         for field_name in self.widgets.keys():
             self.set_widget_value(field_name, None)

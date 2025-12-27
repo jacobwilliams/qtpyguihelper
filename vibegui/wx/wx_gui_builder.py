@@ -365,11 +365,7 @@ class WxGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
     # get_form_data, set_form_data, clear_form, get_field_value, set_field_value
     # are provided by WidgetFactoryMixin
 
-    def get_custom_button_names(self) -> List[str]:
-        """Get a list of all custom button names from the configuration."""
-        if self.config and self.config.custom_buttons:
-            return [button.name for button in self.config.custom_buttons]
-        return []
+    # get_custom_button_names is provided by CallbackManagerMixin
 
     def enable_field(self, field_name: str, enabled: bool = True) -> None:
         """Enable or disable a specific field."""

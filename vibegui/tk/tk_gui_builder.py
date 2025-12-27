@@ -284,13 +284,13 @@ class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
                 try:
                     self.submit_callback(form_data)
                 except Exception as e:
-                    messagebox.showerror("Error", f"Error in submit callback: {str(e)}")
+                    self._show_error("Error", f"Error in submit callback: {str(e)}")
             else:
                 # Default behavior - show the data
                 self._show_form_data(form_data)
 
         except Exception as e:
-            messagebox.showerror("Error", f"Error submitting form: {str(e)}")
+            self._show_error("Error", f"Error submitting form: {str(e)}")
 
     def _handle_cancel(self) -> None:
         """Handle cancel button click."""
@@ -298,7 +298,7 @@ class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
             try:
                 self.cancel_callback()
             except Exception as e:
-                messagebox.showerror("Error", f"Error in cancel callback: {str(e)}")
+                self._show_error("Error", f"Error in cancel callback: {str(e)}")
         else:
             # Default behavior - close the window
             if self.root:
@@ -311,10 +311,24 @@ class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
                 callback = self.custom_button_callbacks[button_config.name]
                 callback(button_config, self.get_form_data())
             except Exception as e:
-                messagebox.showerror("Error", f"Error in custom button callback: {str(e)}")
+                self._show_error("Error", f"Error in custom button callback: {str(e)}")
         else:
             # Default behavior
             messagebox.showinfo("Button Clicked", f"Custom button '{button_config.label}' clicked")
+
+    def _show_error(self, title: str, message: str = None) -> None:
+        """Show an error message dialog.
+        
+        Args:
+            title: Error title or message if message param is None
+            message: Error message (optional for backward compatibility)
+        """
+        if message is None:
+            # Single parameter call - title is actually the message
+            messagebox.showerror("Error", title)
+        else:
+            # Two parameter call
+            messagebox.showerror(title, message)
 
     def _show_form_data(self, data: Dict[str, Any]) -> None:
         """Show form data in a dialog (default submit behavior)."""

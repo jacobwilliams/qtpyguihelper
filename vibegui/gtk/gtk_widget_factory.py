@@ -591,7 +591,7 @@ class GtkWidgetFactory:
         for field_name, value in flat_data.items():
             self.set_widget_value(field_name, value)
 
-    def clear_widgets(self) -> None:
+    def clear_all_widgets(self) -> None:
         """Clear all widget values."""
         for field_name in self.widgets.keys():
             field_config = self.field_configs.get(field_name)
