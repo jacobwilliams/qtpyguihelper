@@ -318,7 +318,7 @@ class TkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
 
     def _show_error(self, title: str, message: str = None) -> None:
         """Show an error message dialog.
-        
+
         Args:
             title: Error title or message if message param is None
             message: Error message (optional for backward compatibility)
