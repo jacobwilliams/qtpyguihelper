@@ -372,33 +372,36 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
         close_button = tk.Button(data_window, text="Close", command=data_window.destroy)
         close_button.pack(pady=(0, 10))
 
-    def _add_tooltip(self, widget: tk.Widget, text: str) -> None:
+    def _add_tooltip(self, widget: tk.Widget, tooltip_text: str) -> None:
         """Add a tooltip to a widget."""
         def show_tooltip(event: tk.Event) -> None:
-            tooltip = tk.Toplevel()
-            tooltip.wm_overrideredirect(True)
-            tooltip.wm_geometry(f"+{event.x_root+10}+{event.y_root+10}")
+            tooltip_window = tk.Toplevel()
+            tooltip_window.wm_overrideredirect(True)
+            tooltip_window.wm_geometry(f"+{event.x_root+10}+{event.y_root+10}")
 
             label = tk.Label(
-                tooltip,
-                text=text,
+                tooltip_window,
+                text=tooltip_text,
                 background="lightyellow",
+                foreground="black",
                 relief="solid",
                 borderwidth=1,
+                padx=5,
+                pady=3,
                 wraplength=200
             )
             label.pack()
 
             # Store reference to prevent garbage collection
-            widget._tooltip = tooltip
+            widget._tooltip_window = tooltip_window
 
             def hide_tooltip() -> None:
-                if hasattr(widget, '_tooltip'):
-                    widget._tooltip.destroy()
-                    del widget._tooltip
+                if hasattr(widget, '_tooltip_window'):
+                    widget._tooltip_window.destroy()
+                    delattr(widget, '_tooltip_window')
 
             # Hide tooltip after delay or on leave
-            tooltip.after(3000, hide_tooltip)
+            tooltip_window.after(3000, hide_tooltip)
             widget.bind('<Leave>', lambda e: hide_tooltip(), '+')
 
         widget.bind('<Enter>', show_tooltip)

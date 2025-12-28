@@ -80,6 +80,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text=field_config.placeholder or None,
+            tooltip=field_config.tooltip or None,
             multiline=False,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
@@ -91,6 +92,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text=field_config.placeholder or None,
+            tooltip=field_config.tooltip or None,
             keyboard_type=ft.KeyboardType.NUMBER,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
@@ -102,6 +104,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text=field_config.placeholder or None,
+            tooltip=field_config.tooltip or None,
             keyboard_type=ft.KeyboardType.NUMBER,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
@@ -113,6 +116,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text=field_config.placeholder or None,
+            tooltip=field_config.tooltip or None,
             keyboard_type=ft.KeyboardType.NUMBER,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
@@ -124,6 +128,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text=field_config.placeholder or None,
+            tooltip=field_config.tooltip or None,
             keyboard_type=ft.KeyboardType.EMAIL,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
@@ -135,6 +140,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text=field_config.placeholder or None,
+            tooltip=field_config.tooltip or None,
             password=True,
             can_reveal_password=True,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
@@ -147,6 +153,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text=field_config.placeholder or None,
+            tooltip=field_config.tooltip or None,
             multiline=True,
             min_lines=3,
             max_lines=10,
@@ -159,6 +166,7 @@ class FletWidgetFactory(NestedValueMixin):
         checkbox = ft.Checkbox(
             label=self._create_label_text(field_config),
             value=bool(field_config.default_value) if field_config.default_value else False,
+            tooltip=field_config.tooltip or None,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
         return checkbox
@@ -193,6 +201,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             options=dropdown_options,
             value=str(field_config.default_value) if field_config.default_value else None,
+            tooltip=field_config.tooltip or None,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
         return dropdown
@@ -204,6 +213,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text="YYYY-MM-DD",
+            tooltip=field_config.tooltip or None,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
         return text_field
@@ -214,6 +224,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text="HH:MM",
+            tooltip=field_config.tooltip or None,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
         return text_field
@@ -224,6 +235,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text="YYYY-MM-DD HH:MM",
+            tooltip=field_config.tooltip or None,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
         return text_field
@@ -294,6 +306,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "#000000",
             hint_text="#RRGGBB",
+            tooltip=field_config.tooltip or None,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )
         return text_field
@@ -304,6 +317,7 @@ class FletWidgetFactory(NestedValueMixin):
             label=self._create_label_text(field_config),
             value=str(field_config.default_value) if field_config.default_value else "",
             hint_text=field_config.placeholder or "https://",
+            tooltip=field_config.tooltip or None,
             keyboard_type=ft.KeyboardType.URL,
             on_change=lambda e: self._trigger_change_callback(field_config.name, e.control.value)
         )

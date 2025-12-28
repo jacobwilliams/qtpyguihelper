@@ -1,0 +1,77 @@
+{
+  "window": {
+    "title": "Tooltip Test",
+    "width": 600,
+    "height": 700
+  },
+  "layout": "grid",
+  "fields": [
+    {
+      "name": "username",
+      "label": "Username",
+      "type": "text",
+      "tooltip": "Enter your username (3-20 characters)",
+      "placeholder": "johndoe"
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "email",
+      "tooltip": "We'll never share your email",
+      "placeholder": "user@example.com"
+    },
+    {
+      "name": "age",
+      "label": "Age",
+      "type": "int",
+      "tooltip": "Must be 18 or older",
+      "default_value": 18
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "type": "password",
+      "tooltip": "Use a strong password with letters, numbers, and symbols"
+    },
+    {
+      "name": "bio",
+      "label": "Bio",
+      "type": "textarea",
+      "tooltip": "Tell us about yourself (max 500 characters)",
+      "placeholder": "Write a short bio..."
+    },
+    {
+      "name": "subscribe",
+      "label": "Subscribe to newsletter",
+      "type": "checkbox",
+      "tooltip": "Receive weekly updates",
+      "default_value": true
+    },
+    {
+      "name": "country",
+      "label": "Country",
+      "type": "select",
+      "tooltip": "Select your country of residence",
+      "options": ["USA", "Canada", "UK", "Australia", "Other"]
+    },
+    {
+      "name": "birthdate",
+      "label": "Birth Date",
+      "type": "date",
+      "tooltip": "Format: YYYY-MM-DD"
+    },
+    {
+      "name": "website",
+      "label": "Website",
+      "type": "url",
+      "tooltip": "Your personal or professional website"
+    },
+    {
+      "name": "favorite_color",
+      "label": "Favorite Color",
+      "type": "color",
+      "tooltip": "Pick your favorite color",
+      "default_value": "#3498db"
+    }
+  ]
+}
