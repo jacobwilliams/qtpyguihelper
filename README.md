@@ -91,7 +91,7 @@ cd ..
 ```bash
 git clone https://github.com/jacobwilliams/vibegui.git
 cd vibegui
-pip install -e .        # Install with tkinter Backend (No Extra Dependencies)
+pip install -e .  # Install with tkinter Backend (No Extra Dependencies)
 
 pip install .[pyside6]  # install with PySide6 Backend
 
