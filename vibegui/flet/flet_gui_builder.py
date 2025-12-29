@@ -169,7 +169,7 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
             for field_config in fields:
                 # Widgets already have built-in labels
                 widget = self.widget_factory.create_widget(field_config)
-                
+
                 if field_config.type == "checkbox":
                     # Checkbox spans both columns
                     controls.append(
