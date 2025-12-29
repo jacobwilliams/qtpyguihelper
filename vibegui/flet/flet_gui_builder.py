@@ -167,9 +167,11 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
             # Grid layout: 2-column responsive grid
             controls = []
             for field_config in fields:
+                # Widgets already have built-in labels
+                widget = self.widget_factory.create_widget(field_config)
+                
                 if field_config.type == "checkbox":
                     # Checkbox spans both columns
-                    widget = self.widget_factory.create_widget(field_config)
                     controls.append(
                         ft.Container(
                             content=widget,
@@ -178,22 +180,11 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
                         )
                     )
                 else:
-                    # Label in first column
-                    if field_config.label:
-                        controls.append(
-                            ft.Container(
-                                content=ft.Text(field_config.label, weight=ft.FontWeight.BOLD),
-                                col={"xs": 12, "sm": 4},  # Full width on mobile, 1/3 on desktop
-                                padding=5
-                            )
-                        )
-
-                    # Widget in second column
-                    widget = self.widget_factory.create_widget(field_config)
+                    # Widget in responsive column
                     controls.append(
                         ft.Container(
                             content=widget,
-                            col={"xs": 12, "sm": 8},  # Full width on mobile, 2/3 on desktop
+                            col={"xs": 12, "sm": 6},  # Full width on mobile, half on desktop
                             padding=5
                         )
                     )
@@ -206,32 +197,12 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
             )
 
         elif layout_type == "form":
-            # Form layout: similar to grid but optimized for forms
+            # Form layout: vertical layout with widgets that have built-in labels
             controls = []
             for field_config in fields:
-                # Create a row for each field (label and widget)
-                row_controls = []
-
-                if field_config.type == "checkbox":
-                    # Checkbox includes its label
-                    widget = self.widget_factory.create_widget(field_config)
-                    row_controls.append(ft.Container(content=widget, expand=True))
-                else:
-                    # Label
-                    if field_config.label:
-                        row_controls.append(
-                            ft.Container(
-                                content=ft.Text(field_config.label, weight=ft.FontWeight.BOLD),
-                                width=150,  # Fixed label width
-                                padding=ft.padding.only(right=10)
-                            )
-                        )
-
-                    # Widget
-                    widget = self.widget_factory.create_widget(field_config)
-                    row_controls.append(ft.Container(content=widget, expand=True))
-
-                controls.append(ft.Row(row_controls, spacing=10))
+                # Widgets already have built-in labels
+                widget = self.widget_factory.create_widget(field_config)
+                controls.append(widget)
 
             return ft.Column(controls, spacing=15, scroll=ft.ScrollMode.AUTO, expand=True)
 
