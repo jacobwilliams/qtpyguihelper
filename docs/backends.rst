@@ -38,6 +38,7 @@ The Qt backend provides the most feature-rich and polished GUI experience.
 - qtpy 2.0.0+ (for backend abstraction)
 
 **Installation:**
+
 .. code-block:: bash
 
    pip install vibegui[pyside6]  # Recommended
@@ -45,6 +46,7 @@ The Qt backend provides the most feature-rich and polished GUI experience.
    pip install vibegui[pyqt6]
 
 **Usage:**
+
 .. code-block:: python
 
    from vibegui.qt import QtGuiBuilder
@@ -76,11 +78,13 @@ The tkinter backend is included with Python and provides good cross-platform sup
 - Python with tkinter (included in most Python distributions)
 
 **Installation:**
+
 .. code-block:: bash
 
    pip install vibegui  # tkinter support included
 
 **Usage:**
+
 .. code-block:: python
 
    from vibegui.tk import TkGuiBuilder
@@ -120,11 +124,13 @@ The wxPython backend provides native look and feel on all platforms.
 - wxPython 4.2.0+
 
 **Installation:**
+
 .. code-block:: bash
 
    pip install vibegui[wxpython]
 
 **Usage:**
+
 .. code-block:: python
 
    from vibegui.wx import WxGuiBuilder
@@ -157,22 +163,26 @@ The GTK backend is primarily designed for Linux environments but also works on m
 - GTK3 or GTK4 system libraries
 
 **Installation:**
+
 .. code-block:: bash
 
    pip install vibegui[gtk]
 
 **System Dependencies:**
 On Ubuntu/Debian:
+
 .. code-block:: bash
 
    sudo apt-get install python3-gi python3-gi-cairo gir1.2-gtk-3.0
 
 On macOS with Homebrew:
+
 .. code-block:: bash
 
    brew install pygobject3 gtk+3
 
 **Usage:**
+
 .. code-block:: python
 
    from vibegui.gtk import GtkGuiBuilder
@@ -205,11 +215,13 @@ The Flet backend provides a modern Material Design experience with excellent cro
 - Flet 0.24.0+
 
 **Installation:**
+
 .. code-block:: bash
 
    pip install vibegui[flet]
 
 **Usage:**
+
 .. code-block:: python
 
    from vibegui.flet import FletGuiBuilder
