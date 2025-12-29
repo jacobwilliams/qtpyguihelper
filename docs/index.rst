@@ -15,7 +15,7 @@ vibegui Documentation
 Overview
 --------
 
-vibegui is a Python library for creating cross-platform GUIs from JSON configuration files.
+`vibegui <https://github.com/jacobwilliams/vibegui>`_ is a Python library for creating cross-platform GUIs from JSON configuration files.
 It supports multiple GUI backends including Qt (PySide6/PyQt6), wxPython, tkinter, GTK3/GTK4, and Flet.
 
 Key Features
