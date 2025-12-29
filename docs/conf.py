@@ -20,8 +20,8 @@ sys.path.insert(0, os.path.abspath('../vibegui'))
 project = 'vibegui'
 copyright = '2025, vibegui Team'
 author = 'vibegui Team'
-release = '1.0.0'
-version = '1.0.0'
+release = ''
+version = ''
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -59,25 +59,16 @@ language = 'en'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
+# html_theme = 'sphinx_rtd_theme'
+html_theme = 'furo'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    'canonical_url': '',
-    'analytics_id': '',
-    'logo_only': False,
-    'prev_next_buttons_location': 'bottom',
-    'style_external_links': False,
-    'vcs_pageview_mode': '',
-    'style_nav_header_background': '#2980B9',
-    # Toc options
-    'collapse_navigation': True,
-    'sticky_navigation': True,
-    'navigation_depth': 4,
-    'includehidden': True,
-    'titles_only': False
+    "sidebar_hide_name": False,
+    "navigation_with_keys": True,
+    "top_of_page_button": "edit",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -85,14 +76,7 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
 
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-html_sidebars = {
-    '**': [
-        'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-    ]
-}
+# Furo handles sidebars automatically - remove custom sidebar configuration
 
 # -- Options for autodoc ----------------------------------------------------
 

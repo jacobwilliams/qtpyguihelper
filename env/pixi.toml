@@ -1,0 +1,23 @@
+[workspace]
+authors = ["Jacob Williams <jacobwilliams@users.noreply.github.com>"]
+channels = ["conda-forge"]
+name = "env"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = ">=3.13.5,<3.14"
+pyside6 = ">=6.9.1,<7"
+qtpy = ">=2.4.3,<3"
+wxpython = ">=4.2.3,<5"
+pytest = ">=8.4.1,<9"
+pygobject = ">=3.50.0,<4"
+gtk4 = ">=4.14.1,<5"
+sphinx = ">=8.2.3,<9"
+sphinx-rtd-theme = ">=3.0.1,<4"
+sphinx-autobuild = ">=2024.10.3,<2025"
+jsonschema = ">=4.25.1,<5"
+flet = ">=0.3.2,<0.4"
+furo = ">=2024.8.6,<2025"

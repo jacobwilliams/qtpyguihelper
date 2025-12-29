@@ -61,7 +61,6 @@ Then open http://127.0.0.1:8000 in your browser. The documentation will automati
 - `api/` - API documentation (auto-generated from docstrings)
 - `examples.rst` - Usage examples
 - `backends.rst` - Backend-specific documentation
-- `changelog.rst` - Version history and changes
 - `_static/` - Static files (CSS, images, etc.)
 - `_templates/` - Custom Sphinx templates
 

@@ -90,6 +90,7 @@ test = [
 docs = [
     "sphinx>=4.0.0",
     "sphinx-rtd-theme>=1.0.0",
+    "furo>=2021.5.28",
     "sphinx-autobuild>=2021.3.14",
 ]
 

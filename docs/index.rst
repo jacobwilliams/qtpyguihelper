@@ -10,7 +10,6 @@ vibegui Documentation
    api/index
    examples
    backends
-   changelog
 
 Overview
 --------

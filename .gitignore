@@ -8,7 +8,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -56,16 +55,11 @@ coverage.xml
 .DS_Store
 
 # Pixi/Conda environments
-.env/
 .envrc
-pixi.lock
-pixi.toml
 
 # Local envs
-env/
 .venv/
 venv/
-ENV/
 
 # Logs
 *.log
