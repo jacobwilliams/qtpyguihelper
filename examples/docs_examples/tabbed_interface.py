@@ -59,8 +59,4 @@ if __name__ == "__main__":
     gui = GuiBuilder(config_dict=config, backend='qt')
     gui.show()
 
-    # Exit immediately when running under pytest
-    if os.environ.get('PYTEST_RUNNING'):
-        sys.exit(0)
-
     sys.exit(app.exec())

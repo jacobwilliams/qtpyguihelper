@@ -1,0 +1,24 @@
+{
+    "window": {
+        "title": "My Application",
+        "width": 500,
+        "height": 400
+    },
+    "fields": [
+        {
+            "name": "title",
+            "label": "Title",
+            "type": "select",
+            "options": ["Mr.", "Ms.", "Dr.", "Prof."],
+            "required": true
+        },
+        {
+            "name": "name",
+            "label": "Full Name",
+            "type": "text",
+            "required": true
+        }
+    ],
+    "submit_button": true,
+    "cancel_button": true
+}

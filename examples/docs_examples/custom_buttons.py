@@ -57,8 +57,4 @@ if __name__ == "__main__":
     gui.set_custom_button_callback('save_draft', save_draft)
     gui.show()
 
-    # Exit immediately when running under pytest
-    if os.environ.get('PYTEST_RUNNING'):
-        sys.exit(0)
-
     sys.exit(app.exec())

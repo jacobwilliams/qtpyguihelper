@@ -20,6 +20,8 @@ EXAMPLE_FILES = [
     "field_change_callbacks.py",
     "nested_fields.py",
     "float_formatting.py",
+"layout_examples.py",
+    "json_loading.py",
 ]
 
 
@@ -65,13 +67,12 @@ def test_example_execution(example_file: str) -> None:
     # Run the script with QT_QPA_PLATFORM=offscreen to avoid GUI display
     # and a timeout to ensure it doesn't hang
     #
-    # note: commented out QT_QPA_PLATFORM and PYTEST_RUNNING so that the
+    # note: commented out QT_QPA_PLATFORM so that the
     # GUIs actually run and open. if running this test, you have to
     # manually close each GUI window to let the test complete.
     env = {
         **subprocess.os.environ.copy(),
         # "QT_QPA_PLATFORM": "offscreen",
-        # "PYTEST_RUNNING": "1",  # Signal to examples they're being tested
         "PYTHONPATH": str(project_root)  # Add project root to Python path
     }
 

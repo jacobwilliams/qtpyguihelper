@@ -39,8 +39,4 @@ if __name__ == "__main__":
     gui.add_field_change_callback('user_type', on_user_type_change)
     gui.show()
 
-    # Exit immediately when running under pytest
-    if os.environ.get('PYTEST_RUNNING'):
-        sys.exit(0)
-
     sys.exit(app.exec())
