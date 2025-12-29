@@ -13,56 +13,62 @@ Here's a simple contact form example:
 
 .. code-block:: python
 
-   from vibegui import GuiBuilder
+    from vibegui import GuiBuilder
+    from qtpy.QtWidgets import QApplication
+    import sys
 
-   config = {
-       "window": {
-           "title": "Contact Form",
-           "width": 400,
-           "height": 350
-       },
-       "fields": [
-           {
-               "name": "name",
-               "label": "Full Name",
-               "type": "text",
-               "required": True,
-               "placeholder": "Enter your full name"
-           },
-           {
-               "name": "email",
-               "label": "Email",
-               "type": "email",
-               "required": True,
-               "placeholder": "your.email@example.com"
-           },
-           {
-               "name": "phone",
-               "label": "Phone Number",
-               "type": "text",
-               "placeholder": "+1 (555) 123-4567"
-           },
-           {
-               "name": "message",
-               "label": "Message",
-               "type": "textarea",
-               "required": True,
-               "placeholder": "Enter your message here..."
-           }
-       ],
-       "submit_button": True,
-       "submit_label": "Send Message",
-       "cancel_button": True
-   }
+    config = {
+        "window": {
+            "title": "Contact Form",
+            "width": 400,
+            "height": 350
+        },
+        "fields": [
+            {
+                "name": "name",
+                "label": "Full Name",
+                "type": "text",
+                "required": True,
+                "placeholder": "Enter your full name"
+            },
+            {
+                "name": "email",
+                "label": "Email",
+                "type": "email",
+                "required": True,
+                "placeholder": "your.email@example.com"
+            },
+            {
+                "name": "phone",
+                "label": "Phone Number",
+                "type": "text",
+                "placeholder": "+1 (555) 123-4567"
+            },
+            {
+                "name": "message",
+                "label": "Message",
+                "type": "textarea",
+                "required": True,
+                "placeholder": "Enter your message here..."
+            }
+        ],
+        "submit_button": True,
+        "submit_label": "Send Message",
+        "cancel_button": True
+    }
 
-   def handle_submit(data):
-       print("Contact form submitted:")
-       for key, value in data.items():
-           print(f"  {key}: {value}")
+    def handle_submit(data):
+        print("Contact form submitted:")
+        for key, value in data.items():
+            print(f"  {key}: {value}")
 
-   gui = GuiBuilder(config_dict=config)
-   gui.set_submit_callback(handle_submit)
-   gui.run()
+
+    app = QApplication(sys.argv)
+    gui = GuiBuilder(config_dict=config, backend='qt')
+    gui.set_submit_callback(handle_submit)
+    gui.show()
+    sys.exit(app.exec())
+
 
 Advanced Form with Validation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,6 +76,8 @@ Advanced Form with Validation
 .. code-block:: python
 
    from vibegui import GuiBuilder
+   from qtpy.QtWidgets import QApplication
+   import sys
 
    config = {
        "window": {
@@ -157,9 +165,11 @@ Advanced Form with Validation
        else:
            print("Registration failed. Please check your inputs.")
 
-   gui = GuiBuilder(config_dict=config)
+   app = QApplication(sys.argv)
+   gui = GuiBuilder(config_dict=config, backend='qt')
    gui.set_submit_callback(handle_registration)
-   gui.run()
+   gui.show()
+   sys.exit(app.exec())
 
 Tabbed Interface Example
 ------------------------
@@ -167,6 +177,8 @@ Tabbed Interface Example
 .. code-block:: python
 
    from vibegui import GuiBuilder
+   from qtpy.QtWidgets import QApplication
+   import sys
 
    config = {
        "window": {
@@ -213,9 +225,10 @@ Tabbed Interface Example
        "cancel_button": True
    }
 
-   gui = GuiBuilder(config_dict=config)
-   gui.run()
-   gui.run()
+   app = QApplication(sys.argv)
+   gui = GuiBuilder(config_dict=config, backend='qt')
+   gui.show()
+   sys.exit(app.exec())
 
 Custom Buttons Example
 ----------------------
@@ -223,6 +236,8 @@ Custom Buttons Example
 .. code-block:: python
 
    from vibegui import GuiBuilder
+   from qtpy.QtWidgets import QApplication
+   import sys
 
    config = {
        "window": {"title": "Data Entry Form", "width": 500, "height": 400},
@@ -269,12 +284,13 @@ Custom Buttons Example
        gui.save_data_to_file("draft.json")
        print("Draft saved!")
 
-   gui = GuiBuilder(config_dict=config)
-   gui.run()
+   app = QApplication(sys.argv)
+   gui = GuiBuilder(config_dict=config, backend='qt')
    gui.set_custom_button_callback('clear_form', clear_form)
    gui.set_custom_button_callback('load_template', load_template)
    gui.set_custom_button_callback('save_draft', save_draft)
-   gui.run()
+   gui.show()
+   sys.exit(app.exec())
 
 Data Persistence Example
 ------------------------
@@ -282,6 +298,8 @@ Data Persistence Example
 .. code-block:: python
 
    from vibegui import GuiBuilder
+   from qtpy.QtWidgets import QApplication
+   import sys
    import os
 
    config = {
@@ -329,8 +347,8 @@ Data Persistence Example
        gui.set_form_data(defaults)
        print("Settings reset to defaults!")
 
-   gui = GuiBuilder(config_dict=config)
-   gui.run()
+   app = QApplication(sys.argv)
+   gui = GuiBuilder(config_dict=config, backend='qt')
    gui.set_custom_button_callback('load_settings', load_settings)
    gui.set_custom_button_callback('save_settings', save_settings)
    gui.set_custom_button_callback('reset_defaults', reset_defaults)
@@ -339,7 +357,8 @@ Data Persistence Example
    if os.path.exists(settings_file):
        gui.load_data_from_file(settings_file)
 
-   gui.run()
+   gui.show()
+   sys.exit(app.exec())
 
 Field Change Callbacks
 ----------------------
@@ -347,6 +366,8 @@ Field Change Callbacks
 .. code-block:: python
 
    from vibegui import GuiBuilder
+   from qtpy.QtWidgets import QApplication
+   import sys
 
    config = {
        "window": {"title": "Dynamic Form", "width": 400, "height": 300},
@@ -377,10 +398,11 @@ Field Change Callbacks
            gui.set_field_value("admin_level", "")
            print("Showing administrator-specific fields")
 
-   gui = GuiBuilder(config_dict=config)
-   gui.run()
+   app = QApplication(sys.argv)
+   gui = GuiBuilder(config_dict=config, backend='qt')
    gui.add_field_change_callback('user_type', on_user_type_change)
-   gui.run()
+   gui.show()
+   sys.exit(app.exec())
 
 Backend-Specific Examples
 -------------------------
@@ -505,6 +527,9 @@ Using dot notation for hierarchical data structures:
 .. code-block:: python
 
    from vibegui import GuiBuilder
+   from qtpy.QtWidgets import QApplication
+   import sys
+   import json
 
    config = {
        "window": {"title": "Application Settings", "width": 600, "height": 500},
@@ -544,9 +569,11 @@ Using dot notation for hierarchical data structures:
        #   "ui": {"theme": "...", "font_size": ...}
        # }
 
-   gui = GuiBuilder(config_dict=config)
+   app = QApplication(sys.argv)
+   gui = GuiBuilder(config_dict=config, backend='qt')
    gui.set_submit_callback(on_submit)
-   gui.run()
+   gui.show()
+   sys.exit(app.exec())
 
 Float Formatting Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -556,6 +583,8 @@ Controlling decimal precision for float fields:
 .. code-block:: python
 
    from vibegui import GuiBuilder
+   from qtpy.QtWidgets import QApplication
+   import sys
 
    config = {
        "window": {"title": "Measurements", "width": 500, "height": 500},
@@ -582,7 +611,10 @@ Controlling decimal precision for float fields:
        "submit_button": True
    }
 
-   gui = GuiBuilder.create_and_run(config_dict=config)
+   app = QApplication(sys.argv)
+   gui = GuiBuilder(config_dict=config, backend='qt')
+   gui.show()
+   sys.exit(app.exec())
 
 Loading from JSON Files
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -619,9 +651,13 @@ Create a JSON configuration file and load it:
 .. code-block:: python
 
    from vibegui import GuiBuilder
+   from qtpy.QtWidgets import QApplication
+   import sys
 
    # Load from JSON file
-   gui = GuiBuilder.create_and_run(config_path="my_form.json")
-   gui.run()
+   app = QApplication(sys.argv)
+   gui = GuiBuilder(config_path="my_form.json", backend='qt')
+   gui.show()
+   sys.exit(app.exec())
 
 For more examples, check the ``examples/`` directory in the vibegui repository.
