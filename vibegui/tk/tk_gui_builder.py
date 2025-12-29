@@ -244,7 +244,7 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
 
             tab_window = tab_canvas.create_window((0, 0), window=tab_content, anchor="nw")
             tab_canvas.configure(yscrollcommand=tab_scrollbar.set)
-            
+
             # Bind canvas resize to update window width
             tab_canvas.bind("<Configure>", lambda e, c=tab_canvas, w=tab_window: on_tab_canvas_configure(e, c, w))
 
