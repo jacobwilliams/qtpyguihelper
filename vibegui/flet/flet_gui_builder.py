@@ -130,7 +130,7 @@ class FletGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin
                 tab_config.layout if hasattr(tab_config, 'layout') else 'vertical'
             )
 
-            # Create tab
+            # Create tab (Note: Flet's Tab widget doesn't support tooltips)
             tab = ft.Tab(
                 text=tab_config.title,
                 content=ft.Container(

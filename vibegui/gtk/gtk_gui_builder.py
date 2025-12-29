@@ -250,6 +250,10 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
             # Add tab to notebook
             notebook.append_page(tab_scrolled, tab_label)
 
+            # Add tooltip to tab if provided
+            if tab_config.tooltip:
+                tab_label.set_tooltip_text(tab_config.tooltip)
+
             # Add fields to the tab based on layout type
             self._add_fields_to_container(tab_container, tab_config.fields, tab_config.layout)
 
