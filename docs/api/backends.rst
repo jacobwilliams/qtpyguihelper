@@ -49,3 +49,16 @@ GTK Backend
    :members:
    :undoc-members:
    :show-inheritance:
+
+Flet Backend
+------------
+
+.. automodule:: vibegui.flet.flet_gui_builder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: vibegui.flet.flet_widget_factory
+   :members:
+   :undoc-members:
+   :show-inheritance:

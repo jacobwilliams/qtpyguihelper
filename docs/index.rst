@@ -25,6 +25,8 @@ Key Features
 * **Multiple backend support**: Choose from Qt, wxPython, tkinter, GTK, or Flet
 * **Cross-platform compatibility**: Works on Windows, macOS, and Linux
 * **Rich widget support**: Text fields, numbers, dates, dropdowns, checkboxes, and more
+* **Multiple layout options**: Vertical, horizontal, grid, and form layouts
+* **Tabbed interfaces**: Organize complex forms with tabs, each with its own layout
 * **Form validation**: Built-in validation for required fields and data types
 * **Data persistence**: Save and load form data to/from JSON files
 * **Dark mode support**: Automatic theme detection and application

@@ -36,8 +36,8 @@ The simplest way to create a GUI is using a JSON configuration:
                "name": "age",
                "label": "Age",
                "type": "number",
-               "min": 0,
-               "max": 120
+               "min_value": 0,
+               "max_value": 120
            }
        ]
    }
@@ -172,6 +172,45 @@ Save form data to files and load it back:
    # Load data from a JSON file
    gui.load_data_from_file('user_data.json')
 
+Layout Options
+--------------
+
+vibegui supports multiple layout styles for organizing fields:
+
+* ``vertical`` - Stack fields vertically (default)
+* ``horizontal`` - Arrange fields horizontally in a row
+* ``grid`` - Responsive grid layout (2-column on desktop, single column on mobile)
+* ``form`` - Form-style layout with labels and fields
+
+Specify layout in your configuration:
+
+.. code-block:: json
+
+   {
+       "window": {"title": "My App"},
+       "layout": "grid",
+       "fields": [
+           {"name": "field1", "label": "Field 1", "type": "text"},
+           {"name": "field2", "label": "Field 2", "type": "text"}
+       ]
+   }
+
+Tabs can also have their own layout:
+
+.. code-block:: json
+
+   {
+       "window": {"title": "Tabbed App"},
+       "use_tabs": true,
+       "tabs": [
+           {
+               "title": "Tab 1",
+               "layout": "form",
+               "fields": [...]
+           }
+       ]
+   }
+
 Field Types
 -----------
 
@@ -182,15 +221,85 @@ vibegui supports various field types:
 * ``password`` - Password input (hidden text)
 * ``email`` - Email input with validation
 * ``number`` - Numeric input
-* ``float`` - Floating-point number input
+* ``int`` - Integer input
+* ``float`` - Floating-point number input with precision control
 * ``date`` - Date picker
 * ``time`` - Time picker
 * ``datetime`` - Date and time picker
 * ``checkbox`` - Boolean checkbox
 * ``dropdown`` - Dropdown/combobox selection
+* ``select`` - Alternative to dropdown
 * ``radio`` - Radio button group
 * ``file`` - File selection
+* ``color`` - Color picker
 * ``url`` - URL input with validation
+* ``range`` - Slider/range input
+
+Advanced Field Features
+-----------------------
+
+Float Formatting
+~~~~~~~~~~~~~~~~
+
+For ``float`` fields, you can control the display format using the ``format_string`` parameter:
+
+.. code-block:: json
+
+   {
+       "name": "price",
+       "label": "Price",
+       "type": "float",
+       "format_string": ".2f",
+       "default_value": 99.99
+   }
+
+Common format strings:
+
+* ``.2f`` - Two decimal places (e.g., 99.99)
+* ``.1f`` - One decimal place (e.g., 95.5)
+* ``.4f`` - Four decimal places (e.g., 0.1234)
+* ``,.2f`` - Thousands separator (e.g., 12,345.67)
+* ``.2e`` - Scientific notation (e.g., 1.23e+06)
+* ``.1%`` - Percentage format (e.g., 85.6%)
+
+Nested Field Names
+~~~~~~~~~~~~~~~~~~
+
+vibegui supports hierarchical data structures using dot notation in field names:
+
+.. code-block:: json
+
+   {
+       "window": {"title": "App Settings", "width": 500, "height": 400},
+       "fields": [
+           {"name": "global.app_name", "label": "Application Name", "type": "text"},
+           {"name": "global.version", "label": "Version", "type": "text"},
+           {"name": "database.host", "label": "Database Host", "type": "text"},
+           {"name": "database.port", "label": "Database Port", "type": "int"},
+           {"name": "ui.theme", "label": "Theme", "type": "dropdown",
+            "options": ["light", "dark", "auto"]}
+       ]
+   }
+
+When saving data, this creates a nested JSON structure:
+
+.. code-block:: json
+
+   {
+       "global": {
+           "app_name": "My Application",
+           "version": "1.0.0"
+       },
+       "database": {
+           "host": "localhost",
+           "port": 5432
+       },
+       "ui": {
+           "theme": "dark"
+       }
+   }
+
+The library automatically handles loading nested data structures back into the form.
 
 Validation
 ----------
@@ -204,8 +313,8 @@ Add validation to your fields:
        "label": "Age",
        "type": "number",
        "required": true,
-       "min": 18,
-       "max": 65,
+       "min_value": 18,
+       "max_value": 65,
        "tooltip": "Age must be between 18 and 65"
    }
 

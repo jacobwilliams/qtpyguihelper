@@ -26,6 +26,7 @@ Main Classes by Backend:
 * :class:`vibegui.tk.TkGuiBuilder` - tkinter backend
 * :class:`vibegui.wx.WxGuiBuilder` - wxPython backend
 * :class:`vibegui.gtk.GtkGuiBuilder` - GTK backend
+* :class:`vibegui.flet.FletGuiBuilder` - Flet backend (Material Design)
 
 Configuration Classes:
 

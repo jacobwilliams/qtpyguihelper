@@ -17,23 +17,29 @@ Version 1.0.0 (2025-01-08)
   - Qt backend (PySide6/PyQt6) with qtpy abstraction
   - tkinter backend with dark mode support
   - wxPython backend with native widgets
-  - GTK backend for Linux/macOS
+  - GTK backend for Linux/macOS (GTK3 and GTK4)
+  - Flet backend with Material Design UI
 
 - Comprehensive widget support:
 
   - Text input fields (single-line and multi-line)
   - Password fields with hidden input
   - Email and URL fields with validation
-  - Number and float fields with range validation
+  - Number, int, and float fields with range validation
+  - Float fields with format_string for precision control
   - Date, time, and datetime pickers
   - Checkboxes and radio button groups
-  - Dropdown/combobox selections
+  - Dropdown/select/combobox selections
   - File selection dialogs
+  - Color picker widgets
+  - Range/slider controls
 
 - Advanced form features:
 
   - JSON-based configuration system
-  - Tabbed interface support
+  - Tabbed interface support with per-tab layouts
+  - Multiple layout options: vertical, horizontal, grid, and form
+  - Nested field names with dot notation for hierarchical data
   - Required field validation
   - Custom button actions
   - Field change callbacks
@@ -77,7 +83,8 @@ Version 1.0.0 (2025-01-08)
 - Core: Python 3.8+
 - Qt backend: PySide6 6.5.0+ or PyQt6 6.5.0+ with qtpy 2.0.0+
 - wxPython backend: wxPython 4.2.0+
-- GTK backend: PyGObject 3.42.0+
+- GTK backend: PyGObject 3.42.0+ (GTK3 or GTK4)
+- Flet backend: Flet 0.24.0+
 - tkinter backend: Included with Python
 
 **Breaking Changes**

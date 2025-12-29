@@ -109,8 +109,8 @@ Advanced Form with Validation
                "name": "age",
                "label": "Age",
                "type": "number",
-               "min": 13,
-               "max": 120,
+               "min_value": 13,
+               "max_value": 120,
                "required": True
            },
            {
@@ -293,7 +293,7 @@ Data Persistence Example
             "options": ["English", "Spanish", "French", "German"]},
            {"name": "auto_save", "label": "Auto-save", "type": "checkbox", "default": True},
            {"name": "backup_interval", "label": "Backup Interval (hours)", "type": "number",
-            "min": 1, "max": 24, "default": 6}
+            "min_value": 1, "max_value": 24, "default": 6}
        ],
        "custom_buttons": [
            {"name": "load_settings", "label": "Load Settings"},
@@ -354,7 +354,7 @@ Field Change Callbacks
            {"name": "user_type", "label": "User Type", "type": "dropdown",
             "options": ["Student", "Teacher", "Administrator"], "required": True},
            {"name": "student_id", "label": "Student ID", "type": "text"},
-           {"name": "grade_level", "label": "Grade Level", "type": "number", "min": 1, "max": 12},
+           {"name": "grade_level", "label": "Grade Level", "type": "number", "min_value": 1, "max_value": 12},
            {"name": "department", "label": "Department", "type": "text"},
            {"name": "admin_level", "label": "Admin Level", "type": "dropdown",
             "options": ["Level 1", "Level 2", "Level 3"]}
@@ -394,6 +394,7 @@ Using Specific Backends
    from vibegui.qt import QtGuiBuilder
    from vibegui.wx import WxGuiBuilder
    from vibegui.gtk import GtkGuiBuilder
+   from vibegui.flet import FletGuiBuilder
 
    config = {"window": {"title": "Backend Test"}, "fields": []}
 
@@ -408,6 +409,180 @@ Using Specific Backends
 
    # Use GTK specifically
    gtk_gui = GtkGuiBuilder(config_dict=config)
+
+   # Use Flet specifically (Material Design)
+   flet_gui = FletGuiBuilder(config_dict=config)
+
+Layout Examples
+~~~~~~~~~~~~~~~
+
+Different layout styles for organizing fields:
+
+.. code-block:: python
+
+   from vibegui import GuiBuilder
+
+   # Vertical layout (default - stacks fields vertically)
+   vertical_config = {
+       "window": {"title": "Vertical Layout", "width": 400, "height": 400},
+       "layout": "vertical",
+       "fields": [
+           {"name": "field1", "label": "Field 1", "type": "text"},
+           {"name": "field2", "label": "Field 2", "type": "text"},
+           {"name": "field3", "label": "Field 3", "type": "number"}
+       ]
+   }
+
+   # Horizontal layout (arranges fields in a row)
+   horizontal_config = {
+       "window": {"title": "Horizontal Layout", "width": 600, "height": 200},
+       "layout": "horizontal",
+       "fields": [
+           {"name": "first", "label": "First", "type": "text"},
+           {"name": "middle", "label": "Middle", "type": "text"},
+           {"name": "last", "label": "Last", "type": "text"}
+       ]
+   }
+
+   # Grid layout (responsive 2-column grid)
+   grid_config = {
+       "window": {"title": "Grid Layout", "width": 600, "height": 400},
+       "layout": "grid",
+       "fields": [
+           {"name": "fname", "label": "First Name", "type": "text"},
+           {"name": "lname", "label": "Last Name", "type": "text"},
+           {"name": "email", "label": "Email", "type": "email"},
+           {"name": "phone", "label": "Phone", "type": "text"},
+           {"name": "city", "label": "City", "type": "text"},
+           {"name": "state", "label": "State", "type": "text"}
+       ]
+   }
+
+   # Form layout (label-field pairs)
+   form_config = {
+       "window": {"title": "Form Layout", "width": 500, "height": 400},
+       "layout": "form",
+       "fields": [
+           {"name": "username", "label": "Username", "type": "text"},
+           {"name": "password", "label": "Password", "type": "password"},
+           {"name": "remember", "label": "Remember me", "type": "checkbox"}
+       ]
+   }
+
+   # Use different layouts in tabs
+   tabbed_layout_config = {
+       "window": {"title": "Mixed Layouts", "width": 600, "height": 500},
+       "use_tabs": True,
+       "tabs": [
+           {
+               "title": "Vertical Tab",
+               "layout": "vertical",
+               "fields": [
+                   {"name": "v1", "label": "Field 1", "type": "text"},
+                   {"name": "v2", "label": "Field 2", "type": "text"}
+               ]
+           },
+           {
+               "title": "Grid Tab",
+               "layout": "grid",
+               "fields": [
+                   {"name": "g1", "label": "Field 1", "type": "text"},
+                   {"name": "g2", "label": "Field 2", "type": "text"},
+                   {"name": "g3", "label": "Field 3", "type": "text"},
+                   {"name": "g4", "label": "Field 4", "type": "text"}
+               ]
+           }
+       ]
+   }
+
+   gui = GuiBuilder.create_and_run(config_dict=grid_config)
+
+Nested Fields Example
+~~~~~~~~~~~~~~~~~~~~~~
+
+Using dot notation for hierarchical data structures:
+
+.. code-block:: python
+
+   from vibegui import GuiBuilder
+
+   config = {
+       "window": {"title": "Application Settings", "width": 600, "height": 500},
+       "layout": "form",
+       "fields": [
+           # Global settings
+           {"name": "global.app_name", "label": "Application Name",
+            "type": "text", "default_value": "My App"},
+           {"name": "global.version", "label": "Version",
+            "type": "text", "default_value": "1.0.0"},
+
+           # Database settings
+           {"name": "database.host", "label": "Database Host",
+            "type": "text", "default_value": "localhost"},
+           {"name": "database.port", "label": "Database Port",
+            "type": "int", "default_value": 5432},
+           {"name": "database.name", "label": "Database Name",
+            "type": "text", "required": True},
+
+           # UI settings
+           {"name": "ui.theme", "label": "Theme",
+            "type": "dropdown", "options": ["light", "dark", "auto"],
+            "default_value": "auto"},
+           {"name": "ui.font_size", "label": "Font Size",
+            "type": "int", "min_value": 8, "max_value": 24, "default_value": 12}
+       ],
+       "submit_button": True
+   }
+
+   def on_submit(data):
+       print("Settings saved:")
+       print(json.dumps(data, indent=2))
+       # Output will be nested:
+       # {
+       #   "global": {"app_name": "...", "version": "..."},
+       #   "database": {"host": "...", "port": ..., "name": "..."},
+       #   "ui": {"theme": "...", "font_size": ...}
+       # }
+
+   gui = GuiBuilder(config_dict=config)
+   gui.set_submit_callback(on_submit)
+   gui.run()
+
+Float Formatting Example
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Controlling decimal precision for float fields:
+
+.. code-block:: python
+
+   from vibegui import GuiBuilder
+
+   config = {
+       "window": {"title": "Measurements", "width": 500, "height": 500},
+       "layout": "form",
+       "fields": [
+           {"name": "price", "label": "Price ($)", "type": "float",
+            "format_string": ".2f", "default_value": 99.99},
+
+           {"name": "temperature", "label": "Temperature (°C)", "type": "float",
+            "format_string": ".1f", "default_value": 23.5},
+
+           {"name": "precision", "label": "High Precision", "type": "float",
+            "format_string": ".4f", "default_value": 3.1416},
+
+           {"name": "scientific", "label": "Large Number", "type": "float",
+            "format_string": ".2e", "default_value": 1234567.89},
+
+           {"name": "percentage", "label": "Completion", "type": "float",
+            "format_string": ".1%", "default_value": 0.856},
+
+           {"name": "currency", "label": "Revenue", "type": "float",
+            "format_string": ",.2f", "default_value": 12345.67}
+       ],
+       "submit_button": True
+   }
+
+   gui = GuiBuilder.create_and_run(config_dict=config)
 
 Loading from JSON Files
 ~~~~~~~~~~~~~~~~~~~~~~~

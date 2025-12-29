@@ -119,6 +119,7 @@ autodoc_mock_imports = [
     'qtpy',
     'gi',
     'gi.repository',
+    'flet',
 ]
 
 # Skip missing modules instead of failing
