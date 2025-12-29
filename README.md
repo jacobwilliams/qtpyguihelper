@@ -272,7 +272,8 @@ gui = GuiBuilder(config_path="form.json")
 from vibegui import GuiBuilder
 
 # Force specific backend during construction
-gui = GuiBuilder(config_path="form.json", backend='wx')  # or 'qt', 'tk', 'gtk'
+# ('wx', 'qt', 'tk', 'gtk', or 'flet')
+gui = GuiBuilder(config_path="form.json", backend='wx')
 ```
 
 ### Backend-Specific Features
