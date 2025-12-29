@@ -861,9 +861,6 @@ gui.save_data_to_file("output.json")
 
 # Save only non-empty fields
 gui.save_data_to_file("output.json", include_empty=False)
-
-# Save with metadata (includes config info and timestamp)
-gui.save_data_with_metadata_to_file("output_with_metadata.json")
 ```
 
 ### Example Data Files

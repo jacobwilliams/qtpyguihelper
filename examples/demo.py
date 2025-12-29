@@ -239,12 +239,6 @@ def demo_data_persistence() -> None:
         if success:
             print(f"Data saved to {output_path}")
 
-        # Also save with metadata
-        metadata_path = os.path.join(os.path.dirname(__file__), "project_output_with_metadata.json")
-        success = gui.save_data_with_metadata_to_file(metadata_path)
-        if success:
-            print(f"Data with metadata saved to {metadata_path}")
-
         # Show success message
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)

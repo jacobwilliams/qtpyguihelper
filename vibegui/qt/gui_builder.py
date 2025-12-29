@@ -361,54 +361,6 @@ class GuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, Va
         """Qt-specific widget show/hide."""
         widget.setVisible(visible)
 
-    def get_data_with_metadata(self) -> Dict[str, Any]:
-        """
-        Get form data with additional metadata about the configuration.
-
-        Returns:
-            Dict containing form data plus metadata
-        """
-        if not self.config:
-            return {}
-
-        form_data = self.get_form_data()
-
-        metadata = {
-            "_metadata": {
-                "config_source": "vibegui",
-                "window_title": self.config.window.title,
-                "layout": self.config.layout,
-                "field_count": len(self.config.fields),
-                "required_fields": [f.name for f in self.config.fields if f.required],
-                "generated_at": QDateTime.currentDateTime().toString(Qt.ISODate)
-            }
-        }
-
-        # Merge form data with metadata
-        return {**form_data, **metadata}
-
-    def save_data_with_metadata_to_file(self, data_file_path: str) -> bool:
-        """
-        Save form data with metadata to a JSON file.
-
-        Args:
-            data_file_path: Path where to save the JSON file
-
-        Returns:
-            bool: True if successful, False otherwise
-        """
-        try:
-            data = self.get_data_with_metadata()
-
-            with open(data_file_path, 'w', encoding='utf-8') as file:
-                json.dump(data, file, indent=2, ensure_ascii=False)
-
-            return True
-
-        except Exception as e:
-            self._show_error(f"Failed to save data with metadata: {str(e)}")
-            return False
-
     @staticmethod
     def create_and_run(config_path: Optional[str] = None,
                        config_dict: Optional[Dict[str, Any]] = None,
