@@ -84,41 +84,57 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
 
-        # Create main container with scrolling capability
-        canvas = tk.Canvas(self.root)
-        scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
-        scrollable_frame = ttk.Frame(canvas)
-
-        scrollable_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-        )
-
-        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
-
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-
-        self.main_frame = scrollable_frame
-
-        # Build the interface
+        # For tabbed interfaces, use a simpler layout without scrolling
         if self.config.use_tabs and self.config.tabs:
+            # Create main frame directly without canvas scrolling
+            main_frame = ttk.Frame(self.root)
+            main_frame.pack(fill="both", expand=True)
+            main_frame.columnconfigure(0, weight=1)
+            main_frame.rowconfigure(0, weight=1)
+            
+            self.main_frame = main_frame
+            
+            # Build the tabbed interface
             self._build_tabbed_interface()
+            
+            # Add buttons in a separate frame at the bottom
+            self._add_buttons()
+            
+            # Set up field change monitoring
+            self._setup_field_change_monitoring()
         else:
+            # For non-tabbed forms, use the scrollable canvas
+            canvas = tk.Canvas(self.root)
+            scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
+            scrollable_frame = ttk.Frame(canvas)
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            canvas.pack(side="left", fill="both", expand=True)
+            scrollbar.pack(side="right", fill="y")
+
+            self.main_frame = scrollable_frame
+            
+            # Build the form interface
             self._build_form_interface()
+            
+            # Add custom buttons
+            self._add_buttons()
 
-        # Add custom buttons
-        self._add_buttons()
+            # Set up field change monitoring
+            self._setup_field_change_monitoring()
 
-        # Set up field change monitoring
-        self._setup_field_change_monitoring()
+            # Bind mouse wheel to canvas for scrolling
+            def _on_mousewheel(event: tk.Event) -> None:
+                canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
-        # Bind mouse wheel to canvas for scrolling
-        def _on_mousewheel(event: tk.Event) -> None:
-            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-
-        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+            canvas.bind_all("<MouseWheel>", _on_mousewheel)
 
         # Apply theme
         self._detect_and_apply_theme()
@@ -197,9 +213,9 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
         if not self.config or not self.config.tabs:
             return
 
-        # Create notebook widget for tabs
+        # Create notebook widget for tabs - it will expand to fill the main_frame
         notebook = ttk.Notebook(self.main_frame)
-        notebook.pack(fill="both", expand=True, padx=10, pady=10)
+        notebook.pack(fill="both", expand=True, padx=10, pady=(10, 5))
 
         for tab_config in self.config.tabs:
             # Create tab frame

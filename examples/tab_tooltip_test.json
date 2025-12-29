@@ -1,0 +1,74 @@
+{
+  "window": {
+    "title": "Tab Tooltip Test",
+    "width": 700,
+    "height": 500
+  },
+  "use_tabs": true,
+  "fields": [
+    {
+      "name": "name",
+      "label": "Full Name",
+      "type": "text",
+      "tooltip": "Your legal name",
+      "required": true
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "email",
+      "tooltip": "Your contact email address"
+    },
+    {
+      "name": "theme",
+      "label": "Theme",
+      "type": "select",
+      "tooltip": "Choose your preferred color theme",
+      "options": ["Light", "Dark", "Auto"],
+      "default_value": "Auto"
+    },
+    {
+      "name": "notifications",
+      "label": "Enable Notifications",
+      "type": "checkbox",
+      "tooltip": "Receive email notifications",
+      "default_value": true
+    },
+    {
+      "name": "debug",
+      "label": "Debug Mode",
+      "type": "checkbox",
+      "tooltip": "Enable debug logging"
+    },
+    {
+      "name": "timeout",
+      "label": "Timeout (seconds)",
+      "type": "int",
+      "tooltip": "Connection timeout in seconds",
+      "default_value": 30
+    }
+  ],
+  "tabs": [
+    {
+      "name": "personal",
+      "title": "Personal Info",
+      "tooltip": "Enter your personal information here",
+      "layout": "vertical",
+      "fields": ["name", "email"]
+    },
+    {
+      "name": "preferences",
+      "title": "Preferences",
+      "tooltip": "Configure your preferences and settings",
+      "layout": "form",
+      "fields": ["theme", "notifications"]
+    },
+    {
+      "name": "advanced",
+      "title": "Advanced",
+      "tooltip": "Advanced settings for power users only",
+      "layout": "grid",
+      "fields": ["debug", "timeout"]
+    }
+  ]
+}
