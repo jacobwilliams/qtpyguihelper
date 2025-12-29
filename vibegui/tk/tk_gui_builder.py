@@ -91,15 +91,15 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
             main_frame.pack(fill="both", expand=True)
             main_frame.columnconfigure(0, weight=1)
             main_frame.rowconfigure(0, weight=1)
-            
+
             self.main_frame = main_frame
-            
+
             # Build the tabbed interface
             self._build_tabbed_interface()
-            
+
             # Add buttons in a separate frame at the bottom
             self._add_buttons()
-            
+
             # Set up field change monitoring
             self._setup_field_change_monitoring()
         else:
@@ -108,22 +108,27 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
             scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
             scrollable_frame = ttk.Frame(canvas)
 
-            scrollable_frame.bind(
-                "<Configure>",
-                lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-            )
+            def on_frame_configure(event: tk.Event) -> None:
+                canvas.configure(scrollregion=canvas.bbox("all"))
 
-            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            def on_canvas_configure(event: tk.Event) -> None:
+                # Update the window width to match canvas width
+                canvas.itemconfig(canvas_window, width=event.width)
+
+            scrollable_frame.bind("<Configure>", on_frame_configure)
+
+            canvas_window = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
             canvas.configure(yscrollcommand=scrollbar.set)
+            canvas.bind("<Configure>", on_canvas_configure)
 
             canvas.pack(side="left", fill="both", expand=True)
             scrollbar.pack(side="right", fill="y")
 
             self.main_frame = scrollable_frame
-            
+
             # Build the form interface
             self._build_form_interface()
-            
+
             # Add custom buttons
             self._add_buttons()
 
@@ -227,14 +232,21 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
             tab_scrollbar = ttk.Scrollbar(tab_frame, orient="vertical", command=tab_canvas.yview)
             tab_content = ttk.Frame(tab_canvas)
 
-            def on_tab_configure(event: tk.Event, canvas: tk.Canvas = tab_canvas) -> None:
-                del event  # Unused but required by bind
+            def on_tab_content_configure(event: tk.Event, canvas: tk.Canvas = tab_canvas) -> None:
                 canvas.configure(scrollregion=canvas.bbox("all"))
 
-            tab_content.bind("<Configure>", on_tab_configure)
+            def on_tab_canvas_configure(event: tk.Event, canvas: tk.Canvas = tab_canvas, window_id = None) -> None:
+                # Update the window width to match canvas width
+                if window_id:
+                    canvas.itemconfig(window_id, width=event.width)
 
-            tab_canvas.create_window((0, 0), window=tab_content, anchor="nw")
+            tab_content.bind("<Configure>", on_tab_content_configure)
+
+            tab_window = tab_canvas.create_window((0, 0), window=tab_content, anchor="nw")
             tab_canvas.configure(yscrollcommand=tab_scrollbar.set)
+            
+            # Bind canvas resize to update window width
+            tab_canvas.bind("<Configure>", lambda e, c=tab_canvas, w=tab_window: on_tab_canvas_configure(e, c, w))
 
             tab_canvas.pack(side="left", fill="both", expand=True)
             tab_scrollbar.pack(side="right", fill="y")
