@@ -2,8 +2,8 @@
 authors = ["Jacob Williams <jacobwilliams@users.noreply.github.com>"]
 channels = ["conda-forge"]
 name = "env"
-platforms = ["osx-arm64"]
-version = "0.1.0"
+platforms = ["osx-arm64", "win-64", "linux-64"]
+version = "1.0.0"
 
 [tasks]
 
@@ -21,3 +21,7 @@ sphinx-autobuild = ">=2024.10.3,<2025"
 jsonschema = ">=4.25.1,<5"
 flet = ">=0.3.2,<0.4"
 furo = ">=2024.8.6,<2025"
+setuptools = ">=80.9.0,<81"
+wheel = ">=0.45.1,<0.46"
+hatch = ">=1.16.2,<2"
+grayskull = ">=2.9.2,<3"
