@@ -555,13 +555,21 @@ class TkGuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, 
     def _detect_and_apply_theme(self) -> None:
         """Detect system theme and apply appropriate colors."""
         try:
+            # Skip theme detection in test/headless environments
+            if not self.root or not self.root.winfo_ismapped():
+                # Window not yet mapped, skip theme detection
+                return
+
             if PlatformUtils.is_dark_mode():
                 self._apply_dark_theme()
             else:
                 self._apply_light_theme()
         except Exception as e:
-            print(f"Warning: Could not detect system theme: {e}")
-            self._apply_light_theme()  # Fallback to light theme
+            # Silently fall back to light theme if detection fails
+            try:
+                self._apply_light_theme()
+            except Exception:
+                pass  # Even fallback failed, just use defaults
 
     def run(self) -> None:
         """Run the GUI application (start the main loop)."""

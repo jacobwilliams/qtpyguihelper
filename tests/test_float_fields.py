@@ -172,7 +172,7 @@ def test_float_format_strings():
         {"format_string": ".4f", "expected_decimals": 4},
         {"format_string": ".1f", "expected_decimals": 1},
         {"format_string": ".0f", "expected_decimals": 0},
-        {"format_string": None, "expected_decimals": 2},  # Default to 2 decimal places
+        {"format_string": "", "expected_decimals": 2},  # Default to 2 decimal places when empty
     ]
 
     factory = WidgetFactory()
@@ -182,9 +182,12 @@ def test_float_format_strings():
             "name": f"test_field_{i}",
             "type": "float",
             "label": f"Test Field {i}",
-            "format_string": test_case["format_string"],
             "default_value": 123.456789
         }
+
+        # Only add format_string if it's not empty
+        if test_case["format_string"]:
+            field_config_data["format_string"] = test_case["format_string"]
 
         # Create a minimal config
         config = {

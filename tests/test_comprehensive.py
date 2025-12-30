@@ -21,7 +21,7 @@ from vibegui.backend import get_available_backends, set_backend, get_backend_inf
 class TestConfigLoader:
     """Test the configuration loader."""
 
-    def test_valid_config_loading(self):
+    def test_valid_config_loading(self) -> None:
         """Test loading a valid configuration."""
         config_data = {
             "window": {"title": "Test App", "width": 500, "height": 400},
@@ -39,24 +39,24 @@ class TestConfigLoader:
         assert len(config.fields) == 1
         assert config.fields[0].name == "test_field"
 
-    def test_invalid_config_validation(self):
+    def test_invalid_config_validation(self) -> None:
         """Test validation of invalid configurations."""
         loader = ConfigLoader()
 
-        # Missing required fields key
-        with pytest.raises(ValueError, match="Configuration must contain 'fields' key"):
+        # Missing required fields key - should fail schema validation
+        with pytest.raises(ValueError, match="Schema validation failed|Configuration must contain 'fields' key"):
             loader.load_from_dict({"window": {"title": "Test"}})
 
-        # Invalid field type
+        # Invalid field type - should fail schema validation
         config_data = {
             "fields": [
                 {"name": "test", "type": "invalid_type", "label": "Test"}
             ]
         }
-        with pytest.raises(ValueError, match="Unsupported field type"):
+        with pytest.raises(ValueError, match="Schema validation failed|'invalid_type' is not one of"):
             loader.load_from_dict(config_data)
 
-    def test_tab_configuration(self):
+    def test_tab_configuration(self) -> None:
         """Test tab configuration loading."""
         config_data = {
             "use_tabs": True,
@@ -82,13 +82,13 @@ class TestConfigLoader:
 class TestBackendSystem:
     """Test the backend selection system."""
 
-    def test_backend_detection(self):
+    def test_backend_detection(self) -> None:
         """Test backend detection."""
         backends = get_available_backends()
         assert isinstance(backends, list)
         assert len(backends) > 0  # At least one backend should be available
 
-    def test_backend_switching(self):
+    def test_backend_switching(self) -> None:
         """Test backend switching."""
         # Test setting Qt backend
         set_backend('qt')
@@ -107,7 +107,7 @@ class TestFieldTypes:
     """Test different field types."""
 
     @pytest.fixture
-    def basic_config(self):
+    def basic_config(self) -> dict:
         """Basic configuration template."""
         return {
             "window": {"title": "Test", "width": 400, "height": 300},
@@ -115,7 +115,7 @@ class TestFieldTypes:
             "fields": []
         }
 
-    def test_text_field(self, basic_config):
+    def test_text_field(self, basic_config: dict) -> None:
         """Test text field configuration."""
         basic_config["fields"] = [
             {
@@ -135,7 +135,7 @@ class TestFieldTypes:
         assert field.placeholder == "Enter text"
         assert field.required is True
 
-    def test_numeric_fields(self, basic_config):
+    def test_numeric_fields(self, basic_config: dict) -> None:
         """Test numeric field types."""
         basic_config["fields"] = [
             {
@@ -168,7 +168,7 @@ class TestFieldTypes:
         assert float_field.type == "float"
         assert float_field.format_string == ".2f"
 
-    def test_choice_fields(self, basic_config):
+    def test_choice_fields(self, basic_config: dict) -> None:
         """Test choice field types (select, radio)."""
         basic_config["fields"] = [
             {
@@ -203,7 +203,7 @@ class TestFieldTypes:
 class TestFileOperations:
     """Test file operations."""
 
-    def test_config_file_loading(self):
+    def test_config_file_loading(self) -> None:
         """Test loading configuration from file."""
         config_data = {
             "window": {"title": "File Test"},
@@ -223,7 +223,7 @@ class TestFileOperations:
         finally:
             os.unlink(temp_path)
 
-    def test_nonexistent_file(self):
+    def test_nonexistent_file(self) -> None:
         """Test loading from nonexistent file."""
         loader = ConfigLoader()
         with pytest.raises(FileNotFoundError):

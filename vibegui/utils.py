@@ -205,7 +205,10 @@ class ButtonHandlerMixin:
             try:
                 self.submit_callback(form_data)
             except Exception as e:
-                self._show_error(f"Submit callback error: {str(e)}")
+                try:
+                    self._show_error("Submit Error", f"Submit callback error: {str(e)}")
+                except TypeError:
+                    self._show_error(f"Submit callback error: {str(e)}")
 
         # Hook for backend-specific post-submit actions (e.g., Qt signals)
         self._on_form_submitted(form_data)
@@ -221,7 +224,10 @@ class ButtonHandlerMixin:
             try:
                 self.cancel_callback()
             except Exception as e:
-                self._show_error(f"Cancel callback error: {str(e)}")
+                try:
+                    self._show_error("Cancel Error", f"Cancel callback error: {str(e)}")
+                except TypeError:
+                    self._show_error(f"Cancel callback error: {str(e)}")
 
         # Hook for backend-specific post-cancel actions
         self._on_form_cancelled()
@@ -237,7 +243,10 @@ class ButtonHandlerMixin:
                 form_data = self.get_form_data()
                 self.custom_button_callbacks[button_name](form_data)
             except Exception as e:
-                self._show_error(f"Custom button '{button_name}' callback error: {str(e)}")
+                try:
+                    self._show_error("Button Error", f"Custom button '{button_name}' callback error: {str(e)}")
+                except TypeError:
+                    self._show_error(f"Custom button '{button_name}' callback error: {str(e)}")
 
 
 class ConfigLoaderMixin:
@@ -263,7 +272,10 @@ class ConfigLoaderMixin:
                     pass
         except Exception as e:
             if hasattr(self, '_show_error'):
-                self._show_error(f"Failed to load configuration: {str(e)}")
+                try:
+                    self._show_error("Configuration Error", f"Failed to load configuration: {str(e)}")
+                except TypeError:
+                    self._show_error(f"Failed to load configuration: {str(e)}")
             else:
                 raise
 
@@ -281,7 +293,10 @@ class ConfigLoaderMixin:
                     pass
         except Exception as e:
             if hasattr(self, '_show_error'):
-                self._show_error(f"Failed to load configuration: {str(e)}")
+                try:
+                    self._show_error("Configuration Error", f"Failed to load configuration: {str(e)}")
+                except TypeError:
+                    self._show_error(f"Failed to load configuration: {str(e)}")
             else:
                 raise
 

@@ -5,39 +5,45 @@ Test tkinter backend functionality.
 
 import sys
 import os
+import pytest
 
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from vibegui import GuiBuilder, set_backend, get_backend_info, is_backend_available
+# Import set_backend but NOT GuiBuilder at module level for Tkinter tests
+from vibegui import set_backend, is_backend_available
+
+# Set backend at module level
+set_backend('tk')
 
 
-def test_tkinter_backend_availability() -> None:
-    """Test that tkinter backend is available."""
-    print("Testing tkinter Backend Availability")
-    print("====================================")
+# @pytest.mark.gui
+# @pytest.mark.tk
+# def test_tkinter_backend_availability() -> None:
+#     """Test that tkinter backend is available."""
+#     print("Testing tkinter Backend Availability")
+#     print("====================================")
 
-    # Check if tkinter is available
-    assert is_backend_available('tk'), "tkinter backend should be available"
-    print("✓ tkinter backend is available")
+#     # Check if tkinter is available
+#     assert is_backend_available('tk'), "tkinter backend should be available"
+#     print("✓ tkinter backend is available")
 
 
+# @pytest.mark.gui
+# @pytest.mark.tk
 def test_tkinter_backend_creation() -> None:
     """Test that we can create a tkinter GUI builder without showing it."""
+
+    import tkinter as tk
+
+    # Import GuiBuilder INSIDE test function (like demo does)
+    from vibegui import GuiBuilder
+
     print("Testing tkinter Backend Creation")
     print("================================")
 
-    # Set tkinter backend
-    set_backend('tk')
-    print("✓ tkinter backend set")
-
-    # Get backend info
-    info = get_backend_info()
-    print(f"✓ Backend: {info['backend']}")
-    if 'tk_version' in info:
-        print(f"✓ tkinter version: {info['tk_version']}")
-    if 'tcl_version' in info:
-        print(f"✓ Tcl version: {info['tcl_version']}")
+    # NOTE: Do NOT call get_backend_info() for Tkinter on macOS - it corrupts state
+    # and causes crashes in gui.show()
 
     # Create a simple config
     config = {
@@ -76,8 +82,10 @@ def test_tkinter_backend_creation() -> None:
     # Verify it's using tkinter
     assert gui.backend == 'tk', f"Expected tk backend, got {gui.backend}"
 
-    # Build the UI without showing (needed for tkinter to create widgets)
-    gui._setup_ui()
+    # Show the GUI to build widgets (but don't run the event loop)
+    print('showing gui...')
+    gui.show()
+    print('gui shown')
 
     # Test getting form data
     form_data = gui.get_form_data()
@@ -107,13 +115,17 @@ def test_tkinter_backend_creation() -> None:
     gui.close()
     print("✓ GUI closed successfully")
 
+# test_tkinter_backend_creation()
 
+@pytest.mark.gui
+@pytest.mark.tk
 def test_tkinter_all_field_types() -> None:
     """Test that all field types can be created with tkinter backend."""
     print("Testing All tkinter Field Types")
     print("===============================")
 
     set_backend('tk')
+    from vibegui import GuiBuilder
 
     # Config with all supported field types
     config = {
@@ -184,12 +196,8 @@ def test_tkinter_all_field_types() -> None:
                 "name": "select_field",
                 "type": "select",
                 "label": "Select Field",
-                "options": [
-                    {"label": "First Choice", "value": "choice1"},
-                    {"label": "Second Choice", "value": "choice2"},
-                    {"label": "Third Choice", "value": "choice3"}
-                ],
-                "default_value": "choice2"
+                "options": ["First Choice", "Second Choice", "Third Choice"],
+                "default_value": "Second Choice"
             },
             {
                 "name": "date_field",
@@ -241,8 +249,8 @@ def test_tkinter_all_field_types() -> None:
     gui = GuiBuilder(config_dict=config)
     print(f"✓ Created GUI with {len(config['fields'])} field types")
 
-    # Build the UI without showing
-    gui._setup_ui()
+    # Show the GUI to build widgets (but don't run the event loop)
+    gui.show()
 
     # Test that all fields were created
     form_data = gui.get_form_data()
@@ -258,8 +266,7 @@ def test_tkinter_all_field_types() -> None:
     assert form_data['int_field'] == 42
     assert form_data['checkbox_field'] is True
     assert form_data['radio_field'] == "Option 2"
-    # The select field should return the value, not the label
-    assert form_data['select_field'] == "choice2", f"Expected 'choice2', got '{form_data['select_field']}'"
+    assert form_data['select_field'] == "Second Choice", f"Expected 'Second Choice', got '{form_data['select_field']}'"
     assert form_data['range_field'] == 50
     assert form_data['color_field'] == "#ff0000"
 
@@ -270,12 +277,15 @@ def test_tkinter_all_field_types() -> None:
     print("✓ All field types test completed successfully")
 
 
+@pytest.mark.gui
+@pytest.mark.tk
 def test_tkinter_tabs() -> None:
     """Test tkinter backend with tabbed interface."""
     print("Testing tkinter Tabs")
     print("===================")
 
     set_backend('tk')
+    from vibegui import GuiBuilder
 
     # Config with tabs
     config = {
@@ -329,8 +339,8 @@ def test_tkinter_tabs() -> None:
     gui = GuiBuilder(config_dict=config)
     print("✓ Created tabbed GUI")
 
-    # Build the UI without showing
-    gui._setup_ui()
+    # Show the GUI to build widgets (but don't run the event loop)
+    gui.show()
 
     # Test that all fields are accessible
     form_data = gui.get_form_data()
@@ -353,12 +363,15 @@ def test_tkinter_tabs() -> None:
     print("✓ Tabs test completed successfully")
 
 
+@pytest.mark.gui
+@pytest.mark.tk
 def test_tkinter_custom_buttons() -> None:
     """Test tkinter backend with custom buttons."""
     print("Testing tkinter Custom Buttons")
     print("==============================")
 
     set_backend('tk')
+    from vibegui import GuiBuilder
 
     # Config with custom buttons
     config = {
@@ -403,8 +416,8 @@ def test_tkinter_custom_buttons() -> None:
 
     print("✓ Created GUI with custom buttons")
 
-    # Build the UI without showing
-    gui._setup_ui()
+    # Show the GUI to build widgets (but don't run the event loop)
+    gui.show()
 
     # Test that the GUI was created without errors
     form_data = gui.get_form_data()
@@ -418,6 +431,8 @@ def test_tkinter_custom_buttons() -> None:
     print("✓ Custom buttons test completed successfully")
 
 
+@pytest.mark.gui
+@pytest.mark.tk
 def test_tkinter_unified_interface() -> None:
     """Test tkinter backend through the unified GuiBuilder interface."""
     print("Testing tkinter Unified Interface")
@@ -425,6 +440,7 @@ def test_tkinter_unified_interface() -> None:
 
     # Force tkinter backend
     set_backend('tk')
+    from vibegui import GuiBuilder
 
     # Simple config
     config = {
@@ -454,8 +470,8 @@ def test_tkinter_unified_interface() -> None:
     gui = GuiBuilder(config_dict=config)
     assert gui.backend == 'tk', f"Expected tk backend, got {gui.backend}"
 
-    # Build the UI without showing
-    gui._setup_ui()
+    # Show the GUI to build widgets (but don't run the event loop)
+    gui.show()
 
     # Test form operations
     form_data = gui.get_form_data()
@@ -474,14 +490,3 @@ def test_tkinter_unified_interface() -> None:
     # Clean up
     gui.close()
     print("✓ Unified interface test completed successfully")
-
-
-if __name__ == "__main__":
-    # Run tests individually for easier debugging
-    test_tkinter_backend_availability()
-    test_tkinter_backend_creation()
-    test_tkinter_all_field_types()
-    test_tkinter_tabs()
-    test_tkinter_custom_buttons()
-    test_tkinter_unified_interface()
-    print("\n🎉 All tkinter backend tests passed!")

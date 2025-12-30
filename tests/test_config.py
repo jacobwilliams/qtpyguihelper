@@ -11,9 +11,10 @@ import json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from vibegui.config_loader import ConfigLoader
+from vibegui.exceptions import ConfigurationError
 
 
-def test_config_loading():
+def test_config_loading() -> None:
     """Test loading and validation of example configurations."""
     print("Testing vibegui Configuration Loading...")
     print("=" * 50)
@@ -58,7 +59,7 @@ def test_config_loading():
     assert True, "All configuration tests passed!"
 
 
-def test_programmatic_config():
+def test_programmatic_config() -> None:
     """Test creating configuration programmatically."""
     print("\nTesting Programmatic Configuration...")
     print("-" * 40)
@@ -100,7 +101,7 @@ def test_programmatic_config():
         assert False, f"  ✗ Error: {e}"
 
 
-def test_config_validation():
+def test_config_validation() -> None:
     """Test configuration validation."""
     print("\nTesting Configuration Validation...")
     print("-" * 40)
@@ -140,22 +141,25 @@ def test_config_validation():
         try:
             loader.load_from_dict(invalid_config)
             assert False, f"✗ {test_name}: Should have failed but didn't"
-        except ValueError:
+        except (ValueError, ConfigurationError):
             print(f"  ✓ {test_name}: Correctly rejected")
         except Exception as e:
             assert False, f"✗ {test_name}: Unexpected error: {e}"
 
     # Test configurations that should be valid
     valid_configs = [
-        # Empty fields array is OK
-        {"fields": []},
         # Minimal valid field
-        {"fields": [{"name": "test", "type": "text", "label": "Test"}]}
+        {"fields": [{"name": "test", "type": "text", "label": "Test"}]},
+        # Multiple fields with different types
+        {"fields": [
+            {"name": "text_field", "type": "text", "label": "Text"},
+            {"name": "number_field", "type": "number", "label": "Number"}
+        ]}
     ]
 
     valid_test_names = [
-        "Empty fields array (should be valid)",
-        "Minimal valid field"
+        "Minimal valid field",
+        "Multiple fields with different types"
     ]
 
     for valid_config, test_name in zip(valid_configs, valid_test_names):

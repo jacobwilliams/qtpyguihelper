@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Test tkinter GUI with run() method."""
 
+import pytest
 from vibegui import set_backend, GuiBuilder
 
+@pytest.mark.gui
+@pytest.mark.tk
 def test_tkinter_gui() -> None:
     # Set tkinter backend
     set_backend('tk')

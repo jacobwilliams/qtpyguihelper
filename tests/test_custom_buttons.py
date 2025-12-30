@@ -7,15 +7,17 @@ import sys
 import os
 import json
 import tempfile
+import pytest
 from pathlib import Path
 
 # Add the vibegui module to the path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from vibegui import GuiBuilder, ConfigLoader, CustomButtonConfig
+from vibegui.exceptions import ConfigurationError
 
 
-def test_custom_button_config():
+def test_custom_button_config() -> None:
     """Test CustomButtonConfig dataclass."""
     print("Testing CustomButtonConfig...")
 
@@ -50,7 +52,7 @@ def test_custom_button_config():
     print("✓ CustomButtonConfig tests passed")
 
 
-def test_config_loader_custom_buttons():
+def test_config_loader_custom_buttons() -> None:
     """Test ConfigLoader with custom buttons."""
     print("Testing ConfigLoader with custom buttons...")
 
@@ -102,7 +104,7 @@ def test_config_loader_custom_buttons():
     print("✓ ConfigLoader custom buttons tests passed")
 
 
-def test_config_validation():
+def test_config_validation() -> None:
     """Test configuration validation for custom buttons."""
     print("Testing custom buttons configuration validation...")
 
@@ -157,17 +159,19 @@ def test_config_validation():
             loader.load_from_dict(invalid_config)
             print(f"✗ Invalid configuration {i+1} was accepted")
             assert False, f"Invalid configuration {i+1} should have been rejected"
-        except ValueError:
+        except (ValueError, ConfigurationError):
             print(f"✓ Invalid configuration {i+1} correctly rejected")
         except Exception as e:
             print(f"✗ Invalid configuration {i+1} rejected with unexpected error: {e}")
-            assert False, f"Invalid configuration {i+1} should have raised ValueError"
+            assert False, f"Invalid configuration {i+1} should have raised ValueError or ConfigurationError"
 
     print("✓ Configuration validation tests passed")
     assert True, "All configuration validation tests passed"
 
 
-def test_gui_builder_custom_buttons():
+@pytest.mark.gui
+@pytest.mark.qt
+def test_gui_builder_custom_buttons() -> None:
     """Test GuiBuilder with custom buttons."""
     print("Testing GuiBuilder with custom buttons...")
 
@@ -226,7 +230,7 @@ def test_gui_builder_custom_buttons():
         # Test callback registration
         callback_called = {"value": False}
 
-        def test_callback(form_data):
+        def test_callback(form_data: dict) -> None:
             callback_called["value"] = True
             assert isinstance(form_data, dict)
 
@@ -239,7 +243,7 @@ def test_gui_builder_custom_buttons():
         gui.remove_custom_button_callback("test_btn")
 
         # Test setting another callback to ensure the methods work
-        def another_callback(_form_data):
+        def another_callback(_form_data: dict) -> None:
             pass
 
         gui.set_custom_button_callback("action_btn", another_callback)
@@ -259,7 +263,9 @@ def test_gui_builder_custom_buttons():
             pass
 
 
-def test_no_custom_buttons():
+@pytest.mark.gui
+@pytest.mark.qt
+def test_no_custom_buttons() -> None:
     """Test that configurations without custom buttons still work."""
     print("Testing configuration without custom buttons...")
 

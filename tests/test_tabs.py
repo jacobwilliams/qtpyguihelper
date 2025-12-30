@@ -11,9 +11,10 @@ import json
 sys.path.insert(0, os.path.dirname(__file__))
 
 from vibegui.config_loader import ConfigLoader
+from vibegui.exceptions import ConfigurationError
 
 
-def test_tab_configuration():
+def test_tab_configuration() -> None:
     """Test loading and validation of tab configurations."""
     print("Testing Tab Configuration Features...")
     print("=" * 50)
@@ -126,7 +127,7 @@ def test_tab_configuration():
             config = loader.load_from_dict(invalid_config)
             print(f"   ✗ {test_name}: Should have failed but didn't")
             assert False, f"Test {i+1} failed to raise expected exception"
-        except ValueError:
+        except (ValueError, ConfigurationError):
             print(f"   ✓ {test_name}: Correctly rejected")
         except Exception as e:
             print(f"   ✗ {test_name}: Unexpected error: {e}")

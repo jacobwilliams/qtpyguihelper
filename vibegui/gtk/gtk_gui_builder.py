@@ -443,7 +443,7 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
         try:
             self._handle_submit_click()
         except Exception as e:
-            self._show_error(f"Error submitting form: {str(e)}")
+            self._show_error("Submit Error", f"Error submitting form: {str(e)}")
 
     def _on_form_submitted(self, form_data: Dict[str, Any]) -> None:
         """GTK-specific post-submit action - show form data if no callback."""
@@ -455,7 +455,7 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
         try:
             self._handle_cancel_click()
         except Exception as e:
-            self._show_error(f"Error in cancel callback: {str(e)}")
+            self._show_error("Cancel Error", f"Error in cancel callback: {str(e)}")
 
     def _on_form_cancelled(self) -> None:
         """GTK-specific post-cancel action - quit if no callback."""
@@ -475,7 +475,7 @@ class GtkGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin,
                 # Default behavior
                 self._show_info("Button Clicked", f"Custom button '{button_config.label}' clicked")
         except Exception as e:
-            self._show_error(f"Error in custom button callback: {str(e)}")
+            self._show_error("Button Error", f"Error in custom button callback: {str(e)}")
 
     def _show_form_data(self, data: Dict[str, Any]) -> None:
         """Show form data in a dialog (default submit behavior)."""

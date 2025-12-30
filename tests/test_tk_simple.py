@@ -5,7 +5,10 @@ Simple tkinter test to check if basic window creation works on macOS.
 
 import sys
 import traceback
+import pytest
 
+@pytest.mark.gui
+@pytest.mark.tk
 def test_basic_tkinter():
     """Test basic tkinter window creation."""
     print("Testing basic tkinter functionality...")
@@ -49,6 +52,8 @@ def test_basic_tkinter():
         traceback.print_exc()
         assert False, "tkinter basic test failed"
 
+@pytest.mark.gui
+@pytest.mark.tk
 def test_tkinter_with_widgets():
     """Test tkinter with various widget types."""
     print("\nTesting tkinter with various widgets...")
