@@ -18,10 +18,10 @@ sys.path.insert(0, os.path.abspath('../vibegui'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'vibegui'
-copyright = '2025, vibegui Team'
-author = 'vibegui Team'
-release = '1.0.1'
-version = '1.0.1'
+copyright = '2025, Jacob Williams'
+author = 'Jacob Williams'
+release = '1.0.2'
+version = '1.0.2'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

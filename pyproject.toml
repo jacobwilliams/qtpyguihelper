@@ -4,16 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vibegui"
-version = "1.0.1"
-description = "A Python library for creating cross-platform GUIs from JSON configuration files. Supports Qt (PySide6/PyQt6), wxPython, tkinter, GTK3/GTK4, and Flet backends."
+version = "1.0.2"
+description = "A Python library to create simple GUIs and read/write config data using multiple backends (Qtpy/PySide6/PyQt, WxPython, TKinter, GTK3/GTK4, and Flet) using a JSON schema."
 readme = "README.md"
 requires-python = ">=3.8"
 license = "MIT"
 authors = [
-    {name = "vibegui Team"},
+    {name = "Jacob Williams"},
 ]
 maintainers = [
-    {name = "vibegui Team"},
+    {name = "Jacob Williams"},
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
