@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 from vibegui.config_loader import ConfigLoader
-from vibegui.qt.widget_factory import WidgetFactory
+from vibegui.qt.qt_widget_factory import WidgetFactory
 from qtpy.QtWidgets import QSpinBox, QDoubleSpinBox
 
 

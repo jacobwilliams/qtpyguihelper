@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from vibegui.config_loader import ConfigLoader
-from vibegui.qt.widget_factory import WidgetFactory
+from vibegui.qt.qt_widget_factory import WidgetFactory
 
 
 def test_float_field_configuration():

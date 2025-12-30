@@ -6,7 +6,7 @@ This section documents the different GUI backend implementations.
 Qt Backend
 ----------
 
-.. automodule:: vibegui.qt.gui_builder
+.. automodule:: vibegui.qt.qt_gui_builder
    :members:
    :undoc-members:
    :show-inheritance:

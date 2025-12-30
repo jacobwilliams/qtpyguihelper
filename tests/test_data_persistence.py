@@ -12,7 +12,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(__file__))
 
 from vibegui.config_loader import ConfigLoader
-from vibegui.qt.gui_builder import GuiBuilder
+from vibegui.qt.qt_gui_builder import GuiBuilder
 
 
 def test_data_persistence() -> None:

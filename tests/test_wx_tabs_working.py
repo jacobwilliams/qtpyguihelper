@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-def test_wx_tabs():
+def test_wx_tabs() -> None:
     """Test wxPython backend with tabs using the existing tabbed_config.json."""
     print("Testing wxPython backend with tabs...")
 
@@ -33,13 +33,13 @@ def test_wx_tabs():
         # Create GUI builder with the existing configuration
         gui_builder = GuiBuilder(config_path=config_path)
 
-        def on_submit(form_data):
+        def on_submit(form_data: dict) -> None:
             print("wxPython tabs form submitted:")
             for key, value in form_data.items():
                 print(f"  {key}: {value}")
             wx.MessageBox("Configuration saved successfully!", "Success", wx.OK | wx.ICON_INFORMATION)
 
-        def on_cancel():
+        def on_cancel() -> None:
             print("wxPython tabs form cancelled")
 
         # Register callbacks

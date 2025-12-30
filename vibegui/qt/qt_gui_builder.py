@@ -18,7 +18,7 @@ from qtpy.QtGui import QIcon
 
 from ..config_loader import ConfigLoader, GuiConfig
 from ..utils import CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin
-from .widget_factory import WidgetFactory
+from .qt_widget_factory import WidgetFactory
 
 
 class GuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, QMainWindow):

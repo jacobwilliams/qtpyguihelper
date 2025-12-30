@@ -19,7 +19,7 @@ except ImportError:
     # Direct execution - use absolute import
     from wx_test_utils import run_wx_gui_for_test, create_wx_app, cleanup_wx_test
 
-def test_wx_backend():
+def test_wx_backend() -> None:
     """Test basic wxPython backend functionality."""
     print("Testing wxPython backend...")
 
@@ -71,14 +71,14 @@ def test_wx_backend():
             ]
         }
 
-        def on_submit(form_data):
+        def on_submit(form_data: dict) -> None:
             print("Form submitted:", form_data)
             try:
                 wx.MessageBox("Form submitted successfully!", "Success", wx.OK | wx.ICON_INFORMATION)  # type: ignore
             except AttributeError:
                 print("✓ Form submitted successfully!")
 
-        def on_cancel():
+        def on_cancel() -> None:
             print("Form cancelled")
             try:
                 wx.MessageBox("Form cancelled by user", "Cancelled", wx.OK | wx.ICON_INFORMATION)  # type: ignore

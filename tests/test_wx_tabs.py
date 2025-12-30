@@ -15,7 +15,7 @@ except ImportError:
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-def test_wx_tabs():
+def test_wx_tabs() -> None:
     """Test wxPython backend with tabs to verify field expansion."""
     print("Testing wxPython Backend with Tabs...")
 
@@ -45,7 +45,7 @@ def test_wx_tabs():
     gui_builder = WxGuiBuilder(config_path=config_path)
 
     # Set up callbacks
-    def on_submit(form_data):
+    def on_submit(form_data: dict) -> None:
         try:
             print("wxPython tabs form submitted:")
             print("="*50)
@@ -59,11 +59,11 @@ def test_wx_tabs():
             wx.MessageBox(f"Error saving configuration: {e}",
                             "Error", wx.OK | wx.ICON_ERROR)
 
-    def on_cancel():
+    def on_cancel() -> None:
         print("wxPython tabs form cancelled")
         wx.MessageBox("Configuration cancelled by user", "Cancelled", wx.OK | wx.ICON_INFORMATION)
 
-    def load_defaults(_form_data):
+    def load_defaults(_form_data: dict) -> None:
         """Load default configuration values."""
         defaults = {
             "app_name": "My Demo Application",
@@ -90,7 +90,7 @@ def test_wx_tabs():
         wx.MessageBox("Default configuration values loaded successfully!",
                         "Defaults Loaded", wx.OK | wx.ICON_INFORMATION)
 
-    def clear_all(_form_data):
+    def clear_all(_form_data: dict) -> None:
         """Clear all form fields."""
         result = wx.MessageBox("Are you sure you want to clear all fields?",
                                 "Confirm Clear", wx.YES_NO | wx.ICON_QUESTION)

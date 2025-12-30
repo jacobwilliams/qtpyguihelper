@@ -37,8 +37,8 @@ from typing import Callable, Any, Dict, Optional
 
 def _lazy_import_qt() -> tuple:
     """Lazy import Qt backend."""
-    from .qt.gui_builder import GuiBuilder as QtGuiBuilder
-    from .qt.widget_factory import WidgetFactory
+    from .qt.qt_gui_builder import GuiBuilder as QtGuiBuilder
+    from .qt.qt_widget_factory import WidgetFactory
     return QtGuiBuilder, WidgetFactory
 
 def _lazy_import_wx() -> tuple:
@@ -131,7 +131,7 @@ class GuiBuilder:
         Args:
             config_path: Path to JSON configuration file
             config_dict: Configuration dictionary (alternative to config_path)
-            backend: Force a specific backend ('qt', 'wx', or 'tk'). If None, auto-detects.
+            backend: Force a specific backend ('qt', 'wx', 'tk', 'gtk', 'flet'). If None, auto-detects.
         """
         self._backend = None
         self._builder = None

@@ -29,7 +29,7 @@ def test_qtpy_imports():
 
         # Test library imports
         from vibegui import GuiBuilder
-        from vibegui.qt.widget_factory import WidgetFactory
+        from vibegui.qt.qt_widget_factory import WidgetFactory
         from vibegui.config_loader import ConfigLoader
         print("✓ vibegui imports successful")
         assert True, "All qtpy imports successful"

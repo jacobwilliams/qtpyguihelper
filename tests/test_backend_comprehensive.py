@@ -79,7 +79,7 @@ def test_import_safety():
         print(f"✗ GuiBuilder import error: {e}")
 
     try:
-        from vibegui.qt.gui_builder import GuiBuilder as QtGuiBuilder
+        from vibegui.qt.qt_gui_builder import GuiBuilder as QtGuiBuilder
         print("✓ QtGuiBuilder imported successfully")
     except ImportError as e:
         print(f"✗ QtGuiBuilder import error: {e}")
@@ -133,7 +133,7 @@ def test_widget_factories():
     print("=== Widget Factory Test ===")
 
     try:
-        from vibegui.qt.widget_factory import WidgetFactory
+        from vibegui.qt.qt_widget_factory import WidgetFactory
         _qt_factory = WidgetFactory()
         print("✓ Qt WidgetFactory created successfully")
     except (ImportError, RuntimeError) as e:

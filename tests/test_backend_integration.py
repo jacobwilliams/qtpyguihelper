@@ -114,7 +114,7 @@ def test_widget_factory_imports():
     print("\n=== Widget Factory Import Test ===")
 
     try:
-        from vibegui.qt.widget_factory import WidgetFactory
+        from vibegui.qt.qt_widget_factory import WidgetFactory
         from vibegui.wx.wx_widget_factory import WxWidgetFactory
 
         # Test that we can create factory instances

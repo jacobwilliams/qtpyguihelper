@@ -46,7 +46,7 @@ def test_nested_value_support():
 
         # Import the appropriate widget factory
         if backend_name == "qt":
-            from vibegui.qt.widget_factory import WidgetFactory
+            from vibegui.qt.qt_widget_factory import WidgetFactory
         elif backend_name == "wx":
             from vibegui.wx.wx_widget_factory import WxWidgetFactory as WidgetFactory
         elif backend_name == "tk":
