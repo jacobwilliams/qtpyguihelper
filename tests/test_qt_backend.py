@@ -69,8 +69,9 @@ def test_qt_backend() -> None:
     def on_submit(form_data: dict) -> None:
         print("Form submitted:", form_data)
 
-    def on_cancel() -> None:
-        print("Form cancelled")
+    # don't do this, just let the dialog close on cancel
+    # def on_cancel() -> None:
+    #     print("Form cancelled")
 
     # Create GUI
     gui = GuiBuilder(config_dict=config)

@@ -314,8 +314,10 @@ class WxGuiBuilder(CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, 
         self._handle_cancel_click()
 
     def _on_form_cancelled(self) -> None:
-        """Wx-specific: print confirmation after cancel."""
-        print("Form cancelled")
+        """Wx-specific: close if no callback."""
+        # Close the dialog if no custom cancel callback was set
+        if not self.cancel_callback:
+            self.Close()
 
     def _on_custom_button_clicked(self, button_name: str) -> None:
         """Handle custom button click."""

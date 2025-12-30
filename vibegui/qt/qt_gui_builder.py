@@ -334,8 +334,11 @@ class GuiBuilder(ButtonHandlerMixin, ConfigLoaderMixin, CallbackManagerMixin, Va
         self._handle_cancel_click()
 
     def _on_form_cancelled(self) -> None:
-        """Qt-specific: emit signal after cancel."""
+        """Qt-specific: emit signal after cancel and close if no callback."""
         self.formCancelled.emit()
+        # Close the dialog if no custom cancel callback was set
+        if not self.cancel_callback:
+            self.close()
 
     def _on_custom_button_clicked(self, button_name: str) -> None:
         """Handle custom button click."""

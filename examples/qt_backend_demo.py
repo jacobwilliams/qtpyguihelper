@@ -6,6 +6,9 @@ This demonstrates the flexibility of using qtpy for Qt binding compatibility.
 
 import os
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 def demo_pyside6() -> None:
     """Demo using PySide6 backend."""
