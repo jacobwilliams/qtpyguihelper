@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-def test_backend_detection():
+def test_backend_detection() -> None:
     """Test backend detection and availability."""
     print("=== Backend Detection Test ===")
 
@@ -26,7 +26,7 @@ def test_backend_detection():
 
     assert len(available) > 0, "No available backends detected"
 
-def test_backend_switching():
+def test_backend_switching() -> None:
     """Test switching between backends."""
     print("\n=== Backend Switching Test ===")
 
@@ -47,7 +47,7 @@ def test_backend_switching():
 
     assert True, "All backends tested successfully"
 
-def test_unified_interface():
+def test_unified_interface() -> None:
     """Test the unified GuiBuilder interface."""
     print("\n=== Unified Interface Test ===")
 
@@ -101,7 +101,7 @@ def test_unified_interface():
         print(f"✗ Unified interface test failed: {e}")
         assert False, "Unified interface test failed"
 
-def test_widget_factories():
+def test_widget_factories() -> None:
     """Test that both widget factories can be imported and work."""
     print("\n=== Widget Factory Test ===")
 
@@ -129,7 +129,7 @@ def test_widget_factories():
         print(f"✗ Widget factory test failed: {e}")
         assert False, "Widget factory test failed"
 
-def test_configuration_loading():
+def test_configuration_loading() -> None:
     """Test configuration loading with all backends."""
     print("\n=== Configuration Loading Test ===")
 

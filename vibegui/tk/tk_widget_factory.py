@@ -705,7 +705,25 @@ class TkWidgetFactory(NestedValueMixin):
         widget = self.widgets[field_name]
 
         try:
-            if isinstance(widget, tk.Entry):
+            if isinstance(widget, ttk.Combobox):
+                if value is not None:
+                    # Try to find and set the value
+                    options = getattr(widget, '_field_options', [])
+                    found = False
+                    for i, option in enumerate(options):
+                        if isinstance(option, dict):
+                            if option.get('value') == str(value) or option.get('label') == str(value):
+                                widget.current(i)
+                                found = True
+                                break
+                        elif str(option) == str(value):
+                            widget.current(i)
+                            found = True
+                            break
+                    # If not found by value/label, try setting the text directly
+                    if not found:
+                        widget.set(str(value))
+            elif isinstance(widget, tk.Entry):
                 # Handle placeholder removal
                 try:
                     if widget.cget('fg') == 'grey':
@@ -731,18 +749,6 @@ class TkWidgetFactory(NestedValueMixin):
                     widget._entry.delete(0, tk.END)
                     if value is not None:
                         widget._entry.insert(0, str(value))
-            elif isinstance(widget, ttk.Combobox):
-                if value is not None:
-                    # Try to find and set the value
-                    options = getattr(widget, '_field_options', [])
-                    for i, option in enumerate(options):
-                        if isinstance(option, dict):
-                            if option.get('value') == str(value) or option.get('label') == str(value):
-                                widget.current(i)
-                                break
-                        elif str(option) == str(value):
-                            widget.current(i)
-                            break
             elif isinstance(widget, tk.Spinbox):
                 widget.delete(0, tk.END)
                 if value is not None:

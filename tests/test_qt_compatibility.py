@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 
-def test_qtpy_imports():
+def test_qtpy_imports() -> None:
     """Test that qtpy imports work correctly."""
     print("Testing qtpy imports...")
 
@@ -39,7 +39,7 @@ def test_qtpy_imports():
         assert False, "Import error occurred"
 
 
-def test_simple_gui_creation():
+def test_simple_gui_creation() -> None:
     """Test creating a simple GUI without showing it."""
     print("\nTesting GUI creation...")
 
@@ -77,7 +77,7 @@ def test_simple_gui_creation():
         assert False, "GUI creation failed"
 
 
-def test_available_backends():
+def test_available_backends() -> None:
     """Test which Qt backends are available."""
     print("\nTesting available Qt backends...")
 

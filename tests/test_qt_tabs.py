@@ -9,7 +9,7 @@ import os
 # Add the library to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-def test_qt_tabs():
+def test_qt_tabs() -> None:
     """Test Qt backend with tabs to verify field expansion."""
     print("Testing Qt Backend with Tabs...")
 
@@ -38,7 +38,7 @@ def test_qt_tabs():
         gui_builder = GuiBuilder(config_path=config_path)
 
         # Set up callbacks
-        def on_submit(form_data):
+        def on_submit(form_data: dict) -> None:
             try:
                 print("Qt tabs form submitted:")
                 print("="*50)
@@ -59,7 +59,7 @@ def test_qt_tabs():
                 msg.setText(f"Error saving configuration: {e}")
                 msg.exec()
 
-        def on_cancel():
+        def on_cancel() -> None:
             print("Qt tabs form cancelled")
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
@@ -67,7 +67,7 @@ def test_qt_tabs():
             msg.setText("Configuration cancelled by user")
             msg.exec()
 
-        def load_defaults(_form_data):
+        def load_defaults(_form_data: dict) -> None:
             """Load default configuration values."""
             defaults = {
                 "app_name": "My Demo Application",
@@ -98,7 +98,7 @@ def test_qt_tabs():
             msg.setText("Default configuration values loaded successfully!")
             msg.exec()
 
-        def clear_all(_form_data):
+        def clear_all(_form_data: dict) -> None:
             """Clear all form fields."""
             reply = QMessageBox.question(
                 None,

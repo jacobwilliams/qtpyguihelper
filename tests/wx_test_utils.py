@@ -7,7 +7,7 @@ import sys
 import os
 
 
-def run_wx_gui_for_test(app, gui):
+def run_wx_gui_for_test(app: object, gui: object) -> None:
     """
     Helper function to run wxPython GUI appropriately for test environment.
 
@@ -21,7 +21,7 @@ def run_wx_gui_for_test(app, gui):
     app.MainLoop()
 
 
-def is_running_under_pytest():
+def is_running_under_pytest() -> bool:
     """Check if we're running under pytest."""
     # More reliable way - check for pytest-specific environment variables
     # or if we're being called by pytest
@@ -32,7 +32,7 @@ def is_running_under_pytest():
         any('py.test' in arg for arg in sys.argv)
     )
 
-def create_wx_app():
+def create_wx_app() -> object:
     """
     Create or get existing wx.App instance.
     Properly handles multiple test scenarios and Qt/wx conflicts.
@@ -77,7 +77,7 @@ def create_wx_app():
         raise
 
 
-def safe_wx_message_box(message, title="Info", style=None):
+def safe_wx_message_box(message: str, title: str = "Info", style: object = None) -> None:
     """
     Show a message box safely, handling cases where wx might not be available.
 
@@ -101,7 +101,7 @@ def safe_wx_message_box(message, title="Info", style=None):
         print(f"{title}: {message}")
 
 
-def cleanup_wx_test():
+def cleanup_wx_test() -> None:
     """
     Clean up after wxPython test to prevent conflicts between tests.
     """

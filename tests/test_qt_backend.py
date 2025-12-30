@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from vibegui import set_backend, GuiBuilder
 
 
-def test_qt_backend():
+def test_qt_backend() -> None:
     """Test basic Qt backend functionality."""
     print("Testing Qt backend...")
 
@@ -66,10 +66,10 @@ def test_qt_backend():
         ]
     }
 
-    def on_submit(form_data):
+    def on_submit(form_data: dict) -> None:
         print("Form submitted:", form_data)
 
-    def on_cancel():
+    def on_cancel() -> None:
         print("Form cancelled")
 
     # Create GUI

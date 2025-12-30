@@ -3,7 +3,7 @@
 
 from vibegui import set_backend, GuiBuilder
 
-def test_tkinter_gui():
+def test_tkinter_gui() -> None:
     # Set tkinter backend
     set_backend('tk')
 

@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from vibegui import set_backend, GuiBuilder, get_backend_info
 
 
-def test_tkinter_comprehensive():
+def test_tkinter_comprehensive() -> None:
     """Comprehensive test of tkinter backend functionality."""
     print("Comprehensive tkinter Backend Test")
     print("==================================")
@@ -55,6 +55,7 @@ def test_tkinter_comprehensive():
     }
 
     gui1 = GuiBuilder(config_dict=config)
+    gui1._setup_ui()  # Build UI to create widgets
     form_data1 = gui1.get_form_data()
     print(f"✓ Created GUI with {len(form_data1)} fields")
 
@@ -89,6 +90,7 @@ def test_tkinter_comprehensive():
     }
 
     gui2 = GuiBuilder(config_dict=tabbed_config)
+    gui2._setup_ui()  # Build UI to create widgets
     form_data2 = gui2.get_form_data()
     print(f"✓ Created tabbed GUI with {len(form_data2)} fields")
 
@@ -115,13 +117,14 @@ def test_tkinter_comprehensive():
     }
 
     button_clicks = []
-    def button_handler(button_config, form_data):
+    def button_handler(button_config: dict, form_data: dict) -> None:
         button_clicks.append(button_config.name)
         print(f"Button '{button_config.name}' clicked with data: {len(form_data)} fields")
 
     gui3 = GuiBuilder(config_dict=button_config)
     gui3.set_custom_button_callback('clear', button_handler)
     gui3.set_custom_button_callback('reset', button_handler)
+    gui3._setup_ui()  # Build UI to create widgets
     print("✓ Created GUI with custom buttons")
 
     form_data3 = gui3.get_form_data()
@@ -141,11 +144,13 @@ def test_tkinter_comprehensive():
             {"name": "int_field", "type": "int", "label": "Integer"},
             {"name": "checkbox_field", "type": "checkbox", "label": "Checkbox"},
             {"name": "select_field", "type": "select", "label": "Select",
-             "options": [{"label": "Option A", "value": "a"}, {"label": "Option B", "value": "b"}]}
+             "options": [{"label": "Option A", "value": "a"}, {"label": "Option B", "value": "b"}],
+             "default_value": "a"}
         ]
     }
 
     gui4 = GuiBuilder(config_dict=manipulation_config)
+    gui4._setup_ui()  # Build UI to create widgets
 
     # Set values
     gui4.set_field_value('text_field', 'new text')

@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from vibegui import GuiBuilder, set_backend, get_backend_info, is_backend_available
 
 
-def test_tkinter_backend_availability():
+def test_tkinter_backend_availability() -> None:
     """Test that tkinter backend is available."""
     print("Testing tkinter Backend Availability")
     print("====================================")
@@ -22,7 +22,7 @@ def test_tkinter_backend_availability():
     print("✓ tkinter backend is available")
 
 
-def test_tkinter_backend_creation():
+def test_tkinter_backend_creation() -> None:
     """Test that we can create a tkinter GUI builder without showing it."""
     print("Testing tkinter Backend Creation")
     print("================================")
@@ -76,6 +76,9 @@ def test_tkinter_backend_creation():
     # Verify it's using tkinter
     assert gui.backend == 'tk', f"Expected tk backend, got {gui.backend}"
 
+    # Build the UI without showing (needed for tkinter to create widgets)
+    gui._setup_ui()
+
     # Test getting form data
     form_data = gui.get_form_data()
     print(f"✓ Form data: {form_data}")
@@ -105,7 +108,7 @@ def test_tkinter_backend_creation():
     print("✓ GUI closed successfully")
 
 
-def test_tkinter_all_field_types():
+def test_tkinter_all_field_types() -> None:
     """Test that all field types can be created with tkinter backend."""
     print("Testing All tkinter Field Types")
     print("===============================")
@@ -238,6 +241,9 @@ def test_tkinter_all_field_types():
     gui = GuiBuilder(config_dict=config)
     print(f"✓ Created GUI with {len(config['fields'])} field types")
 
+    # Build the UI without showing
+    gui._setup_ui()
+
     # Test that all fields were created
     form_data = gui.get_form_data()
     field_names = [field['name'] for field in config['fields']]
@@ -264,7 +270,7 @@ def test_tkinter_all_field_types():
     print("✓ All field types test completed successfully")
 
 
-def test_tkinter_tabs():
+def test_tkinter_tabs() -> None:
     """Test tkinter backend with tabbed interface."""
     print("Testing tkinter Tabs")
     print("===================")
@@ -323,6 +329,9 @@ def test_tkinter_tabs():
     gui = GuiBuilder(config_dict=config)
     print("✓ Created tabbed GUI")
 
+    # Build the UI without showing
+    gui._setup_ui()
+
     # Test that all fields are accessible
     form_data = gui.get_form_data()
     expected_fields = ["personal_name", "personal_age", "contact_email", "contact_phone"]
@@ -344,7 +353,7 @@ def test_tkinter_tabs():
     print("✓ Tabs test completed successfully")
 
 
-def test_tkinter_custom_buttons():
+def test_tkinter_custom_buttons() -> None:
     """Test tkinter backend with custom buttons."""
     print("Testing tkinter Custom Buttons")
     print("==============================")
@@ -383,7 +392,7 @@ def test_tkinter_custom_buttons():
     # Track button clicks
     button_clicks = []
 
-    def custom_button_handler(button_config, form_data):
+    def custom_button_handler(button_config: dict, form_data: dict) -> None:
         button_clicks.append(button_config.name)
         print(f"Custom button clicked: {button_config.name} with data: {form_data}")
 
@@ -393,6 +402,9 @@ def test_tkinter_custom_buttons():
     gui.set_custom_button_callback('preset_button', custom_button_handler)
 
     print("✓ Created GUI with custom buttons")
+
+    # Build the UI without showing
+    gui._setup_ui()
 
     # Test that the GUI was created without errors
     form_data = gui.get_form_data()
@@ -406,7 +418,7 @@ def test_tkinter_custom_buttons():
     print("✓ Custom buttons test completed successfully")
 
 
-def test_tkinter_unified_interface():
+def test_tkinter_unified_interface() -> None:
     """Test tkinter backend through the unified GuiBuilder interface."""
     print("Testing tkinter Unified Interface")
     print("=================================")
@@ -441,6 +453,9 @@ def test_tkinter_unified_interface():
     # Test that unified GuiBuilder uses tkinter backend
     gui = GuiBuilder(config_dict=config)
     assert gui.backend == 'tk', f"Expected tk backend, got {gui.backend}"
+
+    # Build the UI without showing
+    gui._setup_ui()
 
     # Test form operations
     form_data = gui.get_form_data()

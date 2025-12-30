@@ -5,7 +5,7 @@ import pytest
 from vibegui.backend import get_available_backends
 
 
-def test_nested_value_support():
+def test_nested_value_support() -> None:
     """Test that all backends support nested values with dot notation."""
     # Test data with nested structure
     nested_data = {
@@ -64,19 +64,19 @@ def test_nested_value_support():
         # Create mock widgets for testing
         # We'll just add simple string storage for testing
         class MockWidget:
-            def __init__(self):
+            def __init__(self) -> None:
                 self.value = ""
 
         for field_name in nested_data.keys():
             factory.widgets[field_name] = MockWidget()
 
         # Mock get_widget_value and set_widget_value if needed
-        def get_widget_value(field_name):
+        def get_widget_value(field_name: str) -> object:
             if field_name in factory.widgets:
                 return factory.widgets[field_name].value
             return None
 
-        def set_widget_value(field_name, value):
+        def set_widget_value(field_name: str, value: object) -> bool:
             if field_name in factory.widgets:
                 factory.widgets[field_name].value = value
                 return True
@@ -125,7 +125,7 @@ def test_nested_value_support():
         print(f"  ✓ {backend_name} nested value support verified!")
 
 
-def test_nested_value_helper_functions():
+def test_nested_value_helper_functions() -> None:
     """Test the helper functions used by NestedValueMixin."""
     from vibegui.utils import set_nested_value, flatten_nested_dict
 

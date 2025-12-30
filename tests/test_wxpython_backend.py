@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from vibegui import GuiBuilder, set_backend, get_backend_info, is_backend_available
 
-def test_wxpython_backend_creation():
+def test_wxpython_backend_creation() -> None:
     """Test that we can create a wxPython GUI builder without showing it."""
     print("Testing wxPython Backend Creation")
     print("=================================")
@@ -82,7 +82,7 @@ def test_wxpython_backend_creation():
         print(f"✓ GUI builder backend: {gui_builder.backend}")
 
         # Test setting callbacks
-        def test_callback(data):
+        def test_callback(data: dict) -> None:
             print(f"Test callback called with: {data}")
 
         gui_builder.set_submit_callback(test_callback)
@@ -108,7 +108,7 @@ def test_wxpython_backend_creation():
         assert False, "Error creating wxPython GUI"
 
 
-def test_advanced_wxpython_features():
+def test_advanced_wxpython_features() -> None:
     """Test advanced wxPython features like custom widgets."""
     print("\nTesting Advanced wxPython Features")
     print("===================================")
@@ -189,7 +189,7 @@ def test_advanced_wxpython_features():
         assert False, "Error testing advanced wxPython features"
 
 
-def main():
+def main() -> None:
     """Run all tests."""
     print("wxPython Backend Test Suite")
     print("===========================")
