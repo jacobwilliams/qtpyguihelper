@@ -61,11 +61,8 @@ def test_qt_tabs() -> None:
 
         def on_cancel() -> None:
             print("Qt tabs form cancelled")
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setWindowTitle("Cancelled")
-            msg.setText("Configuration cancelled by user")
-            msg.exec()
+            # Close the dialog
+            gui_builder.close()
 
         def load_defaults(_form_data: dict) -> None:
             """Load default configuration values."""
