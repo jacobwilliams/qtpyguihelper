@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('../vibegui'))
 project = 'vibegui'
 copyright = '2025, Jacob Williams'
 author = 'Jacob Williams'
-release = '1.0.3'
+release = '1.0.4'
 version = release
 
 # -- General configuration ---------------------------------------------------
