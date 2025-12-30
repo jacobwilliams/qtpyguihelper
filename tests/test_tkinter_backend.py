@@ -17,16 +17,16 @@ from vibegui import set_backend, is_backend_available
 set_backend('tk')
 
 
-# @pytest.mark.gui
-# @pytest.mark.tk
-# def test_tkinter_backend_availability() -> None:
-#     """Test that tkinter backend is available."""
-#     print("Testing tkinter Backend Availability")
-#     print("====================================")
+@pytest.mark.gui
+@pytest.mark.tk
+def test_tkinter_backend_availability() -> None:
+    """Test that tkinter backend is available."""
+    print("Testing tkinter Backend Availability")
+    print("====================================")
 
-#     # Check if tkinter is available
-#     assert is_backend_available('tk'), "tkinter backend should be available"
-#     print("✓ tkinter backend is available")
+    # Check if tkinter is available
+    assert is_backend_available('tk'), "tkinter backend should be available"
+    print("✓ tkinter backend is available")
 
 
 # @pytest.mark.gui
