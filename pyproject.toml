@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
 
 [project]
 name = "vibegui"
@@ -101,17 +101,20 @@ Repository = "https://github.com/jacobwilliams/vibegui"
 Issues = "https://github.com/jacobwilliams/vibegui/issues"
 Changelog = "https://github.com/jacobwilliams/vibegui/blob/main/CHANGELOG.md"
 
-[tool.setuptools]
-package-dir = {"" = "."}
-include-package-data = true
+[tool.hatch.build.targets.wheel]
+packages = ["vibegui"]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["vibegui*"]
-exclude = ["tests*", "docs*", "examples*"]
-
-[tool.setuptools.package-data]
-vibegui = ["*.py", "schema/*.json"]
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "tests/",
+    "docs/",
+    "examples/",
+    ".github/",
+    "*.sh",
+    "env/",
+    "media/",
+    "*.code-workspace",
+]
 
 # Black configuration
 [tool.black]
