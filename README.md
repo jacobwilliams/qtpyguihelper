@@ -1,5 +1,20 @@
 # vibegui
 
+<!-- Badges -->
+<p align="left">
+  <!-- Python version badge -->
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/language-python-blue.svg" alt="Python"></a>
+  <!-- License badge -->
+  <a href="https://github.com/jacobwilliams/vibegui/blob/master/LICENSE"><img src="https://img.shields.io/github/license/jacobwilliams/vibegui.svg" alt="License"></a>
+  <!-- PyPI badge -->
+  <a href="https://pypi.org/project/vibegui/"><img src="https://img.shields.io/pypi/v/vibegui.svg" alt="PyPI"></a>
+  <!-- conda-forge badge -->
+  <!-- <a href="https://anaconda.org/conda-forge/vibegui"><img src="https://img.shields.io/conda/vn/conda-forge/vibegui.svg" alt="Conda-Forge"></a> -->
+  <!-- GitHub Actions CI badge -->
+  <a href="https://github.com/jacobwilliams/vibegui/actions"><img src="https://github.com/jacobwilliams/vibegui/actions/workflows/docs.yml/badge.svg" alt="GitHub CI Status"></a>
+  <a href="https://github.com/jacobwilliams/vibegui/actions"><img src="https://github.com/jacobwilliams/vibegui/actions/workflows/publish.yml/badge.svg" alt="GitHub CI Status"></a>
+</p>
+
 A Python library for creating GUI applications from JSON configuration files. This library allows you to define GUI layouts, widgets, and their properties in JSON format and automatically generate the corresponding interface.
 
 **Multi-Backend Support:**
