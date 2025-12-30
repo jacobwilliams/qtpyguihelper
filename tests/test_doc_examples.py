@@ -20,7 +20,7 @@ EXAMPLE_FILES = [
     "field_change_callbacks.py",
     "nested_fields.py",
     "float_formatting.py",
-"layout_examples.py",
+    "layout_examples.py",
     "json_loading.py",
 ]
 
