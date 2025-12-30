@@ -9,7 +9,7 @@
   <!-- PyPI badge -->
   <a href="https://pypi.org/project/vibegui/"><img src="https://img.shields.io/pypi/v/vibegui.svg" alt="PyPI"></a>
   <!-- conda-forge badge -->
-  <!-- <a href="https://anaconda.org/conda-forge/vibegui"><img src="https://img.shields.io/conda/vn/conda-forge/vibegui.svg" alt="Conda-Forge"></a> -->
+  <a href="https://anaconda.org/conda-forge/vibegui"><img src="https://img.shields.io/conda/vn/conda-forge/vibegui.svg" alt="Conda-Forge"></a>
   <!-- GitHub Actions CI badge -->
   <a href="https://github.com/jacobwilliams/vibegui/actions"><img src="https://github.com/jacobwilliams/vibegui/actions/workflows/docs.yml/badge.svg" alt="GitHub CI Status"></a>
   <a href="https://github.com/jacobwilliams/vibegui/actions"><img src="https://github.com/jacobwilliams/vibegui/actions/workflows/publish.yml/badge.svg" alt="GitHub CI Status"></a>
@@ -1012,3 +1012,5 @@ open _build/html/index.html  # macOS
 * [VibeGUI repository on GitHub](https://github.com/jacobwilliams/vibegui)
 * [VibeGUI documentation](https://jacobwilliams.github.io/vibegui/)
 * [VibeGUI on PyPi](https://pypi.org/project/vibegui/)
+* [VibeGUI on Conda Forge](https://anaconda.org/channels/conda-forge/packages/vibegui/overview)
+  * [vibegui-feedstock](https://github.com/conda-forge/vibegui-feedstock)
