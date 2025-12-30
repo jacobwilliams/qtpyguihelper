@@ -94,9 +94,6 @@ docs = [
     "sphinx-autobuild>=2021.3.14",
 ]
 
-[project.scripts]
-vibegui-demo = "examples.demo:main"
-
 [project.urls]
 Homepage = "https://github.com/jacobwilliams/vibegui"
 Documentation = "https://github.com/jacobwilliams/vibegui/blob/main/README.md"
@@ -110,12 +107,11 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["vibegui*", "examples*"]
-exclude = ["tests*", "docs*"]
+include = ["vibegui*"]
+exclude = ["tests*", "docs*", "examples*"]
 
 [tool.setuptools.package-data]
 vibegui = ["*.py", "schema/*.json"]
-examples = ["*.json", "*.py", "*.md"]
 
 # Black configuration
 [tool.black]
