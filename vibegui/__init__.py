@@ -335,8 +335,8 @@ class GuiBuilder:
             raise BackendError(f"Unsupported backend: {current_backend}")
 
 
-__version__ = "1.0.0"
-__author__ = "vibegui Team"
+__version__ = "1.0.1"
+__author__ = "Jacob Williams"
 
 __all__ = [
     "GuiBuilder", "QtGuiBuilder", "WxGuiBuilder", "TkGuiBuilder", "GtkGuiBuilder",
