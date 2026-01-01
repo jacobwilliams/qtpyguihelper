@@ -13,7 +13,7 @@ from vibegui.config_loader import ConfigLoader
 from vibegui.qt.qt_widget_factory import WidgetFactory
 
 
-def test_format_strings():
+def test_format_strings() -> None:
     """Test various format string specifications."""
     print("Testing Format String Support...")
     print("=" * 50)

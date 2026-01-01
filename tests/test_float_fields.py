@@ -13,7 +13,7 @@ from vibegui.config_loader import ConfigLoader
 from vibegui.qt.qt_widget_factory import WidgetFactory
 
 
-def test_float_field_configuration():
+def test_float_field_configuration() -> None:
     """Test float field configuration loading and validation."""
     print("Testing Float Field Configuration...")
     print("=" * 50)
@@ -153,7 +153,7 @@ def test_float_field_configuration():
         assert False, f"Test failed with error: {e}"
 
 
-def test_float_format_strings():
+def test_float_format_strings() -> None:
     """Test various format string scenarios."""
     print("\nTesting Float Format Strings...")
     print("=" * 50)

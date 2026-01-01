@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import vibegui
 
 
-def main():
+def main() -> None:
     """Run tab tooltip test with specified backend."""
     backend = sys.argv[1] if len(sys.argv) > 1 else 'qt'
 

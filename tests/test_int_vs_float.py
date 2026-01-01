@@ -14,7 +14,7 @@ from vibegui.qt.qt_widget_factory import WidgetFactory
 from qtpy.QtWidgets import QSpinBox, QDoubleSpinBox
 
 
-def test_int_vs_float_fields():
+def test_int_vs_float_fields() -> None:
     """Test that int and float fields create appropriate widgets."""
     print("Testing Int vs Float Field Types...")
     print("=" * 50)

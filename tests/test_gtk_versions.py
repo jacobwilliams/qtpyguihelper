@@ -6,7 +6,7 @@ Test script for GTK version compatibility.
 import os
 import sys
 
-def test_gtk_detection():
+def test_gtk_detection() -> None:
     """Test GTK version detection."""
     print("Testing GTK version detection...")
 

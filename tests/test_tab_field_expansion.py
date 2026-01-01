@@ -13,7 +13,7 @@ from vibegui import GuiBuilder
 from qtpy.QtWidgets import QApplication
 
 
-def test_tab_field_expansion():
+def test_tab_field_expansion() -> None:
     """Test that fields in tabs expand to fit the window width."""
     print("Testing tab field expansion...")
 
@@ -91,7 +91,7 @@ def test_tab_field_expansion():
 
     gui = GuiBuilder(config_dict=config)
 
-    def on_submit(form_data):
+    def on_submit(form_data: dict) -> None:
         print("Tab form submitted:")
         for key, value in form_data.items():
             print(f"  {key}: {value}")

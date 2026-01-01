@@ -15,7 +15,7 @@ from vibegui import (
 )
 
 
-def test_backend_detection():
+def test_backend_detection() -> None:
     """Test backend detection functionality."""
     print("=== Backend Detection Test ===")
 
@@ -29,7 +29,7 @@ def test_backend_detection():
     print("✓ Backend detection working")
 
 
-def test_backend_info():
+def test_backend_info() -> None:
     """Test getting backend information."""
     print("\n=== Backend Info Test ===")
 
@@ -43,7 +43,7 @@ def test_backend_info():
     print("✓ Backend info working")
 
 
-def test_backend_switching():
+def test_backend_switching() -> None:
     """Test switching between backends."""
     print("\n=== Backend Switching Test ===")
 
@@ -64,7 +64,7 @@ def test_backend_switching():
     print("✓ Backend switching working")
 
 
-def test_unified_interface():
+def test_unified_interface() -> None:
     """Test the unified GuiBuilder interface (without creating GUI)."""
     print("\n=== Unified Interface Test ===")
 
@@ -109,7 +109,7 @@ def test_unified_interface():
     print("✓ Unified interface design working")
 
 
-def test_widget_factory_imports():
+def test_widget_factory_imports() -> None:
     """Test that widget factories can be imported."""
     print("\n=== Widget Factory Import Test ===")
 
@@ -130,7 +130,7 @@ def test_widget_factory_imports():
     assert True
 
 
-def test_config_compatibility():
+def test_config_compatibility() -> None:
     """Test that configurations work with all backends."""
     print("\n=== Configuration Compatibility Test ===")
 
