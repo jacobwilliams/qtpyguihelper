@@ -4,7 +4,7 @@ Widget factory for creating Flet controls based on field configurations.
 
 from __future__ import annotations
 
-from typing import Dict, Any, Callable, Optional, List
+from typing import Dict, Any, Callable, List
 import flet as ft
 
 from vibegui.config_loader import FieldConfig

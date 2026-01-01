@@ -3,7 +3,7 @@ Widget factory for creating tkinter widgets based on field configurations.
 """
 
 import tkinter as tk
-from tkinter import ttk, filedialog, colorchooser, messagebox
+from tkinter import ttk, filedialog, colorchooser
 from typing import Any, Dict, Optional, List, Callable
 
 from vibegui.config_loader import FieldConfig

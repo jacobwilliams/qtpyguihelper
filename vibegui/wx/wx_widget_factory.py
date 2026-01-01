@@ -3,11 +3,10 @@ wxPython widget factory for creating widgets based on field configurations.
 """
 
 import sys
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional
 import wx
-import wx.lib.scrolledpanel as scrolled
 import wx.adv
-from datetime import datetime, date, time
+from datetime import datetime
 
 from ..config_loader import FieldConfig
 from ..utils import NestedValueMixin

@@ -1356,25 +1356,24 @@ def demo_complex_tabs_flet() -> None:
 
 
 def demo_backend_comparison() -> None:
-    """Demo Qt, wxPython, tkinter, and GTK backends side by side."""
+    """Demo Qt, wxPython, tkinter, GTK, and Flet backends side by side."""
+
     print("Starting Backend Comparison Demo...")
+    BACKENDS = {'qt': demo_user_registration,
+                'wx': demo_wxpython_backend,
+                'tk': demo_tkinter_backend,
+                'gtk': demo_gtk_backend,
+                'flet': demo_flet_backend}
 
     # Don't import from vibegui here - it may trigger Qt imports!
     # Just show what backends are typically available
-    print("Available backends: ['qt', 'wx', 'tk', 'gtk']")
+    print(f"Available backends: [{','.join(BACKENDS.keys())}]")
 
-    backend_choice = input("Choose backend (qt/wx/tk/gtk/all): ").lower()
+    backend_choice = input(f"Choose backend ({'/'.join(BACKENDS.keys())}): ").lower()
 
-    if backend_choice == "qt":
-        demo_user_registration()  # Existing Qt demo
-    elif backend_choice == "wx":
-        demo_wxpython_backend()   # wxPython demo
-    elif backend_choice == "tk":
-        demo_tkinter_backend()    # tkinter demo
-    elif backend_choice == "gtk":
-        demo_gtk_backend()        # GTK demo
-    else:
-        print("Invalid choice. Available options: qt, wx, tk, gtk")
+    BACKENDS[backend_choice]() if backend_choice in BACKENDS else print(
+        "Invalid choice. Available options: qt, wx, tk, gtk, flet"
+    )
 
 
 def demo_unified_interface() -> None:

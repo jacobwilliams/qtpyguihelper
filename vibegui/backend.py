@@ -4,7 +4,6 @@ Supports Qt (via qtpy), wxPython, tkinter, and GTK backends.
 """
 
 import os
-import sys
 from typing import Optional, Dict, Any, List
 
 from .exceptions import BackendError

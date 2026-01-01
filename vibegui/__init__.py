@@ -160,13 +160,13 @@ class GuiBuilder:
                 GtkGuiBuilder, _ = _lazy_import_gtk()
                 self._builder = GtkGuiBuilder(config_path, config_dict)
             except ImportError:
-                raise BackendError(f"GTK backend is not available (missing dependencies)")
+                raise BackendError("GTK backend is not available (missing dependencies)")
         elif self._backend == 'flet':
             try:
                 FletGuiBuilder, _ = _lazy_import_flet()
                 self._builder = FletGuiBuilder(config_path, config_dict)
             except ImportError:
-                raise BackendError(f"Flet backend is not available (missing dependencies)")
+                raise BackendError("Flet backend is not available (missing dependencies)")
         else:
             raise BackendError(f"Unsupported backend: {self._backend}")
 

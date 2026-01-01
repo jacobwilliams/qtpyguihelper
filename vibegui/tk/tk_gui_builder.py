@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 from typing import Dict, Any, Optional
 
-from vibegui.config_loader import ConfigLoader, GuiConfig, FieldConfig, CustomButtonConfig
+from vibegui.config_loader import ConfigLoader, GuiConfig, CustomButtonConfig
 from vibegui.utils import CallbackManagerMixin, ValidationMixin, DataPersistenceMixin, WidgetFactoryMixin, FieldStateMixin, ButtonHandlerMixin, ConfigLoaderMixin, PlatformUtils
 from vibegui.tk.tk_widget_factory import TkWidgetFactory
 

@@ -4,16 +4,16 @@ Compatible with both PySide6 and PyQt6 via qtpy.
 """
 
 import sys
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict
 from qtpy.QtWidgets import (
     QWidget, QLabel, QLineEdit, QTextEdit, QSpinBox, QDoubleSpinBox,
     QCheckBox, QRadioButton, QButtonGroup, QComboBox, QDateEdit,
-    QTimeEdit, QDateTimeEdit, QSlider, QProgressBar, QPushButton,
-    QFileDialog, QColorDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
-    QGridLayout, QFrame, QGroupBox, QSizePolicy
+    QTimeEdit, QDateTimeEdit, QSlider, QPushButton,
+    QFileDialog, QColorDialog, QVBoxLayout, QHBoxLayout,
+    QSizePolicy
 )
 from qtpy.QtCore import Qt, QDate, QTime, QDateTime, Signal
-from qtpy.QtGui import QColor, QPixmap, QIcon, QDoubleValidator
+from qtpy.QtGui import QColor, QDoubleValidator
 
 from ..config_loader import FieldConfig
 from ..utils import NestedValueMixin

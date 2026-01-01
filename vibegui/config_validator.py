@@ -2,7 +2,7 @@
 Configuration validation utilities for vibegui.
 """
 
-from typing import Dict, Any, List, Optional
+from typing import List
 from .config_loader import GuiConfig, FieldConfig, TabConfig, WindowConfig, CustomButtonConfig
 from .exceptions import ConfigurationError
 
