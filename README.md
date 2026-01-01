@@ -195,20 +195,25 @@ Create a JSON file defining your GUI structure:
 ```python
 import sys
 from vibegui import GuiBuilder
+from qtpy.QtWidgets import QApplication
 
 def on_submit(form_data):
     print("Form submitted:", form_data)
 
 # Method 1: Auto-detect backend (recommended)
+app = QApplication(sys.argv)  # Create the application
 gui = GuiBuilder(config_path="my_form.json")
 gui.set_submit_callback(on_submit)
 gui.show()
+app.exec()  # Run the application
 
 # Method 2: Force specific backend
 from vibegui import set_backend
+app = QApplication(sys.argv)  # Create the application
 set_backend('flet')  # or 'qt', 'wx', 'tk', 'gtk'
 gui = GuiBuilder(config_path="my_form.json")
 gui.set_submit_callback(on_submit)
+app.exec()  # Run the application
 
 # Method 3: Create and run with auto app management
 GuiBuilder.create_and_run(config_path="my_form.json")
@@ -570,6 +575,7 @@ vibegui supports adding custom buttons with callbacks to the bottom of the form.
 
 ```python
 from vibegui import GuiBuilder
+from qtpy.QtWidgets import QApplication
 
 def validate_data_callback(form_data):
     """Custom button callback receives current form data as parameter."""
@@ -587,6 +593,9 @@ def export_data_callback(form_data):
         json.dump(form_data, f, indent=2)
     print("Data exported successfully!")
 
+# Create the application
+app = QApplication(sys.argv)
+
 # Create GUI
 gui = GuiBuilder("config.json")
 
@@ -600,6 +609,10 @@ gui.set_cancel_callback(lambda: print("Form cancelled"))
 
 # Show the GUI
 gui.show()
+
+# Run the application
+app.exec()
+
 ```
 
 #### Custom Button Management
