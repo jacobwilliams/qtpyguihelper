@@ -76,11 +76,11 @@ vibegui supports multiple GUI backends for maximum flexibility and cross-platfor
 
 ### Backend Options
 
-**Qt Backend (Default)**: Uses `qtpy` as an abstraction layer, supporting both PySide6 and PyQt6.
-**wxPython Backend**: Alternative cross-platform GUI toolkit with native look and feel.
-**GTK Backend**: PyGObject is a Python package which provides bindings for GObject based libraries such as GTK.
-**tkinter Backend**: Built into Python, requires no additional dependencies, perfect for simple GUIs.
-**Flet Backend**: Modern Python framework with Material Design UI, beautiful animations, and automatic theme adaptation.
+* **Qt Backend (Default)**: Uses `qtpy` as an abstraction layer, supporting both PySide6 and PyQt6.
+* **wxPython Backend**: Alternative cross-platform GUI toolkit with native look and feel.
+* **GTK Backend**: PyGObject is a Python package which provides bindings for GObject based libraries such as GTK.
+* **tkinter Backend**: Built into Python, requires no additional dependencies, perfect for simple GUIs.
+* **Flet Backend**: Modern Python framework with Material Design UI, beautiful animations, and automatic theme adaptation.
 
 ### Dependency installation
 
@@ -192,6 +192,8 @@ Create a JSON file defining your GUI structure:
 
 ### 2. Create the GUI Application
 
+#### Method 1: Auto-detect backend (recommended):
+
 ```python
 import sys
 from vibegui import GuiBuilder
@@ -200,22 +202,23 @@ from qtpy.QtWidgets import QApplication
 def on_submit(form_data):
     print("Form submitted:", form_data)
 
-# Method 1: Auto-detect backend (recommended)
 app = QApplication(sys.argv)  # Create the application
 gui = GuiBuilder(config_path="my_form.json")
 gui.set_submit_callback(on_submit)
 gui.show()
 app.exec()  # Run the application
+```
 
-# Method 2: Force specific backend
+#### Method 2: Force specific backend
+```python
 from vibegui import set_backend
-app = QApplication(sys.argv)  # Create the application
 set_backend('flet')  # or 'qt', 'wx', 'tk', 'gtk'
 gui = GuiBuilder(config_path="my_form.json")
 gui.set_submit_callback(on_submit)
-app.exec()  # Run the application
+```
 
-# Method 3: Create and run with auto app management
+#### Method 3: Create and run with auto app management
+```python
 GuiBuilder.create_and_run(config_path="my_form.json")
 ```
 
